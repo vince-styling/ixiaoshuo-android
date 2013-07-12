@@ -1,0 +1,30 @@
+# for android app files
+bin/
+gen/
+out/
+proguard/
+build.properties
+ant.properties
+local.properties
+pkgs/
+
+# for eclipse description files
+.classpath
+.settings
+.project
+
+# for IntelliJ IDEA description files
+*.iml
+.idea
+*.idb
+
+# for Mac OS files
+.DS_Store
+
+# for Maven build files
+target/
+
+# other files
+*~
+*.swp
+*.orig

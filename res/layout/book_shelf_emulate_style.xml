@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"
+              android:background="#f4efe6">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="50dp"
+            android:background="@drawable/title_bg" android:gravity="center_vertical" android:padding="5dp">
+
+        <ImageButton android:layout_width="wrap_content" android:layout_height="50dp"
+                     android:src="@drawable/btn_book_shelf_emulate_style_selector" android:background="@null" />
+
+        <ImageButton android:layout_width="wrap_content" android:layout_height="50dp"
+                     android:src="@drawable/btn_book_shelf_list_style_selector" android:background="@null" />
+
+        <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                  android:layout_weight="1" android:gravity="center"
+                  android:text="我的书架" android:textSize="24sp" android:textColor="#ffffff" />
+
+        <Button android:layout_width="wrap_content" android:layout_height="match_parent"
+                android:text="更新" android:textSize="18sp" android:textColor="#ffffff"
+                android:paddingLeft="12dp" android:paddingRight="12dp" android:gravity="center"
+                android:background="@drawable/btn_orange_selector" />
+
+    </LinearLayout>
+
+    <ListView android:id="@+id/lsvBookShelf"
+              android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+              android:fastScrollEnabled="true" android:listSelector="@android:color/transparent" android:divider="@null" />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="60dp"
+                  android:layout_marginTop="2dp" android:background="@drawable/menu_bg">
+
+        <ImageButton android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                     android:src="@drawable/menu_book_shelf_off" android:background="@null" />
+
+        <ImageButton android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                     android:src="@drawable/menu_online_search_on" android:background="@drawable/menu_bg_pressed" />
+
+        <ImageButton android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                     android:src="@drawable/menu_app_settings_off" android:background="@null" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
