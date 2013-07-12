@@ -51,6 +51,7 @@ public class Book {
 	public static List<Book> getStaticBookList() {
 		List<Book> mBookList = new ArrayList<Book>(50);
 		mBookList.add(new Book(582544, "纵横妖逆", "驳筝", "cover_582544.jpg"));
+		mBookList.add(new Book(588911, "纵横妖逆第二部", "驳筝之一", "cover_588911.png"));
 		mBookList.add(new Book(465602, "残袍", "风御九秋", "cover_465602.jpg"));
 		mBookList.add(new Book(395390, "踏霄录", "桓僧", "cover_395390.jpg"));
 		mBookList.add(new Book(488766, "我的极品女友们", "超级大坦克科比", "cover_488766.jpg"));

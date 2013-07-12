@@ -12,13 +12,13 @@ import com.duowan.mobile.ixiaoshuo.utils.Paths;
 
 import java.util.List;
 
-public class BookshelfEmulateView {
+public class BookshelfEmulateStyleView {
 	private int itemPerLine = 3;
 	private List<Book> mBookList;
 	private ListView mLsvBookShelf;
 	private BookshelfActivity mActivity;
 
-	public BookshelfEmulateView(BookshelfActivity activity, View lsvBookShelf) {
+	public BookshelfEmulateStyleView(BookshelfActivity activity, View lsvBookShelf) {
 		this.mActivity = activity;
 		this.mLsvBookShelf = (ListView) lsvBookShelf;
 	}

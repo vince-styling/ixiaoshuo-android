@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 public class BitmapUtil {
 
@@ -85,6 +88,34 @@ public class BitmapUtil {
 		}
 
 		return new int[] {width, height};
+	}
+
+	public static void scaleCenterCrop(Bitmap source, ImageView view) {
+		int[] dimension = getViewDimension(view);
+		int newWidth = dimension[0];
+		int newHeight = dimension[1];
+		int sourceWidth = source.getWidth();
+		int sourceHeight = source.getHeight();
+		float xScale = (float) newWidth / sourceWidth;
+		float yScale = (float) newHeight / sourceHeight;
+		float scale = Math.max(xScale, yScale);
+
+		//get the resulting size after scaling
+		float scaledWidth = scale * sourceWidth;
+		float scaledHeight = scale * sourceHeight;
+
+		//figure out where we should translate to
+		float dx = (newWidth - scaledWidth) / 2;
+		float dy = (newHeight - scaledHeight) / 2;
+
+		Bitmap dest = Bitmap.createBitmap(newWidth, newHeight, source.getConfig());
+		Canvas canvas = new Canvas(dest);
+		Matrix matrix = new Matrix();
+		matrix.postScale(scale, scale);
+		matrix.postTranslate(dx, dy);
+		canvas.drawBitmap(source, matrix, null);
+
+		view.setImageBitmap(dest);
 	}
 
 }

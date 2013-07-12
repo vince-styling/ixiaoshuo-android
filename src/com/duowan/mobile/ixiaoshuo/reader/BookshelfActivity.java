@@ -1,21 +1,42 @@
 package com.duowan.mobile.ixiaoshuo.reader;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.view.BookshelfEmulateView;
+import com.duowan.mobile.ixiaoshuo.view.BookshelfEmulateStyleView;
 
-public class BookshelfActivity extends Activity {
-	private BookshelfEmulateView mBookshelfView;
+public class BookshelfActivity extends BaseActivity {
+	private BookshelfEmulateStyleView mBookshelfView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.book_shelf_emulate_style);
 
-		mBookshelfView = new BookshelfEmulateView(this, findViewById(R.id.lsvBookShelf));
+		final RadioButton btnCleanArrow = (RadioButton) findViewById(R.id.btnCleanArrow);
+
+		mBookshelfView = new BookshelfEmulateStyleView(this, findViewById(R.id.lsvBookShelf));
 		mBookshelfView.initBookShelf(Book.getStaticBookList());
+
+		final RadioGroup btnStyleSwitchGrp = (RadioGroup) findViewById(R.id.btnStyleSwitchGrp);
+		btnStyleSwitchGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedBtnId) {
+				switch (checkedBtnId) {
+					case R.id.btnEmulateStyle:
+						getReaderApplication().showToastMsg("btnEmulateStyle");
+						btnCleanArrow.toggle();
+						btnCleanArrow.setChecked(true);
+						break;
+					case R.id.btnListStyle:
+						getReaderApplication().showToastMsg("btnListStyle");
+						btnCleanArrow.setChecked(false);
+						break;
+				}
+			}
+		});
 	}
 
 }
