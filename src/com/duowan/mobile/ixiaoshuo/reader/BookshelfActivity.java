@@ -1,6 +1,8 @@
 package com.duowan.mobile.ixiaoshuo.reader;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
@@ -34,6 +36,19 @@ public class BookshelfActivity extends BaseActivity {
 						getReaderApplication().showToastMsg("btnListStyle");
 						btnCleanArrow.setChecked(false);
 						break;
+				}
+			}
+		});
+
+		final LinearLayout lotMyBookShelf = (LinearLayout) findViewById(R.id.lotMyBookShelf);
+		lotMyBookShelf.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				LinearLayout lotBookShelfClean = (LinearLayout) findViewById(R.id.lotBookShelfClean);
+				if(lotBookShelfClean.getVisibility() == View.GONE) {
+					lotBookShelfClean.setVisibility(View.VISIBLE);
+				} else {
+					lotBookShelfClean.setVisibility(View.GONE);
 				}
 			}
 		});
