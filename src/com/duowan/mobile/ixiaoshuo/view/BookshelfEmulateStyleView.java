@@ -77,7 +77,7 @@ public class BookshelfEmulateStyleView {
 						// gridview单行单列，不需要滑动，所以只需要设置一次就可以了
 						if (convertView == null) {
 							convertView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_emulate_list_book_item, null);
-							ScalableImageView imvBookCover = (ScalableImageView) convertView.findViewById(R.id.imvBookCover);
+							ImageView imvBookCover = (ImageView) convertView.findViewById(R.id.imvBookCover);
 							TextView txvBookName = (TextView) convertView.findViewById(R.id.txvBookName);
 
 							int index = getItem(position);
