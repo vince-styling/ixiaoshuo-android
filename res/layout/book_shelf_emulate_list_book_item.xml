@@ -5,7 +5,7 @@
 
     <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:background="@drawable/book_cover_frame_selector"
-                    android:paddingTop="1dp" android:paddingLeft="2dp" android:paddingRight="2dp" android:paddingBottom="4dp">
+                    android:paddingTop="0dp" android:paddingLeft="2dp" android:paddingRight="2dp" android:paddingBottom="4dp">
 
         <com.duowan.mobile.ixiaoshuo.view.ScalableImageView android:id="@+id/imvBookCover"
                    android:layout_width="127dp" android:layout_height="168dp" android:src="@drawable/cover_less" />
