@@ -6,13 +6,13 @@ import java.util.List;
 public class Book {
 	private int id;
 	private String name;
-	private String writer;
+	private String author;
 	private String coverFileName;
 
-	public Book(int id, String name, String writer, String coverFileName) {
+	public Book(int id, String name, String author, String coverFileName) {
 		this.id = id;
 		this.name = name;
-		this.writer = writer;
+		this.author = author;
 		this.coverFileName = coverFileName;
 	}
 
@@ -32,12 +32,12 @@ public class Book {
 		this.name = name;
 	}
 
-	public String getWriter() {
-		return writer;
+	public String getAuthor() {
+		return author;
 	}
 
-	public void setWriter(String writer) {
-		this.writer = writer;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	public String getCoverFileName() {
@@ -46,6 +46,10 @@ public class Book {
 
 	public void setCoverFileName(String coverFileName) {
 		this.coverFileName = coverFileName;
+	}
+
+	public String getStatus() {
+		return "连载";
 	}
 
 	public static List<Book> getStaticBookList() {

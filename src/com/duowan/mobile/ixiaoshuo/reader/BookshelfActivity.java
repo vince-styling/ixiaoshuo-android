@@ -7,20 +7,20 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
+import com.duowan.mobile.ixiaoshuo.view.BookshelfBaseView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfEmulateStyleView;
+import com.duowan.mobile.ixiaoshuo.view.BookshelfListStyleView;
 
 public class BookshelfActivity extends BaseActivity {
-	private BookshelfEmulateStyleView mBookshelfView;
+	private BookshelfBaseView mBookshelfView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.book_shelf_emulate_style);
+		setContentView(R.layout.book_shelf);
 
-		final RadioButton btnCleanArrow = (RadioButton) findViewById(R.id.btnCleanArrow);
-
-		mBookshelfView = new BookshelfEmulateStyleView(this, findViewById(R.id.lsvBookShelf));
-		mBookshelfView.initBookShelf(Book.getStaticBookList());
+		mBookshelfView = new BookshelfEmulateStyleView();
+		mBookshelfView.init(this, findViewById(R.id.lsvBookShelf), Book.getStaticBookList());
 
 		final RadioGroup btnStyleSwitchGrp = (RadioGroup) findViewById(R.id.btnStyleSwitchGrp);
 		btnStyleSwitchGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -28,18 +28,16 @@ public class BookshelfActivity extends BaseActivity {
 			public void onCheckedChanged(RadioGroup group, int checkedBtnId) {
 				switch (checkedBtnId) {
 					case R.id.btnEmulateStyle:
-						getReaderApplication().showToastMsg("btnEmulateStyle");
-						btnCleanArrow.toggle();
-						btnCleanArrow.setChecked(true);
+						mBookshelfView = new BookshelfEmulateStyleView(mBookshelfView);
 						break;
 					case R.id.btnListStyle:
-						getReaderApplication().showToastMsg("btnListStyle");
-						btnCleanArrow.setChecked(false);
+						mBookshelfView = new BookshelfListStyleView(mBookshelfView);
 						break;
 				}
 			}
 		});
 
+		final RadioButton btnCleanArrow = (RadioButton) findViewById(R.id.btnCleanArrow);
 		final LinearLayout lotMyBookShelf = (LinearLayout) findViewById(R.id.lotMyBookShelf);
 		lotMyBookShelf.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -47,8 +45,10 @@ public class BookshelfActivity extends BaseActivity {
 				LinearLayout lotBookShelfClean = (LinearLayout) findViewById(R.id.lotBookShelfClean);
 				if(lotBookShelfClean.getVisibility() == View.GONE) {
 					lotBookShelfClean.setVisibility(View.VISIBLE);
+					btnCleanArrow.setChecked(true);
 				} else {
 					lotBookShelfClean.setVisibility(View.GONE);
+					btnCleanArrow.setChecked(false);
 				}
 			}
 		});

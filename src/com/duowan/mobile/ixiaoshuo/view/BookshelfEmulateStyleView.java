@@ -6,25 +6,18 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.reader.BookshelfActivity;
 import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
-import com.duowan.mobile.ixiaoshuo.utils.Paths;
 
-import java.util.List;
-
-public class BookshelfEmulateStyleView {
-	private int itemPerLine = 3;
-	private List<Book> mBookList;
-	private ListView mLsvBookShelf;
-	private BookshelfActivity mActivity;
-
-	public BookshelfEmulateStyleView(BookshelfActivity activity, View lsvBookShelf) {
-		this.mActivity = activity;
-		this.mLsvBookShelf = (ListView) lsvBookShelf;
+public class BookshelfEmulateStyleView extends BookshelfBaseView {
+	public BookshelfEmulateStyleView() {}
+	public BookshelfEmulateStyleView(BookshelfBaseView bookshelfView) {
+		super.build(bookshelfView);
 	}
 
-	public void initBookShelf(List<Book> bookList) {
-		this.mBookList = bookList;
+	private int itemPerLine = 3;
+
+	@Override
+	protected void initBookShelf() {
 		BaseAdapter bookShelfAdapter = new BaseAdapter() {
 			private Integer[] itemIndexPerLine = new Integer[itemPerLine];
 			private int avaliableCount;
@@ -62,6 +55,7 @@ public class BookshelfEmulateStyleView {
 					grvBookShelf = (GridView) convertView.findViewById(R.id.grvBookShelf);
 					grvBookShelf.setNumColumns(itemPerLine);
 					convertView.setTag(grvBookShelf);
+					grvBookShelf.setOnItemLongClickListener(BookshelfEmulateStyleView.this);
 				} else {
 					grvBookShelf = (GridView) convertView.getTag();
 				}
@@ -87,10 +81,8 @@ public class BookshelfEmulateStyleView {
 								imvBookCover.setImageBitmap(coverBitmap);
 							} else {
 								Book book = mBookList.get(index);
+								setImageBitmap(imvBookCover, book);
 								txvBookName.setText(book.getName());
-
-								Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
-								imvBookCover.setImageBitmap(coverBitmap);
 							}
 						}
 						return convertView;
@@ -101,6 +93,7 @@ public class BookshelfEmulateStyleView {
 			}
 		};
 		mLsvBookShelf.setAdapter(bookShelfAdapter);
+		mLsvBookShelf.setOnItemLongClickListener(null);
 	}
 
 }
