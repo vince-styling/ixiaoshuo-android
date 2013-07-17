@@ -1,8 +1,11 @@
 package com.duowan.mobile.ixiaoshuo.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
@@ -16,6 +19,7 @@ public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickLi
 	protected List<Book> mBookList;
 	protected ListView mLsvBookShelf;
 	protected BookshelfActivity mActivity;
+	protected BaseAdapter mBookShelfAdapter;
 
 	public void build(BookshelfBaseView bookshelfView) {
 		this.mLsvBookShelf = bookshelfView.mLsvBookShelf;
@@ -33,11 +37,17 @@ public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickLi
 
 	protected abstract void initBookShelf();
 
+	protected void notifyDataSetChanged() {
+		mBookShelfAdapter.notifyDataSetChanged();
+	}
+
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		Book book = (Book) parent.getItemAtPosition(position);
+		final Book book = (Book) parent.getItemAtPosition(position);
 		if (book == null) return true;
-		CommonMenuDialog.MenuItem[] menus = {
+
+		final CommonMenuDialog menuDialog = new CommonMenuDialog(mActivity, '《' + book.getName() + '》');
+		menuDialog.initContentView(new CommonMenuDialog.MenuItem[] {
 				new CommonMenuDialog.MenuItem("查看详情", new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -47,7 +57,24 @@ public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickLi
 				new CommonMenuDialog.MenuItem("删除书籍", new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						mActivity.getReaderApplication().showToastMsg("点击了删除书籍");
+						AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+						builder.setMessage("是否确认删除该书籍？");
+						builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								mBookList.remove(book);
+								notifyDataSetChanged();
+								menuDialog.cancel();
+								dialog.cancel();
+							}
+						});
+						builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+						});
+						builder.show();
 					}
 				}),
 				new CommonMenuDialog.MenuItem("更换站点", new View.OnClickListener() {
@@ -56,8 +83,9 @@ public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickLi
 						mActivity.getReaderApplication().showToastMsg("点击了更换站点");
 					}
 				}),
-		};
-		new CommonMenuDialog(mActivity, '《' + book.getName() + '》', menus).show();
+		});
+		menuDialog.show();
+
 		return true;
 	}
 

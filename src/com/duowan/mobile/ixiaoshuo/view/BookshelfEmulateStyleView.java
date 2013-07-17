@@ -18,7 +18,7 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 
 	@Override
 	protected void initBookShelf() {
-		BaseAdapter bookShelfAdapter = new BaseAdapter() {
+		mBookShelfAdapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
 				return mBookList.size() / itemPerLine + 1;
@@ -108,7 +108,7 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 				return convertView;
 			}
 		};
-		mLsvBookShelf.setAdapter(bookShelfAdapter);
+		mLsvBookShelf.setAdapter(mBookShelfAdapter);
 		mLsvBookShelf.setOnItemLongClickListener(null);
 	}
 

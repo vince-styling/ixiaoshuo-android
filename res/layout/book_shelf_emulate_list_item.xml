@@ -9,6 +9,6 @@
     <GridView android:id="@+id/grvBookShelf"
               android:layout_width="match_parent" android:layout_height="wrap_content" android:horizontalSpacing="20dp"
               android:layout_marginLeft="15dp" android:layout_marginRight="15dp"
-              android:listSelector="@android:color/transparent" />
+              android:scrollbars="none" android:listSelector="@android:color/transparent" />
 
 </RelativeLayout>

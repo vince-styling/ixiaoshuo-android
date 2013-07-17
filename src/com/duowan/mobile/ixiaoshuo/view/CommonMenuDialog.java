@@ -8,14 +8,10 @@ import com.duowan.mobile.ixiaoshuo.R;
 
 public class CommonMenuDialog extends AbsDialog {
 	public CommonMenuDialog(Context context) {
-		super(context);
+		this(context, "提示");
 	}
 
-	public CommonMenuDialog(Context context, MenuItem[] menus) {
-		this(context, "提示", menus);
-	}
-
-	public CommonMenuDialog(Context context, String title, MenuItem[] menus) {
+	public CommonMenuDialog(Context context, String title) {
 		super(context);
 
 		mContentView = (ViewGroup) getLayoutInflater().inflate(R.layout.common_menu_dialog, null);
@@ -24,14 +20,15 @@ public class CommonMenuDialog extends AbsDialog {
 		} else {
 			((TextView) mContentView.findViewById(R.id.txtDialogTitle)).setText(title);
 		}
+	}
 
+	public void initContentView(MenuItem[] menus) {
 		for (MenuItem menu : menus) {
 			TextView menuView = (TextView) getLayoutInflater().inflate(R.layout.common_menu_dialog_item, mContentView, false);
-			menuView.setText(menu.title);
 			menuView.setOnClickListener(menu.clickEvent);
+			menuView.setText(menu.title);
 			mContentView.addView(menuView);
 		}
-
 		initContentView(0.8f);
 	}
 
