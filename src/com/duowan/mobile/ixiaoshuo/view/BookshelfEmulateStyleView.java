@@ -19,27 +19,31 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 	@Override
 	protected void initBookShelf() {
 		BaseAdapter bookShelfAdapter = new BaseAdapter() {
-			private Integer[] itemIndexPerLine = new Integer[itemPerLine];
-			private int avaliableCount;
 			@Override
 			public int getCount() {
 				return mBookList.size() / itemPerLine + 1;
 			}
 
 			@Override
-			public Integer[] getItem(int position) {
-				avaliableCount = 0;
-				itemIndexPerLine[0] = position * itemPerLine;
-				itemIndexPerLine[1] = itemIndexPerLine[0] + 1;
-				itemIndexPerLine[2] = itemIndexPerLine[1] + 1;
-				for (int i = 0; i < itemIndexPerLine.length; i++) {
-					avaliableCount++;
+			public int[] getItem(int position) {
+				int[] itemIndexPerLine = new int[itemPerLine];
+				for (int i = 0; i < itemPerLine; i++) {
+					itemIndexPerLine[i] = position * itemPerLine + i;
 					if (itemIndexPerLine[i] >= mBookList.size()) {
 						itemIndexPerLine[i] = -1;
 						break;
 					}
 				}
 				return itemIndexPerLine;
+			}
+
+			public int getAvaliableCount(int[] itemIndexPerLine) {
+				int avaliableCount = 1;
+				for (int i = 0; i < itemPerLine; i++) {
+					if (itemIndexPerLine[i] == -1) break;
+					avaliableCount++;
+				}
+				return avaliableCount;
 			}
 
 			@Override
@@ -60,10 +64,23 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 					grvBookShelf = (GridView) convertView.getTag();
 				}
 
-				grvBookShelf.setAdapter(new ArrayAdapter<Integer>(mActivity, 0, getItem(position)) {
+				final int[] itemIndexPerLine = getItem(position);
+				final int avaliableCount = getAvaliableCount(itemIndexPerLine);
+				grvBookShelf.setAdapter(new BaseAdapter() {
 					@Override
 					public int getCount() {
 						return avaliableCount;
+					}
+
+					@Override
+					public Book getItem(int position) {
+						int index = itemIndexPerLine[position];
+						return index == -1 ? null : mBookList.get(index);
+					}
+
+					@Override
+					public long getItemId(int position) {
+						return position;
 					}
 
 					@Override
@@ -74,13 +91,12 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 							ImageView imvBookCover = (ImageView) convertView.findViewById(R.id.imvBookCover);
 							TextView txvBookName = (TextView) convertView.findViewById(R.id.txvBookName);
 
-							int index = getItem(position);
-							if (index == -1) {
+							Book book = getItem(position);
+							if (book == null) {
 								txvBookName.setText(null);
 								Bitmap coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.book_shelf_addbook, imvBookCover);
 								imvBookCover.setImageBitmap(coverBitmap);
 							} else {
-								Book book = mBookList.get(index);
 								setImageBitmap(imvBookCover, book);
 								txvBookName.setText(book.getName());
 							}

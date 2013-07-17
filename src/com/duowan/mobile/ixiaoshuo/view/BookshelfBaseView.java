@@ -35,7 +35,8 @@ public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickLi
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		Book book = mBookList.get(position);
+		Book book = (Book) parent.getItemAtPosition(position);
+		if (book == null) return true;
 		CommonMenuDialog.MenuItem[] menus = {
 				new CommonMenuDialog.MenuItem("查看详情", new View.OnClickListener() {
 					@Override
