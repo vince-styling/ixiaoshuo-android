@@ -17,8 +17,8 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 	private int itemPerLine = 3;
 
 	@Override
-	protected void initBookShelf() {
-		mBookShelfAdapter = new BaseAdapter() {
+	protected void initListView() {
+		mAdapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
 				return mBookList.size() / itemPerLine + 1;
@@ -57,9 +57,10 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 				if(convertView == null) {
 					convertView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_emulate_list_item, null);
 					grvBookShelf = (GridView) convertView.findViewById(R.id.grvBookShelf);
+					grvBookShelf.setOnItemLongClickListener(BookshelfEmulateStyleView.this);
+					grvBookShelf.setOnItemClickListener(BookshelfEmulateStyleView.this);
 					grvBookShelf.setNumColumns(itemPerLine);
 					convertView.setTag(grvBookShelf);
-					grvBookShelf.setOnItemLongClickListener(BookshelfEmulateStyleView.this);
 				} else {
 					grvBookShelf = (GridView) convertView.getTag();
 				}
@@ -108,8 +109,9 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 				return convertView;
 			}
 		};
-		mLsvBookShelf.setAdapter(mBookShelfAdapter);
+		mLsvBookShelf.setAdapter(mAdapter);
 		mLsvBookShelf.setOnItemLongClickListener(null);
+		mLsvBookShelf.setOnItemClickListener(null);
 	}
 
 }

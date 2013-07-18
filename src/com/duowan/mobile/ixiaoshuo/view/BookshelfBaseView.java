@@ -4,22 +4,23 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.*;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.BookshelfActivity;
+import com.duowan.mobile.ixiaoshuo.utils.BitmapLruCache;
 import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
 
 import java.util.List;
 
-public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickListener {
+public abstract class BookshelfBaseView implements OnItemLongClickListener, OnItemClickListener, AbsListView.OnScrollListener {
+	protected BaseAdapter mAdapter;
 	protected List<Book> mBookList;
 	protected ListView mLsvBookShelf;
 	protected BookshelfActivity mActivity;
-	protected BaseAdapter mBookShelfAdapter;
+//	private BitmapLruCache mBitmapLruCache;
 
 	public void build(BookshelfBaseView bookshelfView) {
 		this.mLsvBookShelf = bookshelfView.mLsvBookShelf;
@@ -35,10 +36,16 @@ public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickLi
 		initBookShelf();
 	}
 
-	protected abstract void initBookShelf();
+	private void initBookShelf() {
+		initListView();
+//		mBitmapLruCache = new BitmapLruCache();
+		mLsvBookShelf.setOnScrollListener(this);
+	}
+
+	protected abstract void initListView();
 
 	protected void notifyDataSetChanged() {
-		mBookShelfAdapter.notifyDataSetChanged();
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -89,7 +96,29 @@ public abstract class BookshelfBaseView implements AdapterView.OnItemLongClickLi
 		return true;
 	}
 
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		Book book = (Book) parent.getItemAtPosition(position);
+		if (book != null) {
+			mActivity.getReaderApplication().showToastMsg("单击：" + book.getName());
+		}
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		switch (scrollState) {
+			case AbsListView.OnScrollListener.SCROLL_STATE_IDLE :
+				int start = view.getFirstVisiblePosition();
+				System.out.println(start);
+				break;
+		}
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+
 	protected void setImageBitmap(ImageView imvBookCover, Book book) {
+//		mBitmapLruCache.loadBitmap(book.getId(), Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
 		Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
 		imvBookCover.setImageBitmap(coverBitmap);
 	}

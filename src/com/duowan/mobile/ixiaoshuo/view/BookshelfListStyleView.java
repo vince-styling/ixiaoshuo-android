@@ -17,8 +17,8 @@ public class BookshelfListStyleView extends BookshelfBaseView {
 	}
 
 	@Override
-	protected void initBookShelf() {
-		mBookShelfAdapter = new BaseAdapter() {
+	protected void initListView() {
+		mAdapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
 				return mBookList.size();
@@ -81,8 +81,9 @@ public class BookshelfListStyleView extends BookshelfBaseView {
 				Button txvBookStatus;
 			}
 		};
-		mLsvBookShelf.setAdapter(mBookShelfAdapter);
+		mLsvBookShelf.setAdapter(mAdapter);
 		mLsvBookShelf.setOnItemLongClickListener(this);
+		mLsvBookShelf.setOnItemClickListener(this);
 	}
 
 }
