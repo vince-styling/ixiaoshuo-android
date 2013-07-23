@@ -9,11 +9,22 @@ public class Book {
 	private String author;
 	private String coverFileName;
 
+	private List<Chapter> chapterList;
+
+	public Book() {}
 	public Book(int id, String name, String author, String coverFileName) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
 		this.coverFileName = coverFileName;
+	}
+
+	public List<Chapter> getChapterList() {
+		return chapterList;
+	}
+
+	public void setChapterList(List<Chapter> chapterList) {
+		this.chapterList = chapterList;
 	}
 
 	public int getId() {
@@ -48,7 +59,7 @@ public class Book {
 		this.coverFileName = coverFileName;
 	}
 
-	public String getStatus() {
+	public String getUpdateStatus() {
 		return "连载";
 	}
 

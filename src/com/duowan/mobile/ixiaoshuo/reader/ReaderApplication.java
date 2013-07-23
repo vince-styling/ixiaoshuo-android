@@ -2,12 +2,14 @@ package com.duowan.mobile.ixiaoshuo.reader;
 
 import android.app.Application;
 import android.widget.Toast;
+import com.duowan.mobile.ixiaoshuo.net.NetService;
 
 public class ReaderApplication extends Application {
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		NetService.init(this);
 	}
 
 	private Toast mToast;
