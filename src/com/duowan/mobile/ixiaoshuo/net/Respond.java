@@ -1,6 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.net;
 
-import java.util.Map;
+import org.codehaus.jackson.type.TypeReference;
 
 /**
  * a common response object, parse json pattern like that :
@@ -9,7 +9,7 @@ import java.util.Map;
 public class Respond {
 	private int status;
 	private String message;
-	private Map<String, Object> data;
+	private Object data;		// instances of ArrayList or LinkedHashMap
 
 	public int getStatus() {
 		return status;
@@ -27,12 +27,17 @@ public class Respond {
 		this.message = message;
 	}
 
-	public Map<String, Object> getData() {
+	public Object getData() {
 		return data;
 	}
 
-	public void setData(Map<String, Object> data) {
+	public void setData(Object data) {
 		this.data = data;
+	}
+
+	public <T> T convert(TypeReference<T> typeRef) {
+		if(data != null) return GObjectMapper.get().convertValue(data, typeRef);
+		return null;
 	}
 
 }

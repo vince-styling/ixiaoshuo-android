@@ -2,6 +2,8 @@ package com.duowan.mobile.ixiaoshuo.net;
 
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.params.BasicHttpParams;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.util.List;
@@ -10,19 +12,26 @@ import java.util.Map;
 public class NetUtil {
 
 	public static String convertListToParams(List list, String listName) {
-		if (list == null || list.size() == 0) return "";
 		StringBuilder params = new StringBuilder();
-
 		for (int i = 0; i < list.size(); i++) {
-			ObjectMapper m = new ObjectMapper();
-			Map<String, Object> beanMaps = m.convertValue(list.get(0), Map.class);
+			Map<String, Object> beanMaps = GObjectMapper.get().convertValue(list.get(i), Map.class);
 			for (String key : beanMaps.keySet()) {
 				params.append('&').append(listName).append('[').append(i).append(']');
 				params.append('.').append(key).append('=').append(beanMaps.get(key));
 			}
 		}
-
 		return params.toString();
+	}
+
+	public static void putListToParams(HttpPost httpPost, List list, String listName) {
+		BasicHttpParams params = new BasicHttpParams();
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> beanMaps = GObjectMapper.get().convertValue(list.get(i), Map.class);
+			for (String key : beanMaps.keySet()) {
+				params.setParameter(listName + '[' + i + "]." + key, beanMaps.get(key));
+			}
+		}
+		httpPost.setParams(params);
 	}
 
 	public static void main(String[] args) throws Exception {

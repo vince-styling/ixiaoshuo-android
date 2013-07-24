@@ -1,11 +1,12 @@
 package com.duowan.mobile.ixiaoshuo.pojo;
 
 public class BookOnUpdate {
-	int bookId, websizeId, lastChapterId;
+	int bookId, websiteId, lastChapterId, updateChapterCount;
 
-	public BookOnUpdate(int bookId, int websizeId, int lastChapterId) {
+	public BookOnUpdate() {}
+	public BookOnUpdate(int bookId, int websiteId, int lastChapterId) {
 		this.bookId = bookId;
-		this.websizeId = websizeId;
+		this.websiteId = websiteId;
 		this.lastChapterId = lastChapterId;
 	}
 
@@ -17,12 +18,12 @@ public class BookOnUpdate {
 		this.bookId = bookId;
 	}
 
-	public int getWebsizeId() {
-		return websizeId;
+	public int getWebsiteId() {
+		return websiteId;
 	}
 
-	public void setWebsizeId(int websizeId) {
-		this.websizeId = websizeId;
+	public void setWebsiteId(int websiteId) {
+		this.websiteId = websiteId;
 	}
 
 	public int getLastChapterId() {
@@ -32,4 +33,13 @@ public class BookOnUpdate {
 	public void setLastChapterId(int lastChapterId) {
 		this.lastChapterId = lastChapterId;
 	}
+
+	public int getUpdateChapterCount() {
+		return updateChapterCount;
+	}
+
+	public void setUpdateChapterCount(int updateChapterCount) {
+		this.updateChapterCount = updateChapterCount;
+	}
+
 }

@@ -10,11 +10,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
 import com.duowan.mobile.ixiaoshuo.R;
+import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.NoHttpResponseException;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
@@ -58,7 +56,7 @@ public abstract class BaseNetService {
 	private boolean mNetworkAvailable, mShouldUseProxy;
 	private boolean mIsUseCmwap, mIsUseCtwap, mIsUseUniwap;
 
-	protected synchronized void doInit (Context context) {
+	protected final synchronized void doInit (Context context) {
 		API = context.getResources().getString(R.string.api);
 
 		retryHandler = new HttpRequestRetryHandler() {
@@ -112,7 +110,7 @@ public abstract class BaseNetService {
 			HttpProtocolParams.setUseExpectContinue(mangrParams, true);
 
 			SchemeRegistry registry = new SchemeRegistry();
-			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 8998));
+			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
 			ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(mangrParams, registry);
 			httpClient = new DefaultHttpClient(connManager, params);
 			httpClient.setHttpRequestRetryHandler(retryHandler);
@@ -160,7 +158,7 @@ public abstract class BaseNetService {
 	public static final String CTWAP = "ctwap";
 	public static final String UNIWAP = "uniwap";
 
-	protected void updateNetworkInfo (Context context) {
+	protected final void updateNetworkInfo (Context context) {
 		ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = manager.getActiveNetworkInfo();
 
@@ -180,16 +178,16 @@ public abstract class BaseNetService {
 		} else mNetworkAvailable = false;
 	}
 
-	public synchronized boolean testNetworkIsAvailable (Context ctx) {
+	public final synchronized boolean testNetworkIsAvailable (Context ctx) {
 		updateNetworkInfo(ctx);
 		return mNetworkAvailable;
 	}
 
-	public synchronized boolean isNetworkAvailable () { return mNetworkAvailable; }
-	public synchronized boolean shouldUseProxy () { return mShouldUseProxy; }
-	public synchronized boolean isUseUniwap() { return mIsUseUniwap; }
-	public synchronized boolean isUseCmwap() { return mIsUseCmwap; }
-	public synchronized boolean isUseCtwap() { return mIsUseCtwap; }
+	public final synchronized boolean isNetworkAvailable () { return mNetworkAvailable; }
+	public final synchronized boolean shouldUseProxy () { return mShouldUseProxy; }
+	public final synchronized boolean isUseUniwap() { return mIsUseUniwap; }
+	public final synchronized boolean isUseCmwap() { return mIsUseCmwap; }
+	public final synchronized boolean isUseCtwap() { return mIsUseCtwap; }
 
 	private String makeAPI(String pageName) {
 		return API + pageName + "?versionCode=" + versionCode + "&versionName=" + versionName;
@@ -201,15 +199,35 @@ public abstract class BaseNetService {
 		return makeAPI(pageName) + '&' + params;
 	}
 
-	protected HttpPost makePost(String pageName, String params) {
-		return new HttpPost(makeUrl(pageName, params));
+	protected final Respond handleHttpGet(String pageName, String params) throws IOException {
+		return handleHttpExecute(makeHttpGet(pageName, params));
 	}
 
-	protected HttpResponse executeGet(String pageName, String params) throws IOException {
-		return execute(new HttpGet(makeUrl(pageName, params)));
+//	protected final Respond handleHttpPost(String pageName) throws IOException {
+//		return handleHttpExecute(makeHttpPost(pageName));
+//	}
+
+	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
+		HttpResponse response = executeHttp(request);
+		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+			String json = new String(IOUtil.toByteArray(response.getEntity().getContent()));
+			Respond respond = mapper.readValue(json, Respond.class);
+			if(respond.getStatus() == HttpStatus.SC_OK) return respond;
+		}
+		return null;
 	}
 
-	protected HttpResponse execute(HttpRequestBase request) throws IOException {
+	protected HttpGet makeHttpGet(String pageName, String params) {
+		String url = makeUrl(pageName, params);
+		return new HttpGet(url);
+	}
+
+	protected HttpPost makeHttpPost(String pageName) {
+		String url = makeUrl(pageName, null);
+		return new HttpPost(url);
+	}
+
+	protected final HttpResponse executeHttp(HttpRequestBase request) throws IOException {
 		return mShouldUseProxy ? getHttpClientProxy().execute(request) : getHttpClientGeneral().execute(request);
 	}
 
