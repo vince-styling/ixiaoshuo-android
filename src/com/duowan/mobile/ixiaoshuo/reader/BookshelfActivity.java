@@ -10,13 +10,9 @@ import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.pojo.BookOnUpdate;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfBaseView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfEmulateStyleView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfListStyleView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BookshelfActivity extends BaseActivity {
 	private BookshelfBaseView mBookshelfView;
@@ -64,25 +60,52 @@ public class BookshelfActivity extends BaseActivity {
 		btnUpdateBookShelf.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final List<BookOnUpdate> list = new ArrayList<BookOnUpdate>(4);
-				list.add(new BookOnUpdate(1902, 4, 189092));
-				list.add(new BookOnUpdate(2912, 2, 189543));
-				list.add(new BookOnUpdate(5389, 1, 908211));
-				list.add(new BookOnUpdate(8062, 3, 883134));
-				list.add(new BookOnUpdate(1489, 1, 998712));
-				list.add(new BookOnUpdate(9971, 5, 661832));
-				(new AsyncTask<Void, Void, List<BookOnUpdate>>() {
+				(new AsyncTask<Void, Void, Void>() {
 					@Override
-					protected List<BookOnUpdate> doInBackground(Void... params) {
-						return NetService.get().syncChapterUpdateOnBookshelf(list);
+					protected Void doInBackground(Void... params) {
+//						List<BookOnUpdate> list = new ArrayList<BookOnUpdate>(4);
+//						list.add(new BookOnUpdate(1902, 4, 189092));
+//						list.add(new BookOnUpdate(2912, 2, 189543));
+//						list.add(new BookOnUpdate(5389, 1, 908211));
+//						list.add(new BookOnUpdate(8062, 3, 883134));
+//						list.add(new BookOnUpdate(1489, 1, 998712));
+//						list.add(new BookOnUpdate(9971, 5, 661832));
+//						List<BookUpdateInfo> updateInfoList = NetService.get().syncChapterUpdateOnBookshelf(list);
+//						for (BookUpdateInfo updateInfo : updateInfoList) {
+//							System.out.println("--- UpdateChapterCount : " + updateInfo.getUpdateChapterCount());
+//						}
+
+						NetService.get().getChapterContent(1984, 5, 197843);
+
+//						Book book = NetService.get().getBookDetail(1984, 5);
+//						System.out.println(book);
+
+//						List<Book> list0 = NetService.get().bookSearch("斗士", Book.STATUS_CONTINUE, 1, 10);
+//						System.out.println(list0);
+
+//						List<Book> list1 = NetService.get().getReadingBookList(1, 10);
+//						System.out.println(list1);
+
+//						List<Book> list2 = NetService.get().getBookRanking(Book.RANK_TOTAL, 1, 10);
+//						System.out.println(list2);
+
+//						List<Site> list3 = NetService.get().getSiteRankingList();
+//						System.out.println(list3);
+
+//						List<Book> list4 = NetService.get().getSiteBookRanking(2, 1, 10);
+//						System.out.println(list4);
+
+						return null;
 					}
 					@Override
-					protected void onPostExecute(List<BookOnUpdate> respond) {
+					protected void onPostExecute(Void respond) {
 						System.out.println(respond);
 					}
 				}).execute();
 			}
 		});
+
+		btnUpdateBookShelf.performClick();
 	}
 
 }

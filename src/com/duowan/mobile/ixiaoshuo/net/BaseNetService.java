@@ -203,28 +203,33 @@ public abstract class BaseNetService {
 		return handleHttpExecute(makeHttpGet(pageName, params));
 	}
 
-//	protected final Respond handleHttpPost(String pageName) throws IOException {
-//		return handleHttpExecute(makeHttpPost(pageName));
-//	}
-
-	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
-		HttpResponse response = executeHttp(request);
-		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-			String json = new String(IOUtil.toByteArray(response.getEntity().getContent()));
-			Respond respond = mapper.readValue(json, Respond.class);
-			if(respond.getStatus() == HttpStatus.SC_OK) return respond;
-		}
-		return null;
-	}
-
 	protected HttpGet makeHttpGet(String pageName, String params) {
 		String url = makeUrl(pageName, params);
 		return new HttpGet(url);
 	}
 
+	protected HttpResponse executeHttpGet(String pageName, String params) throws IOException {
+		String url = makeUrl(pageName, params);
+		return executeHttp(new HttpGet(url));
+	}
+
 	protected HttpPost makeHttpPost(String pageName) {
 		String url = makeUrl(pageName, null);
 		return new HttpPost(url);
+	}
+
+	protected HttpResponse executeHttpPost(String pageName, String params) throws IOException {
+		String url = makeUrl(pageName, params);
+		return executeHttp(new HttpPost(url));
+	}
+
+	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
+		HttpResponse response = executeHttp(request);
+		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+			String json = new String(IOUtil.toByteArray(response.getEntity().getContent()));
+			return mapper.readValue(json, Respond.class);
+		}
+		return null;
 	}
 
 	protected final HttpResponse executeHttp(HttpRequestBase request) throws IOException {

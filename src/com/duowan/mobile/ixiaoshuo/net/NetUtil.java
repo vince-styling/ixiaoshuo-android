@@ -2,10 +2,14 @@ package com.duowan.mobile.ixiaoshuo.net;
 
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.params.BasicHttpParams;
+import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,14 +28,18 @@ public class NetUtil {
 	}
 
 	public static void putListToParams(HttpPost httpPost, List list, String listName) {
-		BasicHttpParams params = new BasicHttpParams();
+		List<NameValuePair> paramList = new ArrayList<NameValuePair>(list.size() * 5);
+
+		Map<String, Object> beanMaps;
 		for (int i = 0; i < list.size(); i++) {
-			Map<String, Object> beanMaps = GObjectMapper.get().convertValue(list.get(i), Map.class);
+			beanMaps = GObjectMapper.get().convertValue(list.get(i), Map.class);
 			for (String key : beanMaps.keySet()) {
-				params.setParameter(listName + '[' + i + "]." + key, beanMaps.get(key));
+				paramList.add(new BasicNameValuePair(listName + '[' + i + "]." + key, beanMaps.get(key).toString()));
 			}
 		}
-		httpPost.setParams(params);
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(paramList));
+		} catch (UnsupportedEncodingException e) {}
 	}
 
 	public static void main(String[] args) throws Exception {

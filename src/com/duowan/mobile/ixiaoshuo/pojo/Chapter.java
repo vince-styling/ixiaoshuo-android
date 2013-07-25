@@ -12,6 +12,10 @@ public class Chapter {
 		this.id = id;
 	}
 
+	public void setChapterId(int chapterId) {
+		this.id = chapterId;
+	}
+
 	public String getTitle() {
 		return title;
 	}

@@ -5,9 +5,23 @@ import java.util.List;
 
 public class Book {
 	private int id;
+	private int websiteId;
 	private String name;
 	private String author;
+	private String category;
 	private String coverFileName;
+	private String coverUrl;
+	private String summary;
+	private String lastUpdateTime;
+	private int readerCount;
+
+	private int updateStatus;
+	public static final int STATUS_CONTINUE = 1; // 1：连载
+	public static final int STATUS_FINISHED = 2; // 2：完结
+
+	public static final String RANK_WEEK	= "week";
+	public static final String RANK_MONTH	= "month";
+	public static final String RANK_TOTAL	= "total";
 
 	private List<Chapter> chapterList;
 
@@ -35,6 +49,10 @@ public class Book {
 		this.id = id;
 	}
 
+	public void setBookId(int bookId) {
+		this.id = bookId;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -59,8 +77,64 @@ public class Book {
 		this.coverFileName = coverFileName;
 	}
 
-	public String getUpdateStatus() {
-		return "连载";
+	public String getUpdateStatusStr() {
+		return updateStatus == 1 ? "连载" : "完结";
+	}
+
+	public int getUpdateStatus() {
+		return updateStatus;
+	}
+
+	public void setUpdateStatus(int updateStatus) {
+		this.updateStatus = updateStatus;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getCoverUrl() {
+		return coverUrl;
+	}
+
+	public void setCoverUrl(String coverUrl) {
+		this.coverUrl = coverUrl;
+	}
+
+	public String getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+	public void setLastUpdateTime(String lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public int getWebsiteId() {
+		return websiteId;
+	}
+
+	public void setWebsiteId(int websiteId) {
+		this.websiteId = websiteId;
+	}
+
+	public int getReaderCount() {
+		return readerCount;
+	}
+
+	public void setReaderCount(int readerCount) {
+		this.readerCount = readerCount;
 	}
 
 	public static List<Book> getStaticBookList() {

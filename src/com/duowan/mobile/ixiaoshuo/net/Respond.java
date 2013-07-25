@@ -1,5 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.net;
 
+import org.apache.http.HttpStatus;
 import org.codehaus.jackson.type.TypeReference;
 
 /**
@@ -35,9 +36,16 @@ public class Respond {
 		this.data = data;
 	}
 
+	public static boolean isCorrect(Respond respond) {
+		return respond != null && respond.status == HttpStatus.SC_OK;
+	}
+
 	public <T> T convert(TypeReference<T> typeRef) {
-		if(data != null) return GObjectMapper.get().convertValue(data, typeRef);
-		return null;
+		return GObjectMapper.get().convertValue(data, typeRef);
+	}
+
+	public <T> T convert(Class<T> clazz) {
+		return GObjectMapper.get().convertValue(data, clazz);
 	}
 
 }
