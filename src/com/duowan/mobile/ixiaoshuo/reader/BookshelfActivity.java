@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
-import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfBaseView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfEmulateStyleView;
@@ -75,7 +74,8 @@ public class BookshelfActivity extends BaseActivity {
 //							System.out.println("--- UpdateChapterCount : " + updateInfo.getUpdateChapterCount());
 //						}
 
-						NetService.get().getChapterContent(1984, 5, 197843);
+//						String content = NetService.get().getChapterContent(1984, 5, 197843);
+//						System.out.println(content);
 
 //						Book book = NetService.get().getBookDetail(1984, 5);
 //						System.out.println(book);

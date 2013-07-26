@@ -1,7 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.net;
 
 import android.content.Context;
-import android.net.http.AndroidHttpClient;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.BookOnUpdate;
 import com.duowan.mobile.ixiaoshuo.pojo.BookUpdateInfo;
@@ -15,6 +14,7 @@ import org.codehaus.jackson.type.TypeReference;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 public final class NetService extends BaseNetService {
 	private NetService() {}
@@ -50,7 +50,7 @@ public final class NetService extends BaseNetService {
 			String params = "bookId=" + bookId + "&websiteId=" + websiteId + "&chapterId=" + chapterId;
 			HttpResponse response = executeHttpGet("/book/get_chapter_content.do", params);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				InputStream ins = AndroidHttpClient.getUngzippedContent(response.getEntity());
+				InputStream ins = new GZIPInputStream(response.getEntity().getContent());
 				return new String(IOUtil.toByteArray(ins));
 			}
 		} catch (IOException e) {
@@ -98,7 +98,6 @@ public final class NetService extends BaseNetService {
 
 	public List<Book> getBookRanking(String type, int pageNo, int pageSize) {
 		try {
-			// TODO : 未通过（没返回json，直接返回全局的错误页面）
 			String params = "type=" + type + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
 			Respond respond = handleHttpGet("/book/book_ranking.do", params);
 			if (Respond.isCorrect(respond)) {
@@ -124,7 +123,6 @@ public final class NetService extends BaseNetService {
 
 	public List<Book> getSiteBookRanking(int siteId, int pageNo, int pageSize) {
 		try {
-			// TODO : 未通过（返回数据不是想要的）
 			String params = "siteId=" + siteId + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
 			Respond respond = handleHttpGet("/book/site_ranking.do", params);
 			if (Respond.isCorrect(respond)) {
