@@ -3,6 +3,8 @@ package com.duowan.mobile.ixiaoshuo.net;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.type.TypeReference;
 
+import java.util.Map;
+
 /**
  * a common response object, parse json pattern like that :
  * {"status":200,"message":"","data":{"id":"190"}}
@@ -45,6 +47,12 @@ public class Respond {
 	}
 
 	public <T> T convert(Class<T> clazz) {
+		if (clazz == Integer.class || clazz == String.class) {
+			Map<String, String> dataMap = (Map<String, String>) data;
+			for (String s : dataMap.values()) {
+				return (T) s;
+			}
+		}
 		return GObjectMapper.get().convertValue(data, clazz);
 	}
 

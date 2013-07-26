@@ -1,18 +1,20 @@
 package com.duowan.mobile.ixiaoshuo.net;
 
 import android.content.Context;
-import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.pojo.BookOnUpdate;
-import com.duowan.mobile.ixiaoshuo.pojo.BookUpdateInfo;
-import com.duowan.mobile.ixiaoshuo.pojo.Site;
+import com.duowan.mobile.ixiaoshuo.pojo.*;
 import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
+import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.type.TypeReference;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -127,6 +129,64 @@ public final class NetService extends BaseNetService {
 			Respond respond = handleHttpGet("/book/site_ranking.do", params);
 			if (Respond.isCorrect(respond)) {
 				return respond.convert(new TypeReference<List<Book>>(){});
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String[] getHotKeyWords() {
+		try {
+			Respond respond = handleHttpGet("/book/hot_keywords.do", null);
+			if (Respond.isCorrect(respond)) {
+				String keywords = respond.convert(String.class);
+				if(StringUtil.isNotEmpty(keywords)) {
+					return keywords.split(",");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public List<Chapter> syncNewlyChapterOfBook(int bookId, int websiteId, int lastChapaterId) {
+		try {
+			String params = "bookId=" + bookId + "&websiteId=" + websiteId + "&lastChapaterId=" + lastChapaterId;
+			Respond respond = handleHttpGet("/book/newly_chapter.do", params);
+			if (Respond.isCorrect(respond)) {
+				return respond.convert(new TypeReference<List<Chapter>>(){});
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean userFeedBack(String content, String imei) {
+		try {
+			HttpPost httpPost = makeHttpPost("/user_feedback.do");
+
+			List<NameValuePair> paramList = new ArrayList<NameValuePair>(2);
+			paramList.add(new BasicNameValuePair("content", content));
+			paramList.add(new BasicNameValuePair("imei", imei));
+			httpPost.setEntity(new UrlEncodedFormEntity(paramList));
+
+			Respond respond = handleHttpExecute(httpPost);
+			return Respond.isCorrect(respond);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public VersionUpdate getVersionInfo(int versionCode, String versionName) {
+		try {
+			String params = "versionCode=" + versionCode + "&versionName=" + versionName;
+			Respond respond = handleHttpGet("/get_update_version.do", params);
+			if (Respond.isCorrect(respond)) {
+				return respond.convert(VersionUpdate.class);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

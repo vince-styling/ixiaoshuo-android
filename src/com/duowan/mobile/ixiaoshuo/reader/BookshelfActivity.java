@@ -95,6 +95,18 @@ public class BookshelfActivity extends BaseActivity {
 //						List<Book> list4 = NetService.get().getSiteBookRanking(2, 1, 10);
 //						System.out.println(list4);
 
+//						String[] list4 = NetService.get().getHotKeyWords();
+//						System.out.println(list4.length);
+
+//						List<Chapter> list5 = NetService.get().syncNewlyChapterOfBook(1892, 3, 190023);
+//						System.out.println(list5);
+
+//						boolean result = NetService.get().userFeedBack("非常好", "23431102910231");
+//						System.out.println(result);
+
+//						VersionUpdate verUpdate = NetService.get().getVersionInfo(12, "1.2.1");
+//						System.out.println(verUpdate.getUpdateInfo());
+
 						return null;
 					}
 					@Override
