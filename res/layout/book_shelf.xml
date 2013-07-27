@@ -57,19 +57,22 @@
                   android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
                   android:fastScrollEnabled="true" android:listSelector="@android:color/transparent" android:divider="@null" />
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="60dp"
-                      android:layout_marginTop="2dp" android:background="@drawable/menu_bg">
+        <RadioGroup android:id="@+id/btnMenuSwitchGrp" android:layout_width="match_parent" android:layout_height="56dp"
+                    android:layout_marginTop="2dp" android:background="@drawable/menu_bg" android:orientation="horizontal">
 
-            <ImageButton android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                         android:src="@drawable/menu_book_shelf_off" android:background="@null" />
+            <RadioButton android:id="@+id/btnMenuBookshelf"
+                         android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                         android:button="@null" android:background="@drawable/menu_bookshelf_selector" android:checked="true" />
 
-            <ImageButton android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                         android:src="@drawable/menu_online_search_on" android:background="@drawable/menu_bg_pressed" />
+            <RadioButton android:id="@+id/btnMenuOnline"
+                         android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                         android:button="@null" android:background="@drawable/menu_online_selector" />
 
-            <ImageButton android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                         android:src="@drawable/menu_app_settings_off" android:background="@null" />
+            <RadioButton android:id="@+id/btnMenuSettings"
+                         android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                         android:button="@null" android:background="@drawable/menu_settings_selector" />
 
-        </LinearLayout>
+        </RadioGroup>
 
     </LinearLayout>
 

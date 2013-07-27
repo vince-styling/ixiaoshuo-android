@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/menu_bg_pressed" />
+    <item>
+        <bitmap android:src="@drawable/menu_bookshelf_on" android:gravity="center" />
+    </item>
+</layer-list>

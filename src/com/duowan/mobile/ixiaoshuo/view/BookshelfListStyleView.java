@@ -65,7 +65,7 @@ public class BookshelfListStyleView extends BookshelfBaseView {
 				holder.txvReadProgress.setText("已读80%");
 				holder.txvRemainChapters.setText("128章节未读");
 				holder.txvNewlyChapter.setText("更新至：第二百二十七章 浮棺里的活死人");
-				holder.txvBookStatus.setText(book.getUpdateStatus());
+				holder.txvBookStatus.setText(book.getUpdateStatusStr());
 				holder.txvBookStatus.setBackgroundResource(R.drawable.blue_cricle_flag);
 
 				return convertView;

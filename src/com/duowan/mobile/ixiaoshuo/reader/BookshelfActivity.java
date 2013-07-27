@@ -8,7 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
+import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
+import com.duowan.mobile.ixiaoshuo.pojo.VersionUpdate;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfBaseView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfEmulateStyleView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfListStyleView;
@@ -24,7 +26,7 @@ public class BookshelfActivity extends BaseActivity {
 		mBookshelfView = new BookshelfEmulateStyleView();
 		mBookshelfView.init(this, findViewById(R.id.lsvBookShelf), Book.getStaticBookList());
 
-		final RadioGroup btnStyleSwitchGrp = (RadioGroup) findViewById(R.id.btnStyleSwitchGrp);
+		RadioGroup btnStyleSwitchGrp = (RadioGroup) findViewById(R.id.btnStyleSwitchGrp);
 		btnStyleSwitchGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedBtnId) {
@@ -34,6 +36,24 @@ public class BookshelfActivity extends BaseActivity {
 						break;
 					case R.id.btnListStyle:
 						mBookshelfView = new BookshelfListStyleView(mBookshelfView);
+						break;
+				}
+			}
+		});
+
+		RadioGroup btnMenuSwitchGrp = (RadioGroup) findViewById(R.id.btnMenuSwitchGrp);
+		btnMenuSwitchGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedBtnId) {
+				switch (checkedBtnId) {
+					case R.id.btnMenuBookshelf:
+						getReaderApplication().showToastMsg("点击了书架菜单");
+						break;
+					case R.id.btnMenuOnline:
+						getReaderApplication().showToastMsg("点击了在线菜单");
+						break;
+					case R.id.btnMenuSettings:
+						getReaderApplication().showToastMsg("点击了设置菜单");
 						break;
 				}
 			}
@@ -116,8 +136,6 @@ public class BookshelfActivity extends BaseActivity {
 				}).execute();
 			}
 		});
-
-		btnUpdateBookShelf.performClick();
 	}
 
 }
