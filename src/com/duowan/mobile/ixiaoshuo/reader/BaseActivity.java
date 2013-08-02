@@ -8,4 +8,12 @@ public abstract class BaseActivity extends Activity {
 		return (ReaderApplication) super.getApplication();
 	}
 
+	public void showToastMsg(CharSequence msg) {
+		getReaderApplication().showToastMsg(msg);
+	}
+
+	public void showToastMsg(int resId) {
+		getReaderApplication().showToastMsg(resId);
+	}
+
 }

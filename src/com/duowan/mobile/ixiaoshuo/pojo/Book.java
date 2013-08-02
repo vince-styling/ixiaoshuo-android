@@ -16,8 +16,8 @@ public class Book {
 	private int readerCount;
 
 	private int updateStatus;
-	public static final int STATUS_CONTINUE = 1; // 1：连载
-	public static final int STATUS_FINISHED = 2; // 2：完结
+	public static final int STATUS_CONTINUE = 1; // 连载
+	public static final int STATUS_FINISHED = 3; // 完结
 
 	public static final String RANK_WEEK	= "week";
 	public static final String RANK_MONTH	= "month";

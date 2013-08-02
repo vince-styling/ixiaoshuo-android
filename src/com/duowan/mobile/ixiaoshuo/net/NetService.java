@@ -47,9 +47,9 @@ public final class NetService extends BaseNetService {
 		return null;
 	}
 
-	public String getChapterContent(int bookId, int websiteId, int chapterId) {
+	public String getChapterContent(int bookId, int chapterId) {
 		try {
-			String params = "bookId=" + bookId + "&websiteId=" + websiteId + "&chapterId=" + chapterId;
+			String params = "bookId=" + bookId + "&chapterId=" + chapterId;
 			HttpResponse response = executeHttpGet("/book/get_chapter_content.do", params);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				InputStream ins = new GZIPInputStream(response.getEntity().getContent());
@@ -61,9 +61,10 @@ public final class NetService extends BaseNetService {
 		return null;
 	}
 
-	public Book getBookDetail(int bookId, int websiteId) {
+	public Book getBookDetail(int bookId) {
 		try {
-			String params = "bookId=" + bookId + "&websiteId=" + websiteId;
+			// TODO : 要确定来源ID及来源网站名称有传。
+			String params = "bookId=" + bookId;
 			Respond respond = handleHttpGet("/book/book_detail.do", params);
 			if (Respond.isCorrect(respond)) return respond.convert(Book.class);
 		} catch (IOException e) {
@@ -151,9 +152,9 @@ public final class NetService extends BaseNetService {
 		return null;
 	}
 
-	public List<Chapter> syncNewlyChapterOfBook(int bookId, int websiteId, int lastChapaterId) {
+	public List<Chapter> syncNewlyChapterOfBook(int bookId, int lastChapaterId) {
 		try {
-			String params = "bookId=" + bookId + "&websiteId=" + websiteId + "&lastChapaterId=" + lastChapaterId;
+			String params = "bookId=" + bookId + "&lastChapaterId=" + lastChapaterId;
 			Respond respond = handleHttpGet("/book/newly_chapter.do", params);
 			if (Respond.isCorrect(respond)) {
 				return respond.convert(new TypeReference<List<Chapter>>(){});
@@ -181,7 +182,11 @@ public final class NetService extends BaseNetService {
 		return false;
 	}
 
-	public VersionUpdate getVersionInfo(int versionCode, String versionName) {
+	public VersionUpdate getVersionUpdateInfo() {
+		return getVersionUpdateInfo(versionCode, versionName);
+	}
+
+	public VersionUpdate getVersionUpdateInfo(int versionCode, String versionName) {
 		try {
 			String params = "versionCode=" + versionCode + "&versionName=" + versionName;
 			Respond respond = handleHttpGet("/get_update_version.do", params);

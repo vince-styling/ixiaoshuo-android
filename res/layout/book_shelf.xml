@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout android:id="@+id/lotBookshelf" xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                  android:orientation="vertical" android:background="#f4efe6">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="50dp"
                       android:background="@drawable/title_bg" android:gravity="center_vertical">
 
-            <RadioGroup android:id="@+id/btnStyleSwitchGrp" android:orientation="horizontal" android:paddingLeft="5dp"
-                        android:layout_width="wrap_content" android:layout_height="wrap_content">
-
-                <RadioButton android:id="@+id/btnEmulateStyle" android:layout_width="wrap_content" android:layout_height="33dp"
-                             android:button="@drawable/btn_book_shelf_emulate_style_selector" android:checked="true" />
-
-                <RadioButton android:id="@+id/btnListStyle" android:layout_width="wrap_content" android:layout_height="33dp"
-                             android:button="@drawable/btn_book_shelf_list_style_selector" android:checked="false" />
-
-            </RadioGroup>
+            <ToggleButton android:id="@+id/btnStyleSwitch"
+                          android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:layout_marginLeft="5dp" android:textOn="" android:textOff=""
+                          android:background="@drawable/btn_bookshelf_switch_selector" />
 
             <LinearLayout android:id="@+id/lotMyBookShelf" android:layout_width="0dp" android:layout_height="match_parent"
                           android:layout_weight="1" android:gravity="center">
@@ -56,23 +49,6 @@
         <ListView android:id="@+id/lsvBookShelf"
                   android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
                   android:fastScrollEnabled="true" android:listSelector="@android:color/transparent" android:divider="@null" />
-
-        <RadioGroup android:id="@+id/btnMenuSwitchGrp" android:layout_width="match_parent" android:layout_height="56dp"
-                    android:layout_marginTop="2dp" android:background="@drawable/menu_bg" android:orientation="horizontal">
-
-            <RadioButton android:id="@+id/btnMenuBookshelf"
-                         android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                         android:button="@null" android:background="@drawable/menu_bookshelf_selector" android:checked="true" />
-
-            <RadioButton android:id="@+id/btnMenuOnline"
-                         android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                         android:button="@null" android:background="@drawable/menu_online_selector" />
-
-            <RadioButton android:id="@+id/btnMenuSettings"
-                         android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                         android:button="@null" android:background="@drawable/menu_settings_selector" />
-
-        </RadioGroup>
 
     </LinearLayout>
 

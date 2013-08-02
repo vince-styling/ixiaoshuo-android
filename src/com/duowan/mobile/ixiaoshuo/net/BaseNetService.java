@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
+import android.os.AsyncTask;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
@@ -45,8 +46,8 @@ public abstract class BaseNetService {
 	private int tmpRetryCount = 0;
 
 	private String API;
-	private int versionCode;
-	private String versionName;
+	protected int versionCode;
+	protected String versionName;
 
 	protected ObjectMapper mapper;
 
@@ -200,32 +201,39 @@ public abstract class BaseNetService {
 	}
 
 	protected final Respond handleHttpGet(String pageName, String params) throws IOException {
+		if (!mNetworkAvailable) return null;
 		return handleHttpExecute(makeHttpGet(pageName, params));
 	}
 
 	protected HttpGet makeHttpGet(String pageName, String params) {
+		if (!mNetworkAvailable) return null;
 		String url = makeUrl(pageName, params);
 		return new HttpGet(url);
 	}
 
 	protected HttpResponse executeHttpGet(String pageName, String params) throws IOException {
+		if (!mNetworkAvailable) return null;
 		String url = makeUrl(pageName, params);
 		return executeHttp(new HttpGet(url));
 	}
 
 	protected HttpPost makeHttpPost(String pageName) {
+		if (!mNetworkAvailable) return null;
 		String url = makeUrl(pageName, null);
 		return new HttpPost(url);
 	}
 
 	protected HttpResponse executeHttpPost(String pageName, String params) throws IOException {
+		if (!mNetworkAvailable) return null;
 		String url = makeUrl(pageName, params);
 		return executeHttp(new HttpPost(url));
 	}
 
 	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
+		if (!mNetworkAvailable) return null;
 		HttpResponse response = executeHttp(request);
-		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+		int statusCode = response.getStatusLine().getStatusCode();
+		if (statusCode == HttpStatus.SC_OK) {
 			String json = new String(IOUtil.toByteArray(response.getEntity().getContent()));
 			return mapper.readValue(json, Respond.class);
 		}
@@ -233,7 +241,50 @@ public abstract class BaseNetService {
 	}
 
 	protected final HttpResponse executeHttp(HttpRequestBase request) throws IOException {
+		if (!mNetworkAvailable) return null;
 		return mShouldUseProxy ? getHttpClientProxy().execute(request) : getHttpClientGeneral().execute(request);
+	}
+
+	public static <T> void execute(final NetExecutor<T> exetor) {
+		(new AsyncTask<Void, Void, T>() {
+			@Override
+			protected void onPreExecute() {
+				exetor.preExecute();
+			}
+
+			@Override
+			protected T doInBackground(Void... params) {
+				if(NetService.get().isNetworkAvailable()) return exetor.execute();
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(T result) {
+				exetor.callback(result);
+			}
+		}).execute();
+	}
+
+	public static void execute(final SimpleNetExecutor exetor) {
+		(new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				if(NetService.get().isNetworkAvailable()) exetor.execute();
+				return null;
+			}
+		}).execute();
+	}
+
+	// has return result
+	public static interface NetExecutor<T> {
+		void preExecute();
+		T execute();
+		void callback(T result);
+	}
+
+	// without result
+	public static interface SimpleNetExecutor {
+		void execute();
 	}
 
 }

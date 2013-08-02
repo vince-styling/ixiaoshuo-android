@@ -8,8 +8,7 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.reader.BookshelfActivity;
-import com.duowan.mobile.ixiaoshuo.utils.BitmapLruCache;
+import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
 
@@ -19,7 +18,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 	protected BaseAdapter mAdapter;
 	protected List<Book> mBookList;
 	protected ListView mLsvBookShelf;
-	protected BookshelfActivity mActivity;
+	protected MainActivity mActivity;
 //	private BitmapLruCache mBitmapLruCache;
 
 	public void build(BookshelfBaseView bookshelfView) {
@@ -29,7 +28,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 		initBookShelf();
 	}
 
-	public void init(BookshelfActivity activity, View lsvBookShelf, List<Book> bookList) {
+	public void init(MainActivity activity, View lsvBookShelf, List<Book> bookList) {
 		this.mLsvBookShelf = (ListView) lsvBookShelf;
 		this.mActivity = activity;
 		this.mBookList = bookList;
@@ -58,7 +57,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 				new CommonMenuDialog.MenuItem("查看详情", new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						mActivity.getReaderApplication().showToastMsg("点击了查看详情");
+						mActivity.showToastMsg("点击了查看详情");
 					}
 				}),
 				new CommonMenuDialog.MenuItem("删除书籍", new View.OnClickListener() {
@@ -87,7 +86,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 				new CommonMenuDialog.MenuItem("更换站点", new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						mActivity.getReaderApplication().showToastMsg("点击了更换站点");
+						mActivity.showToastMsg("点击了更换站点");
 					}
 				}),
 		});
@@ -100,7 +99,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
-			mActivity.getReaderApplication().showToastMsg("单击：" + book.getName());
+			mActivity.showToastMsg("单击：" + book.getName());
 		}
 	}
 

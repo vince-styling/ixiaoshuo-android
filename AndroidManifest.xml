@@ -14,7 +14,7 @@
 
     <application android:label="@string/app_name" android:icon="@drawable/logo"
                  android:name=".reader.ReaderApplication" android:theme="@android:style/Theme.NoTitleBar">
-        <activity android:name=".reader.BookshelfActivity" android:label="@string/app_name">
+        <activity android:name=".reader.MainActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -18,4 +18,10 @@ public class ReaderApplication extends Application {
 		mToast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
 		mToast.show();
 	}
+
+	public void showToastMsg(int resId) {
+		if(mToast != null) mToast.cancel();
+		mToast = Toast.makeText(this, resId, Toast.LENGTH_SHORT);
+		mToast.show();
+	}
 }
