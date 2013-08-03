@@ -33,11 +33,12 @@
 
         </LinearLayout>
 
-        <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none">
+        <ScrollView android:id="@+id/scvKeywords"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:scrollbars="none" android:layout_marginTop="5dp">
 
             <LinearLayout android:id="@+id/lotKeywordPanel"
-                          android:layout_width="match_parent" android:layout_height="wrap_content"
-                          android:orientation="vertical" android:paddingTop="5dp">
+                          android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                           android:text="热门搜索：" android:textColor="#969696" android:textSize="18sp" />
@@ -45,6 +46,11 @@
             </LinearLayout>
 
         </ScrollView>
+
+        <ListView android:id="@+id/lsvBookList" android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:layout_marginTop="5dp" android:layout_marginBottom="5dp" android:fastScrollEnabled="true"
+                  android:divider="@android:color/transparent" android:dividerHeight="10dp"
+                  android:visibility="gone" />
 
     </LinearLayout>
 

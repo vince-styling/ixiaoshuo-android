@@ -8,10 +8,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.type.TypeReference;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -197,6 +200,24 @@ public final class NetService extends BaseNetService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public boolean downloadFile(String url, File file) {
+		try {
+			HttpResponse response = executeHttp(new HttpGet(url));
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				byte[] bytes = IOUtil.toByteArray(response.getEntity().getContent());
+				if (bytes.length > 0) {
+					FileOutputStream fos = new FileOutputStream(file);
+					fos.write(bytes);
+					fos.close();
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

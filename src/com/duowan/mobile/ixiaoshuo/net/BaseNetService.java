@@ -38,6 +38,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.net.SocketException;
 
+// TODO : 要测试从有网络切换到无网络后的可能出现的空异常问题
 public abstract class BaseNetService {
 
 	private DefaultHttpClient httpClient;

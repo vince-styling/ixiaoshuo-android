@@ -3,6 +3,7 @@ package com.duowan.mobile.ixiaoshuo.reader;
 import android.app.Application;
 import android.widget.Toast;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
+import com.duowan.mobile.ixiaoshuo.utils.TaskExecutor;
 
 public class ReaderApplication extends Application {
 
@@ -10,6 +11,13 @@ public class ReaderApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		NetService.init(this);
+
+		mTaskExecutor = new TaskExecutor(10);
+	}
+
+	TaskExecutor mTaskExecutor;
+	public void executeTask(Runnable runnable) {
+		mTaskExecutor.executeTask(runnable);
 	}
 
 	private Toast mToast;

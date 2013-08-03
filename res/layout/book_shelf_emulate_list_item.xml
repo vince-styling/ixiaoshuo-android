@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent" android:layout_height="200dp"
-                android:paddingTop="10dp" android:paddingBottom="5dp">
+                android:layout_width="match_parent" android:layout_height="200dp">
 
     <ImageView android:layout_width="match_parent" android:layout_height="39dp"
                android:background="@drawable/book_shelf_board"

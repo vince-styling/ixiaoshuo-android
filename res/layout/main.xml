@@ -8,7 +8,7 @@
                   android:orientation="horizontal" android:layout_weight="1" />
 
     <RadioGroup android:id="@+id/btnMenuSwitchGrp" android:layout_width="match_parent" android:layout_height="56dp"
-                android:orientation="horizontal" android:layout_marginTop="2dp" android:background="@drawable/menu_bg">
+                android:orientation="horizontal" android:background="@drawable/menu_bg">
 
         <RadioButton android:id="@+id/btnMenuBookshelf"
                      android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"

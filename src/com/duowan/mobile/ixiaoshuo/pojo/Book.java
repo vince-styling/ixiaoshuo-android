@@ -1,5 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.pojo;
 
+import com.duowan.mobile.ixiaoshuo.utils.Paths;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,14 @@ public class Book {
 
 	public void setChapterList(List<Chapter> chapterList) {
 		this.chapterList = chapterList;
+	}
+
+	public String getLocalCoverPath() {
+		return Book.getLocalCoverPath(id);
+	}
+
+	public static String getLocalCoverPath(int bookId) {
+		return Paths.getCoversDirectoryPath() + "book_" + bookId + ".jpg";
 	}
 
 	public int getId() {

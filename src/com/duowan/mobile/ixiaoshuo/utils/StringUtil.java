@@ -1,13 +1,5 @@
 package com.duowan.mobile.ixiaoshuo.utils;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Various String utility functions.
  * Most of the functions herein are re-implementations of the ones in apache
@@ -105,51 +97,38 @@ public class StringUtil {
 		return 0;
 	}
 	
-	public static String formatTime4FeedbackMsg(String datastr) {
-		String result;
-		SimpleDateFormat targetFormat = new SimpleDateFormat("MM月dd日 HH:mm");
-		try {
-			result  = targetFormat.format(dfDateTime.parse(datastr));
-		} catch (ParseException e) {
-			result  = datastr;
-			e.printStackTrace();
-		} 
-		return result;
-	}
-	
 	public static String removeEmptyChar(String src) {
 		if(src == null || src.length() == 0) return src;
 		return src.replaceAll("[\r]*[\n]*[　]*[ ]*", "");
 	}
 	
-	public final static DecimalFormat NO_DECIMAL_POINT_DF = new DecimalFormat("0");
-	public final static DecimalFormat TWO_DECIMAL_POINT_DF = new DecimalFormat("0.00");
-	public final static SimpleDateFormat dfDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	public final static SimpleDateFormat dfTime = new SimpleDateFormat("HH:mm");
-	public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-	public final static Pattern MOBILE_PHONE_NUM_PATTERN = Pattern.compile("^(?:(?:13[0-9])|(?:15[^4,\\D])|(?:18[0,5-9]))\\d{8}$");
-	
-	// format of datetime: 2011-08-24 12:22:11, return 08-24 or 12:22
-	public static CharSequence formatDateTime(String datetime) {
-		try {
-			Calendar cal1 = Calendar.getInstance();
-			cal1.setTime(dfDateTime.parse(datetime));
-			Calendar cal2 = Calendar.getInstance();
-			cal2.setTime(new Date());
-			cal1.add(Calendar.HOUR, 1);
-			if (cal1.after(cal2)) {
-				cal1.add(Calendar.HOUR, -1);
-				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 60000) + "分钟前";
-			}
-			cal1.add(Calendar.HOUR, 23);
-			if (cal1.after(cal2)) {
-				cal1.add(Calendar.HOUR, -24);
-				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 3600000) + "小时前";
-			}
-			return datetime.subSequence(0, 10);
-		} catch (Exception ex) {
-			return datetime;
-		}
-	}
+//	public final static DecimalFormat NO_DECIMAL_POINT_DF = new DecimalFormat("0");
+//	public final static DecimalFormat TWO_DECIMAL_POINT_DF = new DecimalFormat("0.00");
+//	public final static SimpleDateFormat dfDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//	public final static SimpleDateFormat dfTime = new SimpleDateFormat("HH:mm");
+//	public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+//
+//	// format of datetime: 2011-08-24 12:22:11, return 08-24 or 12:22
+//	public static CharSequence formatDateTime(String datetime) {
+//		try {
+//			Calendar cal1 = Calendar.getInstance();
+//			cal1.setTime(dfDateTime.parse(datetime));
+//			Calendar cal2 = Calendar.getInstance();
+//			cal2.setTime(new Date());
+//			cal1.add(Calendar.HOUR, 1);
+//			if (cal1.after(cal2)) {
+//				cal1.add(Calendar.HOUR, -1);
+//				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 60000) + "分钟前";
+//			}
+//			cal1.add(Calendar.HOUR, 23);
+//			if (cal1.after(cal2)) {
+//				cal1.add(Calendar.HOUR, -24);
+//				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 3600000) + "小时前";
+//			}
+//			return datetime.subSequence(0, 10);
+//		} catch (Exception ex) {
+//			return datetime;
+//		}
+//	}
 
 }
