@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.os.AsyncTask;
 import com.duowan.mobile.ixiaoshuo.R;
-import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
@@ -33,6 +32,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -99,8 +99,9 @@ public abstract class BaseNetService {
 	private HttpClient getHttpClientGeneral() {
 		if(httpClient == null) {
 			HttpParams params = new BasicHttpParams();
+
 			// pre-set connection params
-			HttpConnectionParams.setConnectionTimeout(params,30000);
+			HttpConnectionParams.setConnectionTimeout(params, 30000);
 			HttpConnectionParams.setSoTimeout(params, 30000);
 			HttpConnectionParams.setSocketBufferSize(params, 8192);
 			HttpConnectionParams.setTcpNoDelay(params, true);
@@ -113,6 +114,7 @@ public abstract class BaseNetService {
 
 			SchemeRegistry registry = new SchemeRegistry();
 			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+
 			ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(mangrParams, registry);
 			httpClient = new DefaultHttpClient(connManager, params);
 			httpClient.setHttpRequestRetryHandler(retryHandler);
@@ -130,7 +132,7 @@ public abstract class BaseNetService {
 			HttpParams params = new BasicHttpParams();
 			params.setParameter(ConnRouteParams.DEFAULT_PROXY, new HttpHost(proxyHost, proxyPort));
 			// pre-set connection params
-			HttpConnectionParams.setConnectionTimeout(params,30000);
+			HttpConnectionParams.setConnectionTimeout(params, 30000);
 			HttpConnectionParams.setSoTimeout(params, 30000);
 			HttpConnectionParams.setSocketBufferSize(params, 8192);
 			HttpConnectionParams.setTcpNoDelay(params, true);
@@ -144,6 +146,7 @@ public abstract class BaseNetService {
 			SchemeRegistry registry = new SchemeRegistry();
 			// should use 80 as port if we are using "cmwap"`
 			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+
 			ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(mangrParams, registry);
 			httpClientProxy = new DefaultHttpClient(connManager, params);
 			httpClientProxy.setHttpRequestRetryHandler(retryHandler);
@@ -235,7 +238,7 @@ public abstract class BaseNetService {
 		HttpResponse response = executeHttp(request);
 		int statusCode = response.getStatusLine().getStatusCode();
 		if (statusCode == HttpStatus.SC_OK) {
-			String json = new String(IOUtil.toByteArray(response.getEntity().getContent()));
+			String json = new String(EntityUtils.toByteArray(response.getEntity()));
 			return mapper.readValue(json, Respond.class);
 		}
 		return null;

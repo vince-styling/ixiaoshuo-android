@@ -1,10 +1,11 @@
-package com.duowan.mobile.ixiaoshuo.view;
+package com.duowan.mobile.ixiaoshuo.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.LinearLayout;
+import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class ScrollLayout extends LinearLayout {
 	public ScrollLayout(Context context) {

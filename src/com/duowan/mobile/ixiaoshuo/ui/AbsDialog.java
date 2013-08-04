@@ -1,4 +1,4 @@
-package com.duowan.mobile.ixiaoshuo.view;
+package com.duowan.mobile.ixiaoshuo.ui;
 
 import android.app.Dialog;
 import android.content.Context;

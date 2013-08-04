@@ -14,20 +14,24 @@ import com.duowan.mobile.ixiaoshuo.utils.BookCoverDownloder;
 
 import java.util.List;
 
-public class BookSearchView extends ViewBuilder implements View.OnFocusChangeListener, View.OnClickListener {
-
+public class BookSearchView extends ViewBuilder implements View.OnFocusChangeListener, View.OnClickListener, AbsListView.OnScrollListener {
 	public BookSearchView(MainActivity activity) {
 		this.mViewId = R.id.lotBookSearch;
 		this.mActivity = activity;
 	}
+
+	private int mPageNo = 1;
+	private final static int PAGE_SIZE = 40;
+
+	String mKeyword;
+	int mUpdateStatus;
 
 	EditText mEdtSearchKeyword;
 	ToggleButton mBtnFinishType;
 	ImageButton mBtnGoSearch;
 	View mScvKeywords;
 	ListView mLsvBookList;
-	List<Book> mBookList;
-	BaseAdapter mAdapter;
+	EndlessListAdapter<Book> mAdapter;
 
 	@Override
 	protected void build() {
@@ -88,8 +92,9 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 		mBtnGoSearch.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				final String keyword = mEdtSearchKeyword.getText().toString();
-				final int updateStatus = mBtnFinishType.isChecked() ? Book.STATUS_CONTINUE : Book.STATUS_FINISHED;
+				mPageNo = 1;
+				mKeyword = mEdtSearchKeyword.getText().toString();
+				mUpdateStatus = mBtnFinishType.isChecked() ? Book.STATUS_CONTINUE : Book.STATUS_FINISHED;
 
 				NetService.execute(new NetService.NetExecutor<List<Book>>() {
 					ProgressDialog mPrgreDialog;
@@ -102,7 +107,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 					}
 
 					public List<Book> execute() {
-						return NetService.get().bookSearch(keyword, updateStatus, 1, 40);
+						return NetService.get().bookSearch(mKeyword, mUpdateStatus, mPageNo, PAGE_SIZE);
 					}
 
 					public void callback(List<Book> bookList) {
@@ -117,33 +122,16 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 						}
 
 						mScvKeywords.setVisibility(View.GONE);
-
-						mBookList = bookList;
-						mAdapter.notifyDataSetChanged();
+						mAdapter.setData(bookList);
 						mLsvBookList.setVisibility(View.VISIBLE);
 					}
 				});
 			}
 		});
 
-		mAdapter = new BaseAdapter() {
+		mAdapter = new EndlessListAdapter<Book>(mActivity, mLsvBookList, R.layout.contents_loading) {
 			@Override
-			public int getCount() {
-				return mBookList == null ? 0 : mBookList.size();
-			}
-
-			@Override
-			public Book getItem(int position) {
-				return mBookList == null ? null : mBookList.get(position);
-			}
-
-			@Override
-			public long getItemId(int position) {
-				return position;
-			}
-
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
+			public View doGetView(int position, View convertView, ViewGroup parent) {
 				Holder holder;
 				if (convertView == null) {
 					convertView = mActivity.getLayoutInflater().inflate(R.layout.book_search_list_item, null);
@@ -165,7 +153,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 				if (coverBitmap != null) {
 					holder.imvBookCover.setImageBitmap(coverBitmap);
 				} else {
-					mActivity.getReaderApplication().executeTask(new BookCoverDownloder(book, holder.imvBookCover));
+					mActivity.getReaderApplication().submitTask(new BookCoverDownloder(book, holder.imvBookCover));
 
 					coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.cover_less, holder.imvBookCover);
 					holder.imvBookCover.setImageBitmap(coverBitmap);
@@ -173,7 +161,6 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 
 				return convertView;
 			}
-
 			class Holder {
 				ImageView imvBookCover;
 				TextView txvBookName;
@@ -183,6 +170,27 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 		};
 
 		mLsvBookList.setAdapter(mAdapter);
+		mLsvBookList.setOnScrollListener(this);
+	}
+
+	private void loadNextPage() {
+		mAdapter.setIsLoadingData(true);
+		NetService.execute(new NetService.NetExecutor<List<Book>>() {
+			public void preExecute() {}
+
+			public List<Book> execute() {
+				return NetService.get().bookSearch(mKeyword, mUpdateStatus, ++mPageNo, PAGE_SIZE);
+			}
+
+			public void callback(List<Book> bookList) {
+				mAdapter.setIsLoadingData(false);
+				if (bookList == null || bookList.size() == 0) {
+					mActivity.showToastMsg(R.string.without_data);
+					return;
+				}
+				mAdapter.addAll(bookList);
+			}
+		});
 	}
 
 	@Override
@@ -195,6 +203,20 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 	public void onFocusChange(View view, boolean hasFocus) {
 		View parentView = (View) view.getParent();
 		parentView.setBackgroundResource(hasFocus ? R.drawable.book_search_bg_pressed : R.drawable.book_search_bg);
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+			mActivity.getReaderApplication().startTasksExecute();
+		}
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+		if (mAdapter.shouldRequestNextPage(firstVisibleItem, visibleItemCount, totalItemCount)) {
+			loadNextPage();
+		}
 	}
 
 }

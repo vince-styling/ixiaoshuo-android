@@ -6,7 +6,7 @@ import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.view.BookSearchView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfView;
-import com.duowan.mobile.ixiaoshuo.view.ScrollLayout;
+import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class MainActivity extends BaseActivity {

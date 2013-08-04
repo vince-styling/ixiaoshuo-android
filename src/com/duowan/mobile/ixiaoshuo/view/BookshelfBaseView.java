@@ -9,6 +9,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
+import com.duowan.mobile.ixiaoshuo.ui.CommonMenuDialog;
 import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
 

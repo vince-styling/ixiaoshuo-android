@@ -11,6 +11,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.type.TypeReference;
 
 import java.io.File;
@@ -206,7 +207,7 @@ public final class NetService extends BaseNetService {
 		try {
 			HttpResponse response = executeHttp(new HttpGet(url));
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				byte[] bytes = IOUtil.toByteArray(response.getEntity().getContent());
+				byte[] bytes = EntityUtils.toByteArray(response.getEntity());
 				if (bytes.length > 0) {
 					FileOutputStream fos = new FileOutputStream(file);
 					fos.write(bytes);

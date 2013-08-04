@@ -9,7 +9,7 @@ import com.duowan.mobile.ixiaoshuo.pojo.Book;
 
 import java.io.File;
 
-public class BookCoverDownloder implements Runnable {
+public class BookCoverDownloder extends TaskRunnable {
 	private ImageView mImageView;
 	private Book mBook;
 
@@ -28,17 +28,20 @@ public class BookCoverDownloder implements Runnable {
 	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.what != 1) return;
-			Object tagValue = mImageView.getTag();
-			if (tagValue != null && tagValue instanceof Integer) {
-				int imvTagBookId = (Integer) mImageView.getTag();
-				// when fast scrolling, ImageView maybe refers to other Book quickly
-				if (mBook.getId() == imvTagBookId) {
-					Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(mBook.getLocalCoverPath(), mImageView);
-					if (coverBitmap != null) mImageView.setImageBitmap(coverBitmap);
-				}
-			}
+			if (msg.what != 1 || !validate()) return;
+			Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(mBook.getLocalCoverPath(), mImageView);
+			if (coverBitmap != null) mImageView.setImageBitmap(coverBitmap);
 		}
 	};
 
+	@Override
+	boolean validate() {
+		Object tagValue = mImageView.getTag();
+		if (tagValue != null && tagValue instanceof Integer) {
+			int imvTagBookId = (Integer) mImageView.getTag();
+			// when fast scrolling, ImageView maybe refers to other Book quickly
+			return mBook.getId() == imvTagBookId;
+		}
+		return false;
+	}
 }
