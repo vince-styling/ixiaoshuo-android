@@ -235,11 +235,17 @@ public abstract class BaseNetService {
 
 	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
 		if (!mNetworkAvailable) return null;
-		HttpResponse response = executeHttp(request);
-		int statusCode = response.getStatusLine().getStatusCode();
-		if (statusCode == HttpStatus.SC_OK) {
-			String json = new String(EntityUtils.toByteArray(response.getEntity()));
-			return mapper.readValue(json, Respond.class);
+		HttpEntity entity = null;
+		try {
+			HttpResponse response = executeHttp(request);
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == HttpStatus.SC_OK) {
+				entity = response.getEntity();
+				String json = new String(EntityUtils.toByteArray(entity));
+				return mapper.readValue(json, Respond.class);
+			}
+		} finally {
+			closeEntity(entity);
 		}
 		return null;
 	}
@@ -247,6 +253,14 @@ public abstract class BaseNetService {
 	protected final HttpResponse executeHttp(HttpRequestBase request) throws IOException {
 		if (!mNetworkAvailable) return null;
 		return mShouldUseProxy ? getHttpClientProxy().execute(request) : getHttpClientGeneral().execute(request);
+	}
+
+	protected void closeEntity(HttpEntity entity) {
+		if (entity != null) {
+			try {
+				entity.consumeContent();
+			} catch (IOException e) {}
+		}
 	}
 
 	public static <T> void execute(final NetExecutor<T> exetor) {

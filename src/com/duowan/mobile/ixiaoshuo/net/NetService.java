@@ -4,6 +4,7 @@ import android.content.Context;
 import com.duowan.mobile.ixiaoshuo.pojo.*;
 import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -52,15 +53,19 @@ public final class NetService extends BaseNetService {
 	}
 
 	public String getChapterContent(int bookId, int chapterId) {
+		HttpEntity entity = null;
 		try {
 			String params = "bookId=" + bookId + "&chapterId=" + chapterId;
 			HttpResponse response = executeHttpGet("/book/get_chapter_content.do", params);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				InputStream ins = new GZIPInputStream(response.getEntity().getContent());
+				entity = response.getEntity();
+				InputStream ins = new GZIPInputStream(entity.getContent());
 				return new String(IOUtil.toByteArray(ins));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			closeEntity(entity);
 		}
 		return null;
 	}
@@ -204,10 +209,12 @@ public final class NetService extends BaseNetService {
 	}
 
 	public boolean downloadFile(String url, File file) {
+		HttpEntity entity = null;
 		try {
 			HttpResponse response = executeHttp(new HttpGet(url));
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+				entity = response.getEntity();
+				byte[] bytes = EntityUtils.toByteArray(entity);
 				if (bytes.length > 0) {
 					FileOutputStream fos = new FileOutputStream(file);
 					fos.write(bytes);
@@ -217,6 +224,8 @@ public final class NetService extends BaseNetService {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			closeEntity(entity);
 		}
 		return false;
 	}
