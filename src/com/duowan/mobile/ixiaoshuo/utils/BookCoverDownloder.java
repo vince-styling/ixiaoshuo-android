@@ -4,8 +4,10 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ImageView;
+import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
+import com.duowan.mobile.ixiaoshuo.reader.BaseActivity;
 
 import java.io.File;
 
@@ -44,4 +46,18 @@ public class BookCoverDownloder extends TaskRunnable {
 		}
 		return false;
 	}
+
+	public static void loadCover(BaseActivity activity, Book book, ImageView imvBookCover) {
+		String bookCoverPath = book.getLocalCoverPath();
+		Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(bookCoverPath, imvBookCover);
+		if (coverBitmap != null) {
+			imvBookCover.setImageBitmap(coverBitmap);
+		} else {
+			activity.getReaderApplication().submitTask(new BookCoverDownloder(book, imvBookCover));
+
+			coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.cover_less, imvBookCover);
+			imvBookCover.setImageBitmap(coverBitmap);
+		}
+	}
+
 }

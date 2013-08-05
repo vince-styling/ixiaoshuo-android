@@ -3,7 +3,6 @@ package com.duowan.mobile.ixiaoshuo.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
@@ -16,34 +15,21 @@ public class ScrollLayout extends LinearLayout {
 		super(context, attrs);
 	}
 
-	private ViewBuilder[] mViewBuilders;
-
-	Animation mSlideLeftIn, mSlideLeftOut, mSlideRightIn, mSlideRightOut;
-
-	public void setViewBuilders(ViewBuilder[] viewBuilders) {
-		this.mViewBuilders = viewBuilders;
-	}
-
-	public void showView(Class<? extends ViewBuilder> viewClass) {
-		ViewBuilder targetBuilder = null;
-		for (ViewBuilder builder : mViewBuilders) {
-			if (builder.getClass() == viewClass) {
-				targetBuilder = builder;
-			} else {
-				View view = findViewById(builder.getViewId());
-				if (view != null) view.setVisibility(View.GONE);
-			}
+	public void showView(ViewBuilder builder) {
+		for (int i = 0; i < getChildCount(); i++) {
+			getChildAt(i).setVisibility(View.GONE);
 		}
-		if (targetBuilder == null) return;
 
-		View view = findViewById(targetBuilder.getViewId());
+		View view = findViewById(builder.getViewId());
 		if (view != null) {
-			for (int i = 0; i < getChildCount(); i++) {
-				View childView = getChildAt(i);
-				childView.setVisibility(childView == view ? View.VISIBLE : View.GONE);
+			if (builder.isReusable()) {
+				view.setVisibility(View.VISIBLE);
+			} else {
+				removeView(view);
+				addView(builder.getView());
 			}
 		} else {
-			addView(targetBuilder.getView());
+			addView(builder.getView());
 		}
 	}
 

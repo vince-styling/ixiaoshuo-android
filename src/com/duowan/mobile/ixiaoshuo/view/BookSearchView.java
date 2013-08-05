@@ -1,7 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.view;
 
 import android.app.ProgressDialog;
-import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -9,12 +8,13 @@ import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
-import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
 import com.duowan.mobile.ixiaoshuo.utils.BookCoverDownloder;
 
 import java.util.List;
 
-public class BookSearchView extends ViewBuilder implements View.OnFocusChangeListener, View.OnClickListener, AbsListView.OnScrollListener {
+public class BookSearchView extends ViewBuilder implements View.OnFocusChangeListener, View.OnClickListener,
+		AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+
 	public BookSearchView(MainActivity activity) {
 		this.mViewId = R.id.lotBookSearch;
 		this.mActivity = activity;
@@ -147,17 +147,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 				holder.txvBookName.setText(book.getName());
 				holder.txvBookAuthor.setText("作者：" + book.getAuthor());
 				holder.txvBookSummary.setText("书籍简介：" + book.getSummary());
-
-				String bookCoverPath = book.getLocalCoverPath();
-				Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(bookCoverPath, holder.imvBookCover);
-				if (coverBitmap != null) {
-					holder.imvBookCover.setImageBitmap(coverBitmap);
-				} else {
-					mActivity.getReaderApplication().submitTask(new BookCoverDownloder(book, holder.imvBookCover));
-
-					coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.cover_less, holder.imvBookCover);
-					holder.imvBookCover.setImageBitmap(coverBitmap);
-				}
+				BookCoverDownloder.loadCover(mActivity, book, holder.imvBookCover);
 
 				return convertView;
 			}
@@ -171,6 +161,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 
 		mLsvBookList.setAdapter(mAdapter);
 		mLsvBookList.setOnScrollListener(this);
+		mLsvBookList.setOnItemClickListener(this);
 	}
 
 	private void loadNextPage() {
@@ -191,6 +182,12 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 				mAdapter.addAll(bookList);
 			}
 		});
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		Book book = (Book) parent.getItemAtPosition(position);
+		mActivity.showView(new BookInfoView(mActivity, book.getId()));
 	}
 
 	@Override

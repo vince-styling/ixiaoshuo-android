@@ -35,6 +35,10 @@ public class Book {
 		this.coverFileName = coverFileName;
 	}
 
+	public boolean hasChapters() {
+		return chapterList != null && chapterList.size() > 0;
+	}
+
 	public List<Chapter> getChapterList() {
 		return chapterList;
 	}

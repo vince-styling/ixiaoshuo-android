@@ -23,4 +23,9 @@ public abstract class ViewBuilder {
 	public int getViewId() {
 		return mViewId;
 	}
+
+	public boolean isReusable() {
+		return true;
+	}
+
 }
