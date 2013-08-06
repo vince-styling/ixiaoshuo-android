@@ -4,14 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.os.AsyncTask;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
+import com.duowan.mobile.ixiaoshuo.utils.SysUtil;
 import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -77,13 +76,8 @@ public abstract class BaseNetService {
 			}
 		};
 
-		try {
-			PackageInfo pkgInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-			versionCode = pkgInfo.versionCode;
-			versionName = pkgInfo.versionName;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
+		versionCode = SysUtil.getVersionCode(context);
+		versionName = SysUtil.getVersionName(context);
 
 		mapper = GObjectMapper.get();
 

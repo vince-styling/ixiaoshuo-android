@@ -71,13 +71,6 @@ public class StringUtil {
 		return text.substring(0, sepPos);
 	}
 	
-	public static String varcharEscape(String str) {
-        if (isEmpty(str)) return "";
-        str = str.replaceAll("'","''");
-		str = str.replaceAll("\\\\","\\\\\\\\");
-		return str;
-	}
-	
 	public static int getIntValue(String str) {
 		if(str != null && str.length() > 0) {
 			try {

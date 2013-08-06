@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Book {
-	private int id;
+	private int bid;				// 本地的自增长ID，主键
+	private int bookId;				// 服务端的书籍ID，有可能会改变
 	private int websiteId;
+	private String websiteName;
 	private String name;
 	private String author;
 	private String category;
@@ -28,8 +30,8 @@ public class Book {
 	private List<Chapter> chapterList;
 
 	public Book() {}
-	public Book(int id, String name, String author, String coverFileName) {
-		this.id = id;
+	public Book(int bookId, String name, String author, String coverFileName) {
+		this.bookId = bookId;
 		this.name = name;
 		this.author = author;
 		this.coverFileName = coverFileName;
@@ -48,23 +50,31 @@ public class Book {
 	}
 
 	public String getLocalCoverPath() {
-		return Book.getLocalCoverPath(id);
+		return Book.getLocalCoverPath(bookId);
 	}
 
 	public static String getLocalCoverPath(int bookId) {
 		return Paths.getCoversDirectoryPath() + "book_" + bookId + ".jpg";
 	}
 
-	public int getId() {
-		return id;
+	public int getBid() {
+		return bid;
+	}
+
+	public void setBid(int bid) {
+		this.bid = bid;
+	}
+
+	public int getBookId() {
+		return bookId;
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		this.bookId = id;
 	}
 
 	public void setBookId(int bookId) {
-		this.id = bookId;
+		this.bookId = bookId;
 	}
 
 	public String getName() {
@@ -133,6 +143,14 @@ public class Book {
 
 	public void setSummary(String summary) {
 		this.summary = summary;
+	}
+
+	public String getWebsiteName() {
+		return websiteName;
+	}
+
+	public void setWebsiteName(String websiteName) {
+		this.websiteName = websiteName;
 	}
 
 	public int getWebsiteId() {

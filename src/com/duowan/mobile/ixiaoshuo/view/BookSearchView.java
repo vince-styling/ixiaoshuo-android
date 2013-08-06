@@ -199,7 +199,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 			}
 
 			public Book execute() {
-				return NetService.get().getBookDetail(book.getId());
+				return NetService.get().getBookDetail(book.getBookId());
 			}
 
 			public void callback(Book book) {

@@ -118,7 +118,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
 
 	protected void setImageBitmap(ImageView imvBookCover, Book book) {
-//		mBitmapLruCache.loadBitmap(book.getId(), Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
+//		mBitmapLruCache.loadBitmap(book.getBookId(), Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
 		Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
 		imvBookCover.setImageBitmap(coverBitmap);
 	}
