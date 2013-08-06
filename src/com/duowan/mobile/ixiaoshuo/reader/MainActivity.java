@@ -1,6 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.reader;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.RadioGroup;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
@@ -40,6 +41,16 @@ public class MainActivity extends BaseActivity {
 
 	public void showView(ViewBuilder builder) {
 		mLotMainContent.showView(builder);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK:
+				if (mLotMainContent.onKeyDown(keyCode, event)) return true;
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 }

@@ -186,8 +186,36 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Book book = (Book) parent.getItemAtPosition(position);
-		mActivity.showView(new BookInfoView(mActivity, book.getId()));
+		final Book book = (Book) parent.getItemAtPosition(position);
+		NetService.execute(new NetService.NetExecutor<Book>() {
+			ProgressDialog mPrgreDialog;
+
+			public void preExecute() {
+				if (NetService.get().isNetworkAvailable()) {
+					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), true, true);
+				} else {
+					mActivity.showToastMsg(R.string.network_disconnect_msg);
+				}
+			}
+
+			public Book execute() {
+				return NetService.get().getBookDetail(book.getId());
+			}
+
+			public void callback(Book book) {
+				if (mPrgreDialog != null) {
+					if (!mPrgreDialog.isShowing()) return;
+					mPrgreDialog.cancel();
+				}
+
+				if (book == null) {
+					mActivity.showToastMsg(R.string.without_data);
+					return;
+				}
+
+				mActivity.showView(new BookInfoView(mActivity, book));
+			}
+		});
 	}
 
 	@Override

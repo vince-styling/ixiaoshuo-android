@@ -2,6 +2,7 @@ package com.duowan.mobile.ixiaoshuo.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
@@ -33,4 +34,22 @@ public class ScrollLayout extends LinearLayout {
 		}
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK:
+				for (int index = 0; index < getChildCount(); index++) {
+					View childView = getChildAt(index);
+					if (childView.getVisibility() == View.VISIBLE) {
+						if (index == 0) return false;
+						childView.setVisibility(View.GONE);
+						getChildAt(--index).setVisibility(View.VISIBLE);
+						return true;
+					}
+				}
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
+
+	}
 }
