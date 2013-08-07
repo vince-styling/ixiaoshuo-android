@@ -1,5 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.view;
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -8,6 +9,7 @@ import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
+import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
 import com.duowan.mobile.ixiaoshuo.utils.BookCoverDownloder;
 
 public class BookInfoView extends ViewBuilder implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -60,7 +62,9 @@ public class BookInfoView extends ViewBuilder implements View.OnClickListener, A
 		if(bid > 0 && mBook.hasChapters()) {
 			AppDAO.get().saveBookChapterList(bid, mBook.getChapterList());
 		}
-		mActivity.showToastMsg("Success Goto Reader!");
+		Intent intent = new Intent(mActivity, ReaderActivity.class);
+		intent.setAction(String.valueOf(bid));
+		mActivity.startActivity(intent);
 	}
 
 	@Override

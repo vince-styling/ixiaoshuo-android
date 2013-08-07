@@ -121,9 +121,9 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 							return;
 						}
 
-						mScvKeywords.setVisibility(View.GONE);
 						mAdapter.setData(bookList);
 						mLsvBookList.setVisibility(View.VISIBLE);
+						mScvKeywords.setVisibility(View.GONE);
 					}
 				});
 			}
@@ -239,6 +239,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+		mActivity.getReaderApplication().suspendTaskExecutor();
 		if (mAdapter.shouldRequestNextPage(firstVisibleItem, visibleItemCount, totalItemCount)) {
 			loadNextPage();
 		}

@@ -19,8 +19,8 @@ public class ReaderApplication extends Application {
 
 	TaskExecutor mTaskExecutor;
 
-	public void executeTask(Runnable runnable) {
-		mTaskExecutor.executeTask(runnable);
+	public void suspendTaskExecutor() {
+		mTaskExecutor.suspend();
 	}
 
 	public void submitTask(TaskRunnable runnable) {

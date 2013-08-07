@@ -16,7 +16,7 @@ public class AppDAO extends BaseDAO {
 	}
 
 	public int addBook(Book book) {
-		String sql = "insert into " + Tables.Book.NAME + "(book_id, name, author, cover_url, summary, update_status, website_id, website_name) value(" +
+		String sql = "insert into " + Tables.Book.NAME + "(book_id, name, author, cover_url, summary, update_status, website_id, website_name) values(" +
 				"'" + book.getBookId() + "', " +
 				"'" + escape(book.getName()) + "', " +
 				"'" + escape(book.getAuthor()) + "', " +
@@ -35,7 +35,7 @@ public class AppDAO extends BaseDAO {
 		return executeTranUpdate(list, new DBOperator<Chapter>() {
 			@Override
 			public String gen(Chapter chapter) {
-				return "insert or ignore into " + Tables.Chapter.NAME + "(bid, chapter_id, title) value(" +
+				return "insert or ignore into " + Tables.Chapter.NAME + "(bid, chapter_id, title) values(" +
 						"'" + bid + "'," +
 						"'" + chapter.getId() + "'," +
 						"'" + escape(chapter.getTitle()) + "'" +
@@ -43,5 +43,16 @@ public class AppDAO extends BaseDAO {
 			}
 		});
 	}
+
+//	public Book getBook(int bid) {
+//		String sql = "select bid, book_id, name, author, cover_url, summary, update_status";
+//		return getEntity(sql, new DBFetcher<Book>() {
+//			public Book fetch(Cursor cursor) {
+//				Book book = new Book();
+//				book.setBid(cursor.get);
+//				return book;
+//			}
+//		});
+//	}
 
 }

@@ -5,29 +5,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TaskExecutor {
+	LinkedList<TaskRunnable> mTaskRunnableList = new LinkedList<TaskRunnable>();
 	private ExecutorService service;
+	private boolean isSuspend;
 
 	public TaskExecutor(int numThreads) {
 		service = Executors.newFixedThreadPool(numThreads);
 	}
 
-	public void executeTask(Runnable runnable) {
-		service.execute(runnable);
+	public void submitTask(TaskRunnable runnable) {
+		if(isSuspend) {
+			mTaskRunnableList.add(runnable);
+		} else {
+			service.execute(runnable);
+		}
 	}
 
-//	public <T> Future<T> submitTask(Callable<T> task) {
-//		return service.submit(task);
-//	}
-
-	LinkedList<TaskRunnable> mTaskRunnableList = new LinkedList<TaskRunnable>();
-	public void submitTask(TaskRunnable runnable) {
-		mTaskRunnableList.add(runnable);
+	public void suspend() {
+		isSuspend = true;
 	}
 
 	public void startExecute() {
+		isSuspend = false;
 		while (mTaskRunnableList.size() > 0) {
+			if (isSuspend) break;
 			TaskRunnable runnable = mTaskRunnableList.pollLast();
-			if(runnable != null && runnable.validate()) executeTask(runnable);
+			if (runnable != null && runnable.validate()) submitTask(runnable);
 		}
 	}
 
