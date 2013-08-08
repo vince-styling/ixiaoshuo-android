@@ -53,7 +53,7 @@ public class BookCoverDownloder extends TaskRunnable {
 		if (coverBitmap != null) {
 			imvBookCover.setImageBitmap(coverBitmap);
 		} else {
-			activity.getReaderApplication().submitTask(new BookCoverDownloder(book, imvBookCover));
+			activity.submitTask(new BookCoverDownloder(book, imvBookCover));
 
 			coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.cover_less, imvBookCover);
 			imvBookCover.setImageBitmap(coverBitmap);

@@ -58,13 +58,15 @@ public class BookInfoView extends ViewBuilder implements View.OnClickListener, A
 
 	@Override
 	public void onClick(View btnView) {
-		int bid = AppDAO.get().addBook(mBook);
-		if(bid > 0 && mBook.hasChapters()) {
-			AppDAO.get().saveBookChapterList(bid, mBook.getChapterList());
-		}
-		Intent intent = new Intent(mActivity, ReaderActivity.class);
-		intent.setAction(String.valueOf(bid));
-		mActivity.startActivity(intent);
+		if (mBook.hasChapters()) {
+			int bid = AppDAO.get().addBook(mBook);
+			if (bid > 0) {
+				AppDAO.get().saveBookChapters(bid, mBook.getChapterList());
+				Intent intent = new Intent(mActivity, ReaderActivity.class);
+				intent.setAction(String.valueOf(bid));
+				mActivity.startActivity(intent);
+			} else mActivity.showToastMsg("抱歉，无法添加书籍！");
+		} else mActivity.showToastMsg("无可读章节！");
 	}
 
 	@Override

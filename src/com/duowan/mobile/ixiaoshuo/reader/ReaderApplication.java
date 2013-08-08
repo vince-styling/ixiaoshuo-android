@@ -18,27 +18,16 @@ public class ReaderApplication extends Application {
 	}
 
 	TaskExecutor mTaskExecutor;
-
-	public void suspendTaskExecutor() {
-		mTaskExecutor.suspend();
-	}
-
-	public void submitTask(TaskRunnable runnable) {
-		mTaskExecutor.submitTask(runnable);
-	}
-
-	public void startTasksExecute() {
-		mTaskExecutor.startExecute();
+	public TaskExecutor getTaskExecutor() {
+		return mTaskExecutor;
 	}
 
 	private Toast mToast;
-
 	public void showToastMsg(CharSequence msg) {
 		if(mToast != null) mToast.cancel();
 		mToast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
 		mToast.show();
 	}
-
 	public void showToastMsg(int resId) {
 		if(mToast != null) mToast.cancel();
 		mToast = Toast.makeText(this, resId, Toast.LENGTH_SHORT);

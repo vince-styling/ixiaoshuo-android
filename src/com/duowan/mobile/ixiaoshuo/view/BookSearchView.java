@@ -58,7 +58,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 			ProgressDialog mPrgreDialog;
 			public void preExecute() {
 				if (NetService.get().isNetworkAvailable()) {
-					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg));
+					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), true, true);
 				} else {
 					mActivity.showToastMsg(R.string.network_disconnect_msg);
 				}
@@ -233,13 +233,13 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-			mActivity.getReaderApplication().startTasksExecute();
+			mActivity.startTasksExecute();
 		}
 	}
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		mActivity.getReaderApplication().suspendTaskExecutor();
+		mActivity.suspendTaskExecutor();
 		if (mAdapter.shouldRequestNextPage(firstVisibleItem, visibleItemCount, totalItemCount)) {
 			loadNextPage();
 		}

@@ -36,6 +36,8 @@ public class Tables {
 					"bid integer, " +
 					"chapter_id integer, " +
 					"title varchar(200), " +
+					"read_status int, " +
+					"begin_position int, " +
 					"create_time datetime default (datetime('now','localtime')), " +
 					"primary key(bid, chapter_id)" +
 					")";

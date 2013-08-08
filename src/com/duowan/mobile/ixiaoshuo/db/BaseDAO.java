@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class BaseDAO {
 	protected DBHelper mDBHelper;
 	protected static final String TAG = "AppDAO";
 
-	public int getIntValue(String sql) { return getIntValue(sql, 0); }
-	public int getIntValue(String sql, int defValue) {
+	protected final int getIntValue(String sql) { return getIntValue(sql, 0); }
+	protected final int getIntValue(String sql, int defValue) {
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
@@ -31,8 +32,13 @@ public class BaseDAO {
 		return defValue;
 	}
 
-	public long getLongValue(String sql) { return getLongValue(sql, 0); }
-	public long getLongValue(String sql, long defValue) {
+	// 'select last_insert_rowid()' may do that same
+	protected final int getLastInsertRowId(String tableName) {
+		return getIntValue("select seq from sqlite_sequence where name='" + tableName + "'");
+	}
+
+	protected final long getLongValue(String sql) { return getLongValue(sql, 0); }
+	protected final long getLongValue(String sql, long defValue) {
 		Cursor cursor = null;
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		try {
@@ -46,8 +52,8 @@ public class BaseDAO {
 		return defValue;
 	}
 
-	public String getStringValue(String sql) { return getStringValue(sql, null); }
-	public String getStringValue(String sql, String defValue) {
+	protected final String getStringValue(String sql) { return getStringValue(sql, null); }
+	protected final String getStringValue(String sql, String defValue) {
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
@@ -61,7 +67,7 @@ public class BaseDAO {
 		return defValue;
 	}
 
-	public int[] getAmountIntValue(String sql, int columnAmount) {
+	protected final int[] getAmountIntValue(String sql, int columnAmount) {
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
@@ -81,7 +87,7 @@ public class BaseDAO {
 		return null;
 	}
 
-	public String[] getAmountStringValue(String sql, int columnAmount) {
+	protected final String[] getAmountStringValue(String sql, int columnAmount) {
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
@@ -101,7 +107,7 @@ public class BaseDAO {
 		return null;
 	}
 
-	public boolean checkExists(String sql) {
+	protected final boolean checkExists(String sql) {
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
@@ -115,7 +121,7 @@ public class BaseDAO {
 		return false;
 	}
 
-	public boolean executeUpdate(String sql) {
+	protected final boolean executeUpdate(String sql) {
 		SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
 		try {
 			dataBase.execSQL(sql);
@@ -129,10 +135,10 @@ public class BaseDAO {
 	}
 
 	/** @deprecated may has "database is locked" exception, recommended use executeTranUpdate method */
-	public <T> boolean executeBatchUpdate(T[] array, DBOperator<T> operator) {
+	protected final <T> boolean executeBatchUpdate(T[] array, DBOperator<T> operator) {
 		SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
 		try {
-			for (T entity : array) dataBase.execSQL(operator.gen(entity));
+			for (T entity : array) dataBase.execSQL(operator.build(entity));
 			return true;
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
@@ -142,10 +148,10 @@ public class BaseDAO {
 		return false;
 	}
 	/** @deprecated may has "database is locked" exception, recommended use executeTranUpdate method */
-	public <T> boolean executeBatchUpdate(List<T> list, DBOperator<T> operator) {
+	protected final <T> boolean executeBatchUpdate(List<T> list, DBOperator<T> operator) {
 		SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
 		try {
-			for (T entity : list) dataBase.execSQL(operator.gen(entity));
+			for (T entity : list) dataBase.execSQL(operator.build(entity));
 			return true;
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
@@ -155,7 +161,7 @@ public class BaseDAO {
 		return false;
 	}
 
-	public <T> T getEntity(String sql, DBFetcher<T> fetcher) {
+	protected final <T> T getEntity(String sql, DBFetcher<T> fetcher) {
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
@@ -169,7 +175,21 @@ public class BaseDAO {
 		return null;
 	}
 
-	public <T> void getFetcherList(String sql, List<T> list, DBFetcher<T> fetcher) {
+	protected final <T> T getEntity(String sql, Class<T> clazz) {
+		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
+		Cursor cursor = null;
+		try {
+			cursor = dataBase.rawQuery(sql, null);
+			if(cursor.moveToFirst()) return getEntity(cursor, clazz);
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage(), e);
+		} finally {
+			if(cursor != null) cursor.close();
+		}
+		return null;
+	}
+
+	protected final <T> void getFetcherList(String sql, List<T> list, DBFetcher<T> fetcher) {
 		SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
 		Cursor cursor = null;
 		try {
@@ -186,18 +206,26 @@ public class BaseDAO {
 		}
 	}
 
-	public <T> List<T> getFetcherList(String sql, DBFetcher<T> fetcher) {
+	protected final <T> List<T> getFetcherList(String sql, DBFetcher<T> fetcher) {
 		List<T> list = new ArrayList<T>();
 		getFetcherList(sql, list, fetcher);
 		return list;
 	}
 
-	public <T> boolean executeTranUpdate(T[] array, DBOperator<T> operator) {
+	protected final <T> List<T> getFetcherList(String sql, final Class<T> clazz) {
+		return getFetcherList(sql, new DBFetcher<T>() {
+			public T fetch(Cursor cursor) {
+				return getEntity(cursor, clazz);
+			}
+		});
+	}
+
+	protected final <T> boolean executeTranUpdate(T[] array, DBOperator<T> operator) {
 		if (array == null || array.length == 0) return false;
 		SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
 		try {
 			dataBase.beginTransaction();
-			for (T entity : array) dataBase.execSQL(operator.gen(entity));
+			for (T entity : array) dataBase.execSQL(operator.build(entity));
 			dataBase.setTransactionSuccessful();
 			return true;
 		} catch (Exception e) {
@@ -209,12 +237,12 @@ public class BaseDAO {
 		return false;
 	}
 
-	public <T> boolean executeTranUpdate(List<T> list, DBOperator<T> operator) {
+	protected final <T> boolean executeTranUpdate(List<T> list, DBOperator<T> operator) {
 		if (list == null || list.size() == 0) return false;
 		SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
 		try {
 			dataBase.beginTransaction();
-			for (T entity : list) dataBase.execSQL(operator.gen(entity));
+			for (T entity : list) dataBase.execSQL(operator.build(entity));
 			dataBase.setTransactionSuccessful();
 			return true;
 		} catch (Exception e) {
@@ -224,6 +252,58 @@ public class BaseDAO {
 			dataBase.close();
 		}
 		return false;
+	}
+
+	private static final String methodPrefix = "set";
+	protected final <T> T getEntity(Cursor cursor, Class<T> clazz) {
+		try {
+			T entity = clazz.newInstance();
+			String[] columnNames = cursor.getColumnNames();
+			for (int index = 0; index < columnNames.length; index++) {
+				columnNames[index] = convertColumnName(columnNames[index]);
+				for (Method method : clazz.getMethods()) {
+					if ((method.getName().equalsIgnoreCase(methodPrefix + columnNames[index]))) {
+						Class paramType = method.getParameterTypes()[0];
+						if (paramType == String.class)
+							method.invoke(entity, cursor.getString(index));
+						else if (paramType == int.class)
+							method.invoke(entity, cursor.getInt(index));
+						else if (paramType == long.class)
+							method.invoke(entity, cursor.getLong(index));
+						else if (paramType == float.class)
+							method.invoke(entity, cursor.getFloat(index));
+						else if (paramType == double.class)
+							method.invoke(entity, cursor.getDouble(index));
+						break;
+					}
+				}
+			}
+			return entity;
+		} catch (Exception ex) {}
+		return null;
+	}
+
+	/** naming convention：login_time > loginTime */
+	protected static String convertColumnName(String columnName) {
+		StringBuilder nameBuffer = new StringBuilder();
+		int index;
+		int nextIndex = 0;
+		do {
+			index = columnName.indexOf('_', nextIndex);
+			if(index < 0) {
+				nameBuffer.append(columnName.substring(nextIndex));
+				break;
+			}
+			nameBuffer.append(columnName.substring(nextIndex, index));
+			//是否还有下一位字符，否则退出
+			if(++index >= columnName.length()) break;
+			//如果前面已经有输出，则转为大写，否则不操作
+			if(nameBuffer.length() > 0) {
+				nameBuffer.append(Character.toUpperCase(columnName.charAt(index)));
+				nextIndex = ++index;
+			} else nextIndex = index;
+		} while (true);
+		return nameBuffer.toString();
 	}
 
 	protected static String escape(String str) {
@@ -233,6 +313,7 @@ public class BaseDAO {
 		return str;
 	}
 
+	protected interface DBFetcher<T> { T fetch(Cursor cursor); }
+	protected interface DBOperator<T> { String build(T entity); }
+
 }
-interface DBFetcher<T> { public T fetch(Cursor cursor); }
-interface DBOperator<T> { public String gen(T entity); }

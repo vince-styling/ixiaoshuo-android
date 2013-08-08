@@ -15,8 +15,16 @@ public class AppDAO extends BaseDAO {
 		if (mInstance == null) mInstance = new AppDAO(new DBHelper(ctx));
 	}
 
+	public int checkIfBookExists(int bookId) {
+		String sql = "select bid from " + Tables.Book.NAME + " where book_id = " + bookId;
+		return getIntValue(sql);
+	}
+
 	public int addBook(Book book) {
-		String sql = "insert into " + Tables.Book.NAME + "(book_id, name, author, cover_url, summary, update_status, website_id, website_name) values(" +
+		int bid = checkIfBookExists(book.getBookId());
+		if (bid > 0) return bid;
+
+		String sql = "insert or ignore into " + Tables.Book.NAME + "(book_id, name, author, cover_url, summary, update_status, website_id, website_name) values(" +
 				"'" + book.getBookId() + "', " +
 				"'" + escape(book.getName()) + "', " +
 				"'" + escape(book.getAuthor()) + "', " +
@@ -27,14 +35,15 @@ public class AppDAO extends BaseDAO {
 				"'" + escape(book.getWebsiteName()) + "'" +
 				")";
 		executeUpdate(sql);
-		sql = "select last_insert_rowid() from " + Tables.Book.NAME;
-		return getIntValue(sql);
+		return getLastInsertRowId(Tables.Book.NAME);
 	}
 
-	public boolean saveBookChapterList(final int bid, List<Chapter> list) {
+	public boolean saveBookChapters(final int bid, List<Chapter> list) {
+		String sql = "delete from " + Tables.Chapter.NAME + " where bid = " + bid;
+		executeUpdate(sql);
 		return executeTranUpdate(list, new DBOperator<Chapter>() {
 			@Override
-			public String gen(Chapter chapter) {
+			public String build(Chapter chapter) {
 				return "insert or ignore into " + Tables.Chapter.NAME + "(bid, chapter_id, title) values(" +
 						"'" + bid + "'," +
 						"'" + chapter.getId() + "'," +
@@ -44,15 +53,22 @@ public class AppDAO extends BaseDAO {
 		});
 	}
 
-//	public Book getBook(int bid) {
-//		String sql = "select bid, book_id, name, author, cover_url, summary, update_status";
-//		return getEntity(sql, new DBFetcher<Book>() {
-//			public Book fetch(Cursor cursor) {
-//				Book book = new Book();
-//				book.setBid(cursor.get);
-//				return book;
-//			}
-//		});
-//	}
+	public Book getBook(int bid) {
+		if (bid <= 0) return null;
+		String sql = "select bid, book_id, name, author, cover_url, summary, update_status from " + Tables.Book.NAME + " where bid = " + bid;
+		return getEntity(sql, Book.class);
+	}
+
+	public Book getBookForReader(int bid) {
+		Book book = getBook(bid);
+		if(book != null) book.setChapterList(getBookChapters(bid));
+		return book;
+	}
+
+	public List<Chapter> getBookChapters(int bid) {
+		if (bid <= 0) return null;
+		String sql = "select chapter_id, title, read_status, begin_position from " + Tables.Chapter.NAME + " where bid = " + bid;
+		return getFetcherList(sql, Chapter.class);
+	}
 
 }

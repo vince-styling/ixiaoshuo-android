@@ -41,6 +41,14 @@ public class Book {
 		return chapterList != null && chapterList.size() > 0;
 	}
 
+	public Chapter getReadingChapter() {
+		if (!hasChapters()) return null;
+		for (Chapter chapter : chapterList) {
+			if (chapter.isReading()) return chapter;
+		}
+		return chapterList.get(0);
+	}
+
 	public List<Chapter> getChapterList() {
 		return chapterList;
 	}
