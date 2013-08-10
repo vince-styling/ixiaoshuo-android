@@ -54,14 +54,14 @@ public class StringUtil {
 		return string.toString();
 	}
 	
-	public static String intToLessthanLength(int val, int wide) {
-		String res = String.valueOf(val);
-		if(res.length() >= wide) return res;
-		
-		StringBuilder sb = new StringBuilder(res);
-		for(int i = 0; i < wide - res.length(); i++) sb.insert(0, '0');
-		return sb.toString();
-	}
+//	public static String intToLessthanLength(int val, int wide) {
+//		String res = String.valueOf(val);
+//		if(res.length() >= wide) return res;
+//
+//		StringBuilder sb = new StringBuilder(res);
+//		for(int i = 0; i < wide - res.length(); i++) sb.insert(0, '0');
+//		return sb.toString();
+//	}
 	
 	/** Gives the substring of the given text before the given separator. */
 	public static String substringBefore(String text, char separator) {

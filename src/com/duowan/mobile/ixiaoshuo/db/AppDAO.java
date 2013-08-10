@@ -53,6 +53,11 @@ public class AppDAO extends BaseDAO {
 		});
 	}
 
+	public List<Book> getBookList() {
+		String sql = "select bid, book_id, name, author, cover_url, summary, update_status from " + Tables.Book.NAME + " order by create_time desc";
+		return getFetcherList(sql, Book.class);
+	}
+
 	public Book getBook(int bid) {
 		if (bid <= 0) return null;
 		String sql = "select bid, book_id, name, author, cover_url, summary, update_status from " + Tables.Book.NAME + " where bid = " + bid;

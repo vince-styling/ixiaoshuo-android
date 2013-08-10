@@ -53,7 +53,7 @@ public class BookshelfListStyleView extends BookshelfBaseView {
 				}
 
 				Book book = getItem(position);
-				setImageBitmap(holder.imvBookCover, book);
+				setImageBitmap(book, holder.imvBookCover);
 
 				holder.txvBookName.setText(book.getName());
 				View view = (View) holder.txvBookAuthor.getParent();

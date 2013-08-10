@@ -41,4 +41,21 @@ public abstract class Paths {
 		return getCoversDirectory().getPath() + File.separatorChar;
 	}
 
+	public static File getCacheDirectory() {
+		File dir = new File(cardDirectory() + ".cache");
+		if (!dir.exists()) dir.mkdirs();
+		return dir;
+	}
+	public static String getCacheDirectoryPath() {
+		return getCacheDirectory().getPath() + File.separatorChar;
+	}
+	public static File getCacheDirectorySubFolder(int bookId) {
+		File dir = new File(getCacheDirectoryPath() + bookId);
+		if (!dir.exists()) dir.mkdirs();
+		return dir;
+	}
+	public static String getCacheDirectorySubFolderPath(int bookId) {
+		return getCacheDirectorySubFolder(bookId).getPath() + File.separatorChar;
+	}
+
 }

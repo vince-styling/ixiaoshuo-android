@@ -4,8 +4,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.duowan.mobile.ixiaoshuo.R;
+import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
-import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
 public class BookshelfView extends ViewBuilder {
@@ -20,7 +20,7 @@ public class BookshelfView extends ViewBuilder {
 		mView = (ViewGroup) mActivity.getLayoutInflater().inflate(R.layout.book_shelf, null);
 
 		mBookshelfView = new BookshelfEmulateStyleView();
-		mBookshelfView.init(mActivity, findViewById(R.id.lsvBookShelf), Book.getStaticBookList());
+		mBookshelfView.init(mActivity, findViewById(R.id.lsvBookShelf), AppDAO.get().getBookList());
 
 		ToggleButton btnStyleSwitch = (ToggleButton) findViewById(R.id.btnStyleSwitch);
 		btnStyleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -2,16 +2,16 @@ package com.duowan.mobile.ixiaoshuo.view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.view.View;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
+import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
 import com.duowan.mobile.ixiaoshuo.ui.CommonMenuDialog;
-import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
-import com.duowan.mobile.ixiaoshuo.utils.Paths;
+import com.duowan.mobile.ixiaoshuo.utils.BookCoverDownloder;
 
 import java.util.List;
 
@@ -100,7 +100,9 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
-			mActivity.showToastMsg("单击：" + book.getName());
+			Intent intent = new Intent(mActivity, ReaderActivity.class);
+			intent.setAction(String.valueOf(book.getBid()));
+			mActivity.startActivity(intent);
 		}
 	}
 
@@ -117,10 +119,8 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
 
-	protected void setImageBitmap(ImageView imvBookCover, Book book) {
-//		mBitmapLruCache.loadBitmap(book.getBookId(), Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
-		Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(Paths.getCoversDirectoryPath() + book.getCoverFileName(), imvBookCover);
-		imvBookCover.setImageBitmap(coverBitmap);
+	protected void setImageBitmap(Book book, ImageView imvBookCover) {
+		BookCoverDownloder.loadCover(mActivity, book, imvBookCover);
 	}
 
 }

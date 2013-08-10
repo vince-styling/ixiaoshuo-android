@@ -98,7 +98,7 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 								Bitmap coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.book_shelf_addbook, imvBookCover);
 								imvBookCover.setImageBitmap(coverBitmap);
 							} else {
-								setImageBitmap(imvBookCover, book);
+								setImageBitmap(book, imvBookCover);
 								txvBookName.setText(book.getName());
 							}
 						}

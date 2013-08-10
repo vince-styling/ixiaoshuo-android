@@ -58,7 +58,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 			ProgressDialog mPrgreDialog;
 			public void preExecute() {
 				if (NetService.get().isNetworkAvailable()) {
-					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), true, true);
+					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
 				} else {
 					mActivity.showToastMsg(R.string.network_disconnect_msg);
 				}
@@ -100,7 +100,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 					ProgressDialog mPrgreDialog;
 					public void preExecute() {
 						if (NetService.get().isNetworkAvailable()) {
-							mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), true, true);
+							mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
 						} else {
 							mActivity.showToastMsg(R.string.network_disconnect_msg);
 						}
@@ -192,7 +192,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 
 			public void preExecute() {
 				if (NetService.get().isNetworkAvailable()) {
-					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), true, true);
+					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
 				} else {
 					mActivity.showToastMsg(R.string.network_disconnect_msg);
 				}
