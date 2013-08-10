@@ -76,4 +76,20 @@ public class AppDAO extends BaseDAO {
 		return getFetcherList(sql, Chapter.class);
 	}
 
+	public void persistReadingStatistics(final Book book) {
+		if (!book.hasChapters()) return;
+		executeTranUpdate(book.getChapterList(), new DBOperator<Chapter>() {
+			@Override
+			public String build(Chapter chapter) {
+				return "update " + Tables.Chapter.NAME + " set " +
+						"read_status = '" + chapter.getReadStatus() + "', " +
+						"begin_position = '" + chapter.getBeginPosition() + "' " +
+						"where bid = '" + book.getBid() + "' and chapter_id = '" + chapter.getId() + "'";
+			}
+		});
+	}
+
+	public boolean deleteBook(Book book) {
+		return executeUpdate("delete from " + Tables.Book.NAME + " where bid = " + book.getBid());
+	}
 }

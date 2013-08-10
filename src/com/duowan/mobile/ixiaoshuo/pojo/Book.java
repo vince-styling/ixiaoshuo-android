@@ -61,6 +61,7 @@ public class Book {
 		for (Chapter chapt : chapterList) {
 			if (chapt.isReading()) {
 				chapt.setReadStatus(Chapter.READSTATUS_READ);
+				chapt.setBeginPosition(0);
 			}
 		}
 		chapter.setReadStatus(Chapter.READSTATUS_READING);

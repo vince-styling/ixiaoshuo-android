@@ -22,7 +22,6 @@ public class RenderPaint extends Paint {
 	private int mCanvasPaddingLeft, mCanvasPaddingTop, mCanvasPaddingBottom;
 	private int mTextWidth, mTextHeight;
 	private int mStatusBarHeight;
-	private int paragraphSpacing;
 
 	public RenderPaint(Context ctx) {
 		super(ANTI_ALIAS_FLAG);
@@ -106,7 +105,7 @@ public class RenderPaint extends Paint {
 	}
 
 	public int getParagraphSpacing() {
-		return paragraphSpacing;
+		return mParagraphSpacing;
 	}
 
 	public int getCanvasPaddingLeft() {

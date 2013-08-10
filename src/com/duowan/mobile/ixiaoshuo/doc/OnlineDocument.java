@@ -77,7 +77,7 @@ public class OnlineDocument extends Document {
 
 	@Override
 	public boolean adjustReadingProgress(Chapter chapter) {
-		if(renewRandomAccessFile(chapter)) {
+		if (renewRandomAccessFile(chapter)) {
 			mReadByteBeginOffset = chapter.getBeginPosition();
 			mReadByteEndOffset = mReadByteBeginOffset;
 			invalidatePrevPagesCache();

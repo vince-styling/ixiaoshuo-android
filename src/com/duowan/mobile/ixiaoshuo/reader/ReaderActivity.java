@@ -1,6 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.reader;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,6 +72,30 @@ public class ReaderActivity extends BaseActivity {
 			}
 			return true;
 		}
+	}
+
+	ProgressDialog mExitDialog;
+
+	@Override
+	public void finish() {
+		mExitDialog = ProgressDialog.show(this, null, "正在退出阅读...", false, false);
+		super.finish();
+	}
+
+	protected void onPause() {
+		super.onPause();
+
+		if(mReadingBoard == null) return;
+		AppDAO.get().persistReadingStatistics(mReadingBoard.getBook());
+
+		if(isFinishing()) {
+			sendBookShelfRefreshMessage();
+		}
+	}
+
+	protected void onStop() {
+		if(mExitDialog != null) mExitDialog.cancel();
+		super.onStop();
 	}
 
 	private void showErrorConfirmDialog(String message) {

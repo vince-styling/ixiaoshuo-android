@@ -57,7 +57,7 @@ public abstract class Document {
 	LinkedList<Integer> mCharOffsetList = new LinkedList<Integer>();
 	// for fast turning previous page
 	LinkedList<Integer> mCharOffsetCache = new LinkedList<Integer>();
-	
+
 	public Document(Book book, RenderPaint paint) {
 		mByteBuffer = new byte[8192];
 		mPaint = paint;
@@ -338,6 +338,7 @@ public abstract class Document {
 	public void calculatePagePosition() {
 		try {
 			mPageBeginPosition = mReadByteBeginOffset + mContentBuf.substring(0, mPageCharOffsetInBuffer).getBytes(mEncoding.getName()).length;
+			mBook.getReadingChapter().setBeginPosition((int) mPageBeginPosition);
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
 		}
@@ -352,7 +353,7 @@ public abstract class Document {
 //	protected long calculatePosition(float percentage) {
 //		return percentage >= 1f ? mFileSize - 200 : (long) (mFileSize * percentage);
 //	}
-	
+
 	protected final long getSafetyPosition(long fileBeginPosition) {
 		if(fileBeginPosition == 0) return 0;
 		try {
@@ -387,9 +388,6 @@ public abstract class Document {
 	public abstract boolean adjustReadingProgress(Chapter chapter);
 //	public abstract float calculateReadingProgress();
 	
-//	public long getPageBeginPosition() { return mPageBeginPosition; }
-//	public int getPageLineCount() { return mMaxPageLineCount; }
-
 	class ByteMeta {
 		long byteOffset;
 		int byteCount;
@@ -399,6 +397,10 @@ public abstract class Document {
 			this.byteCount = byteCount;
 			this.charCount = charCount;
 		}
+	}
+
+	public Book getBook() {
+		return mBook;
 	}
 
 	@Override

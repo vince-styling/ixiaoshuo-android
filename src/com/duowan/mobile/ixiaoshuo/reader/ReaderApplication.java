@@ -1,11 +1,11 @@
 package com.duowan.mobile.ixiaoshuo.reader;
 
 import android.app.Application;
+import android.os.Handler;
 import android.widget.Toast;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.utils.TaskExecutor;
-import com.duowan.mobile.ixiaoshuo.utils.TaskRunnable;
 
 public class ReaderApplication extends Application {
 
@@ -32,6 +32,15 @@ public class ReaderApplication extends Application {
 		if(mToast != null) mToast.cancel();
 		mToast = Toast.makeText(this, resId, Toast.LENGTH_SHORT);
 		mToast.show();
+	}
+
+	private Handler mBookShelfHandler;
+	public void setBookShelfRefreshHandler(Handler handler) {
+		mBookShelfHandler = handler;
+	}
+	public void sendBookShelfRefreshMessage() {
+		if(mBookShelfHandler == null) return;
+		mBookShelfHandler.sendEmptyMessage(0);
 	}
 
 }

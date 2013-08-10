@@ -21,7 +21,7 @@ public class BookshelfListStyleView extends BookshelfBaseView {
 		mAdapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
-				return mBookList.size();
+				return mBookList != null ? mBookList.size() : 0;
 			}
 
 			@Override

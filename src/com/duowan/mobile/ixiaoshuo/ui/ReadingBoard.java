@@ -121,6 +121,7 @@ public class ReadingBoard extends View {
 		float contentHeight = 0;
 		byte flags;
 		while (true) {
+			// TODO : 这个方法的逻辑需要理解！！！！，目测有优化的空间！
 			flags = mDoc.getNextLine(sb);
 			if(flags == 0) break;
 
@@ -185,6 +186,10 @@ public class ReadingBoard extends View {
 
 	private BaseActivity getActivity() {
 		return (BaseActivity) getContext();
+	}
+
+	public Book getBook() {
+		return mDoc.getBook();
 	}
 
 }

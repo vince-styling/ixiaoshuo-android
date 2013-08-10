@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
@@ -29,15 +30,15 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 		initBookShelf();
 	}
 
-	public void init(MainActivity activity, View lsvBookShelf, List<Book> bookList) {
+	public void init(MainActivity activity, View lsvBookShelf) {
 		this.mLsvBookShelf = (ListView) lsvBookShelf;
 		this.mActivity = activity;
-		this.mBookList = bookList;
 		initBookShelf();
 	}
 
 	private void initBookShelf() {
 		initListView();
+		notifyDataSetChanged();
 //		mBitmapLruCache = new BitmapLruCache();
 		mLsvBookShelf.setOnScrollListener(this);
 	}
@@ -45,6 +46,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 	protected abstract void initListView();
 
 	protected void notifyDataSetChanged() {
+		mBookList = AppDAO.get().getBookList();
 		mAdapter.notifyDataSetChanged();
 	}
 
@@ -69,7 +71,7 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 						builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								mBookList.remove(book);
+								AppDAO.get().deleteBook(book);
 								notifyDataSetChanged();
 								menuDialog.cancel();
 								dialog.cancel();

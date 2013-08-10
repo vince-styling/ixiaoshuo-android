@@ -21,7 +21,7 @@ public class BookshelfEmulateStyleView extends BookshelfBaseView {
 		mAdapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
-				return mBookList.size() / itemPerLine + 1;
+				return mBookList != null ? mBookList.size() / itemPerLine + 1 : 0;
 			}
 
 			@Override
