@@ -4,32 +4,34 @@ import android.graphics.Paint;
 
 public class LayoutUtil {
 	private final static char SPACE_CHAR = ' ';	// \u0020
-	private final static char SBC_CASE_SPACE_CHAR = '　';	// \u3000
+	public final static char SBC_CASE_SPACE_CHAR = '　';	// \u3000
 	
 	public static boolean isASCII (char ch) {
 		return ch <= 0x7f && ch != 0x20;
 	}
 	
-	public static void trimSpaces (StringBuilder sb) {
-		int len = sb.length();
-		if(len > 0) {
-			int i = -1;
-			// trim left
-			while (++i < len && sb.charAt(i) == 0x20);
-			
-			if(i > 0)
-				sb.delete(0, i);
-			len = sb.length();
-			
-			// trim right
-			if(len > 0) {
-				i = len;
-				while (--i >= 0 && sb.charAt(i) == 0x20);
-				++i;
-				if(i < len)
-					sb.delete(i, len);
-			}
+	public static void trimWhiteSpaces(StringBuilder sb) {
+		if (sb.length() == 0) return;
+
+		// ----------- trim left
+		int index = -1;
+		while (++index < sb.length()) {
+			char ch = sb.charAt(index);
+			if (ch == SPACE_CHAR) continue;
+			if (ch == SBC_CASE_SPACE_CHAR) continue;
+			break;
 		}
+		if (index > 0) sb.delete(0, index);
+
+		// ----------- trim right
+		index = sb.length();
+		while (--index >= 0) {
+			char ch = sb.charAt(index);
+			if (ch == SPACE_CHAR) continue;
+			if (ch == SBC_CASE_SPACE_CHAR) continue;
+			break;
+		}
+		if (++index < sb.length()) sb.delete(index, sb.length());
 	}
 	
 	public static boolean isAlphanumeric (char ch) {
@@ -119,6 +121,12 @@ public class LayoutUtil {
 			
 			previousPosX += paint.measureText(text, i, i + 1);
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		StringBuilder sb = new StringBuilder(" 　   经过了一番强烈的思想斗争，她决定 　   ");
+		trimWhiteSpaces(sb);
+		System.out.println("----" + sb + "____");
 	}
 
 }

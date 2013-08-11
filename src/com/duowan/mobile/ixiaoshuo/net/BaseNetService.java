@@ -37,7 +37,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.net.SocketException;
 
-// TODO : 要测试从有网络切换到无网络后的可能出现的空异常问题
 public abstract class BaseNetService {
 
 	private DefaultHttpClient httpClient;
@@ -54,7 +53,8 @@ public abstract class BaseNetService {
 	public static final String CTWAP_USERNAME = "ctwap@mycdma.cn";
 	public static final String CTWAP_PASSWORD = "vnet.mobi";
 
-	private boolean mNetworkAvailable, mShouldUseProxy;
+	private boolean mShouldUseProxy;
+	protected boolean mNetworkAvailable;
 	private boolean mIsUseCmwap, mIsUseCtwap, mIsUseUniwap;
 
 	protected final synchronized void doInit (Context context) {
@@ -199,36 +199,30 @@ public abstract class BaseNetService {
 	}
 
 	protected final Respond handleHttpGet(String pageName, String params) throws IOException {
-		if (!mNetworkAvailable) return null;
 		return handleHttpExecute(makeHttpGet(pageName, params));
 	}
 
 	protected HttpGet makeHttpGet(String pageName, String params) {
-		if (!mNetworkAvailable) return null;
 		String url = makeUrl(pageName, params);
 		return new HttpGet(url);
 	}
 
 	protected HttpResponse executeHttpGet(String pageName, String params) throws IOException {
-		if (!mNetworkAvailable) return null;
 		String url = makeUrl(pageName, params);
 		return executeHttp(new HttpGet(url));
 	}
 
 	protected HttpPost makeHttpPost(String pageName) {
-		if (!mNetworkAvailable) return null;
 		String url = makeUrl(pageName, null);
 		return new HttpPost(url);
 	}
 
-	protected HttpResponse executeHttpPost(String pageName, String params) throws IOException {
-		if (!mNetworkAvailable) return null;
-		String url = makeUrl(pageName, params);
-		return executeHttp(new HttpPost(url));
-	}
+//	protected HttpResponse executeHttpPost(String pageName, String params) throws IOException {
+//		String url = makeUrl(pageName, params);
+//		return executeHttp(new HttpPost(url));
+//	}
 
 	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
-		if (!mNetworkAvailable) return null;
 		HttpEntity entity = null;
 		try {
 			HttpResponse response = executeHttp(request);
@@ -245,7 +239,6 @@ public abstract class BaseNetService {
 	}
 
 	protected final HttpResponse executeHttp(HttpRequestBase request) throws IOException {
-		if (!mNetworkAvailable) return null;
 		return mShouldUseProxy ? getHttpClientProxy().execute(request) : getHttpClientGeneral().execute(request);
 	}
 

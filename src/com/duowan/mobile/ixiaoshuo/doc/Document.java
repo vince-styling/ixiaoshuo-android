@@ -221,7 +221,7 @@ public abstract class Document {
 
 						lineCount = 0;
 					}
-					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset);
+					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset, false);
 					
 					// note: addFirst
 					mCharOffsetList.addFirst(lineCharOffset);
@@ -241,7 +241,7 @@ public abstract class Document {
 				}
 			} else {
 				while(lineCharOffset < endCharOffset) {
-					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset);
+					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset, false);
 					
 					mCharOffsetList.addFirst(lineCharOffset);
 					
@@ -288,46 +288,47 @@ public abstract class Document {
 	
 	public final byte getNextLine (StringBuilder sb) {
 		// reach the end of the file
-		if(mPageCharOffsetInBuffer + mCharCountOfPage >= mContentBuf.length())
-			return 0;
+		if (mPageCharOffsetInBuffer + mCharCountOfPage >= mContentBuf.length()) return 0;
 
 		mCurContentHeight += mPaint.getTextHeight();
-		if(mCurContentHeight > mPaint.getRenderHeight()) {
-			return 0;
-		}
-		
+		if (mCurContentHeight > mPaint.getRenderHeight()) return 0;
 		byte flags = GET_NEXT_LINE_FLAG_HAS_NEXT_LINE;
-		
+
 		int index = mPageCharOffsetInBuffer + mCharCountOfPage;
-		if (index == mNewlineIndex) { 
+		if (index == mNewlineIndex) {
 			mNewlineIndex = mContentBuf.indexOf(NEW_LINE_STR, mNewlineIndex);
-			mEndCharIndex = (mNewlineIndex != -1) ? mNewlineIndex : mContentBuf.length();  
+			mEndCharIndex = (mNewlineIndex != -1) ? mNewlineIndex : mContentBuf.length();
 		}
-		
-		int charCount = mPaint.breakText(mContentBuf, index, mEndCharIndex);
-		if(charCount > 0) {
+
+		boolean needIndent = false;
+		if (index > 0 && mPaint.getFirstLineIndent().length() > 0) {
+			needIndent = mContentBuf.charAt(index - 1) == NEW_LINE_CHAR;
+		}
+
+		int charCount = mPaint.breakText(mContentBuf, index, mEndCharIndex, needIndent);
+		if (charCount > 0) {
 			sb.append(mContentBuf, index, index + charCount);
-			LayoutUtil.trimSpaces(sb);
+			LayoutUtil.trimWhiteSpaces(sb);
 			mCharCountOfPage += charCount;
+
+			// append indent if carriage return character before the line
+			if (needIndent) sb.insert(0, mPaint.getFirstLineIndent());
 		}
-		
+
 		int endIndex = mPageCharOffsetInBuffer + mCharCountOfPage;
-		if(endIndex == mNewlineIndex) {
-			int carrigeReturnIndex = sb.length() - 1;
-			// ignore the carriage return character if it exists
-			if(carrigeReturnIndex >= 0 && sb.charAt(carrigeReturnIndex) == 0x0D)
-				sb.deleteCharAt(carrigeReturnIndex);
+		if (endIndex == mNewlineIndex) {
 			++mCharCountOfPage;
 			++mNewlineIndex;
 			mCurContentHeight += mPaint.getParagraphSpacing();
 			flags |= GET_NEXT_LINE_FLAG_PARAGRAPH_ENDS;
 		} else {
+			// justify when text fill whole line
 			if (endIndex < mContentBuf.length()) {
 				flags |= GET_NEXT_LINE_FLAG_SHOULD_JUSTIFY;
 			}
 			mCurContentHeight += mPaint.getLineSpacing();
 		}
-		
+
 		return flags;
 	}
 

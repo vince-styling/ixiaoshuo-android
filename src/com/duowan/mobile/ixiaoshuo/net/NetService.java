@@ -39,6 +39,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public List<BookUpdateInfo> syncChapterUpdateOnBookshelf(List<BookOnUpdate> bookList) {
+		if (!mNetworkAvailable) return null;
 		try {
 			HttpPost httpPost = makeHttpPost("/bookshelf/get_chapter_update.do");
 			NetUtil.putListToParams(httpPost, bookList, "bookList");
@@ -53,6 +54,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public String getChapterContent(int bookId, int chapterId) {
+		if (!mNetworkAvailable) return null;
 		HttpEntity entity = null;
 		try {
 			String params = "bookId=" + bookId + "&chapterId=" + chapterId;
@@ -71,8 +73,8 @@ public final class NetService extends BaseNetService {
 	}
 
 	public Book getBookDetail(int bookId) {
+		if (!mNetworkAvailable) return null;
 		try {
-			// TODO : 要确定来源ID及来源网站名称有传。
 			String params = "bookId=" + bookId;
 			Respond respond = handleHttpGet("/book/book_detail.do", params);
 			if (Respond.isCorrect(respond)) return respond.convert(Book.class);
@@ -83,6 +85,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public List<Book> bookSearch(String keyword, int updateStatus, int pageNo, int pageSize) {
+		if (!mNetworkAvailable) return null;
 		try {
 			String params = "keyword=" + keyword + "&updateStatus=" + updateStatus + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
 			Respond respond = handleHttpGet("/book/book_search.do", params);
@@ -96,11 +99,13 @@ public final class NetService extends BaseNetService {
 	}
 
 	public List<Book> getReadingBookList(int pageNo, int pageSize) {
+		if (!mNetworkAvailable) return null;
 		try {
 			String params = "pageNo=" + pageNo + "&pageSize=" + pageSize;
 			Respond respond = handleHttpGet("/book/reading_ranking.do", params);
 			if (Respond.isCorrect(respond)) {
-				return respond.convert(new TypeReference<List<Book>>(){});
+				return respond.convert(new TypeReference<List<Book>>() {
+				});
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -109,6 +114,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public List<Book> getBookRanking(String type, int pageNo, int pageSize) {
+		if (!mNetworkAvailable) return null;
 		try {
 			String params = "type=" + type + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
 			Respond respond = handleHttpGet("/book/book_ranking.do", params);
@@ -122,6 +128,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public List<Site> getSiteRankingList() {
+		if (!mNetworkAvailable) return null;
 		try {
 			Respond respond = handleHttpGet("/get_site_list_ranking.do", null);
 			if (Respond.isCorrect(respond)) {
@@ -134,6 +141,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public List<Book> getSiteBookRanking(int siteId, int pageNo, int pageSize) {
+		if (!mNetworkAvailable) return null;
 		try {
 			String params = "siteId=" + siteId + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
 			Respond respond = handleHttpGet("/book/site_ranking.do", params);
@@ -147,6 +155,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public String[] getHotKeyWords() {
+		if (!mNetworkAvailable) return null;
 		try {
 			Respond respond = handleHttpGet("/book/hot_keywords.do", null);
 			if (Respond.isCorrect(respond)) {
@@ -162,6 +171,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public List<Chapter> syncNewlyChapterOfBook(int bookId, int lastChapaterId) {
+		if (!mNetworkAvailable) return null;
 		try {
 			String params = "bookId=" + bookId + "&lastChapaterId=" + lastChapaterId;
 			Respond respond = handleHttpGet("/book/newly_chapter.do", params);
@@ -175,6 +185,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public boolean userFeedBack(String content, String imei) {
+		if (!mNetworkAvailable) return false;
 		try {
 			HttpPost httpPost = makeHttpPost("/user_feedback.do");
 
@@ -196,6 +207,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public VersionUpdate getVersionUpdateInfo(int versionCode, String versionName) {
+		if (!mNetworkAvailable) return null;
 		try {
 			String params = "versionCode=" + versionCode + "&versionName=" + versionName;
 			Respond respond = handleHttpGet("/get_update_version.do", params);
@@ -209,6 +221,7 @@ public final class NetService extends BaseNetService {
 	}
 
 	public boolean downloadFile(String url, File file) {
+		if (!mNetworkAvailable) return false;
 		HttpEntity entity = null;
 		try {
 			HttpResponse response = executeHttp(new HttpGet(url));

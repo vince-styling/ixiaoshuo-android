@@ -22,6 +22,7 @@ public class RenderPaint extends Paint {
 	private int mCanvasPaddingLeft, mCanvasPaddingTop, mCanvasPaddingBottom;
 	private int mTextWidth, mTextHeight;
 	private int mStatusBarHeight;
+	private String mFirstLineIndent = "";
 
 	public RenderPaint(Context ctx) {
 		super(ANTI_ALIAS_FLAG);
@@ -46,6 +47,11 @@ public class RenderPaint extends Paint {
 
 		setColor(0xff543927);
 		setTextSize(res.getDimensionPixelSize(R.dimen.reading_board_default_text_size));
+
+		int indentCharCount = res.getInteger(R.integer.reading_board_indent_char_count);
+		for (int i = 0; i < indentCharCount; i++) {
+			mFirstLineIndent += LayoutUtil.SBC_CASE_SPACE_CHAR;
+		}
 	}
 
 	public void drawBg(Canvas canvas) {
@@ -61,21 +67,22 @@ public class RenderPaint extends Paint {
 		mTextHeight = rect.bottom - rect.top;
 	}
 
-	public int breakText (StringBuilder contentBuf, int startIndex, int endIndex) {
-		int suggestCharCount = breakText(contentBuf, startIndex, endIndex, true, mRenderWidth, null);
+	public int breakText(StringBuilder contentBuf, int startIndex, int endIndex, boolean needIndent) {
+		float renderWidth = needIndent ? mRenderWidth - measureText(mFirstLineIndent) : mRenderWidth;
+		int suggestCharCount = breakText(contentBuf, startIndex, endIndex, true, renderWidth, null);
 		int lineEndIndex = startIndex + suggestCharCount;
-		if(lineEndIndex < contentBuf.length()) {
+		if (lineEndIndex < contentBuf.length()) {
 			char nextChar = contentBuf.charAt(lineEndIndex);
 			if (LayoutUtil.isPunctuation(nextChar)) {
-				while (--lineEndIndex > startIndex) {	// at least one character will be left
+				while (--lineEndIndex > startIndex) {    // at least one character will be left
 					char ch = contentBuf.charAt(lineEndIndex);
-					if(!LayoutUtil.isSBCPunctuation(ch) && !LayoutUtil.isASCII(ch)) {
+					if (!LayoutUtil.isSBCPunctuation(ch) && !LayoutUtil.isASCII(ch)) {
 						return lineEndIndex - startIndex;
 					}
 				}
 			} else if (LayoutUtil.isAlphanumeric(nextChar)) {
-				while (--lineEndIndex > startIndex) {	// at least one character will be left
-					if(!LayoutUtil.isAlphanumeric(contentBuf.charAt(lineEndIndex))) {
+				while (--lineEndIndex > startIndex) {    // at least one character will be left
+					if (!LayoutUtil.isAlphanumeric(contentBuf.charAt(lineEndIndex))) {
 						return lineEndIndex + 1 - startIndex;
 					}
 				}
@@ -118,6 +125,10 @@ public class RenderPaint extends Paint {
 
 	public int getCanvasPaddingBottom() {
 		return mCanvasPaddingBottom;
+	}
+
+	public String getFirstLineIndent() {
+		return mFirstLineIndent;
 	}
 
 }
