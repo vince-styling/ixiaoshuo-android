@@ -12,6 +12,7 @@ public enum Encoding {
 		this.name = name;
 		try {
 			maxCharLength = "中".getBytes(name).length;
+			minCharLength = "\n".getBytes(name).length;
 		} catch (Exception e) {}
 	}
 	
@@ -24,4 +25,10 @@ public enum Encoding {
 	public int getMaxCharLength() {
 		return maxCharLength;
 	}
+
+	private int minCharLength;
+	public int getMinCharLength() {
+		return minCharLength;
+	}
+
 }

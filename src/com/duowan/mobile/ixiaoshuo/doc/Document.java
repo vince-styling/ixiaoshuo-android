@@ -283,7 +283,7 @@ public abstract class Document {
 	public final static byte GET_NEXT_LINE_FLAG_SHOULD_JUSTIFY = 1 << 1;
 	public final static byte GET_NEXT_LINE_FLAG_PARAGRAPH_ENDS = 1 << 2;
 	
-	public final byte getNextLine (StringBuilder sb) {
+	public final byte getNextLine(StringBuilder sb) {
 		// reach the end of the file
 		if (mPageCharOffsetInBuffer + mCharCountOfPage >= mContentBuf.length()) return 0;
 
@@ -298,8 +298,12 @@ public abstract class Document {
 		}
 
 		boolean needIndent = false;
-		if (index > 0 && mPaint.getFirstLineIndent().length() > 0) {
-			needIndent = mContentBuf.charAt(index - 1) == NEW_LINE_CHAR;
+		if (mPaint.getFirstLineIndent().length() > 0) {
+			if (index > 0) {
+				needIndent = mContentBuf.charAt(index - 1) == NEW_LINE_CHAR;
+			} else {
+				needIndent = determineParagraphIndent();
+			}
 		}
 
 		int charCount = mPaint.breakText(mContentBuf, index, mEndCharIndex, needIndent);
@@ -373,7 +377,26 @@ public abstract class Document {
 		}
 		return fileBeginPosition;
 	}
-	
+
+	// determine carriage return character that before the contentBuffer,
+	// if exists or is file beginning, we should use paragraph first line indent
+	private boolean determineParagraphIndent() {
+		try {
+			long beginPosition = mReadByteBeginOffset - mEncoding.getMinCharLength();
+			if (beginPosition < 0) return true;
+
+			byte[] tempBytes = new byte[mEncoding.getMinCharLength()];
+			mRandBookFile.seek(beginPosition);
+			mRandBookFile.read(tempBytes);
+
+			String charStr = new String(tempBytes, mEncoding.getName());
+			return charStr.charAt(charStr.length() - 1) == NEW_LINE_CHAR;
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return false;
+	}
+
 	protected final long getBackmostPosition() {
 		long beginPosition = mFileSize - Double.valueOf(mMaxCharCountPerLine * (mMaxPageLineCount / 3) * mEncoding.getMaxCharLength()).intValue();
 		return beginPosition < 1 ? 0 : getSafetyPosition(beginPosition);
