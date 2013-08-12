@@ -206,12 +206,12 @@ public abstract class Document {
 			int newlineOffset = mContentBuf.lastIndexOf(NEW_LINE_STR, endCharOffset - 1);
 
 			// found a newline in previous page
-			if(newlineOffset != -1) {
+			if (newlineOffset != -1) {
 				lineCharOffset = newlineOffset + 1;
 				
 				int lineCount = 0;
 				while (endCharOffset > beginCharOffset) {
-					if(lineCharOffset == endCharOffset) {
+					if (lineCharOffset == endCharOffset) {
 						newlineOffset = mContentBuf.lastIndexOf(NEW_LINE_STR, endCharOffset - 1);
 						if(newlineOffset != -1) {
 							lineCharOffset = newlineOffset + 1;
@@ -221,43 +221,40 @@ public abstract class Document {
 
 						lineCount = 0;
 					}
-					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset, false);
+					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset, lineCount == 0);
 					
 					// note: addFirst
 					mCharOffsetList.addFirst(lineCharOffset);
 					
 					lineCharOffset += charCount;
 					++lineCount;
-					if(lineCharOffset == endCharOffset) {
-						while(--lineCount >= 0) {
+					if (lineCharOffset == endCharOffset) {
+						while (--lineCount >= 0) {
 							// note: removeFirst and then add to the last
 							mCharOffsetList.add(mCharOffsetList.removeFirst());
 						}
-						if(mCharOffsetList.size() >= mMaxPageLineCount)
-							break;
+						if (mCharOffsetList.size() >= mMaxPageLineCount) break;
 						
 						lineCharOffset = endCharOffset = newlineOffset;
 					}
 				}
 			} else {
-				while(lineCharOffset < endCharOffset) {
+				while (lineCharOffset < endCharOffset) {
 					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset, false);
-					
 					mCharOffsetList.addFirst(lineCharOffset);
-					
 					lineCharOffset += charCount;
 				}
 			}
 			
 			int contentHeight = 0;
 			for (int i = 0; i < mCharOffsetList.size(); ++i) {
-				if(contentHeight > 0) {
+				if (contentHeight > 0) {
 					boolean isNewline = mContentBuf.charAt(mCharOffsetList.get(i - 1) - 1) == NEW_LINE_CHAR;
 					if(isNewline) contentHeight += mPaint.getParagraphSpacing();
 					else contentHeight += mPaint.getLineSpacing();
 				}
 				contentHeight += mPaint.getTextHeight();
-				if(contentHeight > mPaint.getRenderHeight()) {
+				if (contentHeight > mPaint.getRenderHeight()) {
 					mPageCharOffsetInBuffer = mCharOffsetList.get(i - 1);
 					break;
 				} else if (i == 0) {
