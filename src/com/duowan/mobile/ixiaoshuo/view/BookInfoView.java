@@ -57,7 +57,7 @@ public class BookInfoView extends ViewBuilder implements View.OnClickListener, A
 	}
 
 	@Override
-	public void onClick(View btnView) {
+	public void onClick(View view) {
 		if (mBook.hasChapters()) {
 			int bid = AppDAO.get().addBook(mBook);
 			if (bid > 0) {
@@ -71,6 +71,8 @@ public class BookInfoView extends ViewBuilder implements View.OnClickListener, A
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		Chapter chapter = (Chapter) parent.getItemAtPosition(position);
+		chapter.setReadStatus(Chapter.READSTATUS_READING);
 		onClick(view);
 	}
 

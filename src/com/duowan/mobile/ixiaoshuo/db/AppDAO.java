@@ -44,10 +44,12 @@ public class AppDAO extends BaseDAO {
 		return executeTranUpdate(list, new DBOperator<Chapter>() {
 			@Override
 			public String build(Chapter chapter) {
-				return "insert or ignore into " + Tables.Chapter.NAME + "(bid, chapter_id, title) values(" +
+				return "insert or ignore into " + Tables.Chapter.NAME + "(bid, chapter_id, title, read_status, begin_position) values(" +
 						"'" + bid + "'," +
 						"'" + chapter.getId() + "'," +
-						"'" + escape(chapter.getTitle()) + "'" +
+						"'" + escape(chapter.getTitle()) + "'," +
+						"'" + chapter.getReadStatus() + "'," +
+						"'" + chapter.getBeginPosition() + "'" +
 						")";
 			}
 		});

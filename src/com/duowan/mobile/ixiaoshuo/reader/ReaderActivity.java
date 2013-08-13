@@ -31,20 +31,20 @@ public class ReaderActivity extends BaseActivity {
 		setContentView(R.layout.reading_board);
 
 		int bid = Integer.parseInt(getIntent().getAction());
-		Book mBook = AppDAO.get().getBookForReader(bid);
+		Book book = AppDAO.get().getBookForReader(bid);
 
-		if (mBook == null) {
+		if (book == null) {
 			showErrorConfirmDialog("书籍不存在！");
 			return;
 		}
-		if (!mBook.hasChapters()) {
+		if (!book.hasChapters()) {
 			showErrorConfirmDialog("书籍无可读章节！");
 			return;
 		}
 
 		try {
 			mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
-			mReadingBoard.init(mBook);
+			mReadingBoard.init(book);
 
 			initStatusBar();
 
