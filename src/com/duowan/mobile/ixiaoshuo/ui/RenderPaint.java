@@ -2,26 +2,21 @@ package com.duowan.mobile.ixiaoshuo.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.Display;
 import android.view.WindowManager;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.doc.LayoutUtil;
-import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
+import com.duowan.mobile.ixiaoshuo.pojo.ColorScheme;
 
 public class RenderPaint extends Paint {
-	private Drawable mBgDrawable;
-
+	private ColorScheme mColorScheme;
 	private int mRenderWidth, mRenderHeight;
 	private int mLineSpacing, mParagraphSpacing;
-	private int mCanvasPaddingLeft, mCanvasPaddingTop, mCanvasPaddingBottom;
+	private int mCanvasPaddingLeft, mCanvasPaddingTop;
 	private int mTextWidth, mTextHeight;
-	private int mStatusBarHeight;
 
 	private String mFirstLineIndent = "";
 	private float mFirstLineIndentWidth;
@@ -31,33 +26,26 @@ public class RenderPaint extends Paint {
 		Display display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		Resources res = ctx.getResources();
 
-		mLineSpacing = res.getDimensionPixelSize(R.dimen.reading_board_line_spacing);
 		mParagraphSpacing = res.getDimensionPixelSize(R.dimen.reading_board_paragraph_spacing);
+		mLineSpacing = res.getDimensionPixelSize(R.dimen.reading_board_line_spacing);
 
-		mStatusBarHeight = res.getDimensionPixelSize(R.dimen.reading_board_status_bar_height);
-
+		int statusBarHeight = res.getDimensionPixelSize(R.dimen.reading_board_status_bar_height);
 		mCanvasPaddingLeft = res.getDimensionPixelSize(R.dimen.reading_board_padding_left);
 		mCanvasPaddingTop = res.getDimensionPixelSize(R.dimen.reading_board_padding_top);
-		mCanvasPaddingBottom = res.getDimensionPixelSize(R.dimen.reading_board_padding_bottom);
 
+		mRenderHeight = display.getHeight() - mCanvasPaddingTop - statusBarHeight;
 		mRenderWidth = display.getWidth() - mCanvasPaddingLeft * 2;
-		mRenderHeight = display.getHeight() - mCanvasPaddingTop - mCanvasPaddingBottom - mStatusBarHeight;
-
-		Bitmap readingBg = BitmapUtil.loadBitmapInRes(res, R.drawable.reading_bg_1, display.getWidth(), display.getHeight());
-		mBgDrawable = new BitmapDrawable(readingBg);
-		mBgDrawable.setBounds(new Rect(0, 0, display.getWidth(), display.getHeight()));
 
 		int indentCharCount = res.getInteger(R.integer.reading_board_indent_char_count);
 		for (int i = 0; i < indentCharCount; i++) {
 			mFirstLineIndent += LayoutUtil.SBC_CASE_SPACE_CHAR;
 		}
 
-		setColor(0xff543927);
 		setTextSize(res.getDimensionPixelSize(R.dimen.reading_board_default_text_size));
 	}
 
 	public void drawBg(Canvas canvas) {
-		mBgDrawable.draw(canvas);
+		mColorScheme.getReadingDrawable().draw(canvas);
 	}
 
 	@Override
@@ -72,6 +60,11 @@ public class RenderPaint extends Paint {
 		if (mFirstLineIndent.length() > 0) {
 			mFirstLineIndentWidth = measureText(mFirstLineIndent);
 		}
+	}
+
+	public void setColorScheme(ColorScheme colorScheme) {
+		setColor(colorScheme.getTextColor());
+		mColorScheme = colorScheme;
 	}
 
 	public int breakText(StringBuilder contentBuf, int startIndex, int endIndex, boolean needIndent) {
@@ -128,10 +121,6 @@ public class RenderPaint extends Paint {
 
 	public int getCanvasPaddingTop() {
 		return mCanvasPaddingTop;
-	}
-
-	public int getCanvasPaddingBottom() {
-		return mCanvasPaddingBottom;
 	}
 
 	public String getFirstLineIndent() {

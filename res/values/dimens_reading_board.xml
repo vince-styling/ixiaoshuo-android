@@ -2,10 +2,9 @@
 <resources>
     <dimen name="reading_board_padding_left">20dp</dimen>
     <dimen name="reading_board_padding_top">20dp</dimen>
-    <dimen name="reading_board_padding_bottom">0dp</dimen>
     <dimen name="reading_board_line_spacing">8dp</dimen>
     <dimen name="reading_board_paragraph_spacing">18dp</dimen>
     <dimen name="reading_board_default_text_size">18sp</dimen>
-    <dimen name="reading_board_status_bar_height">36dip</dimen>
+    <dimen name="reading_board_status_bar_height">30dp</dimen>
     <integer name="reading_board_indent_char_count">1</integer>
 </resources>

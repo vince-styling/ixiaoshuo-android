@@ -76,6 +76,15 @@ public class OnlineDocument extends Document {
 	}
 
 	@Override
+	public float calculateReadingProgress() {
+		int readChapterIndex = mBook.getReadChapterIndex();
+		if (readChapterIndex + 1 == mBook.getChapterCount() && mReadByteEndOffset == mFileSize) {
+			if (mPageCharOffsetInBuffer + mMaxCharCountPerPage >= mContentBuf.length()) return 100;
+		}
+		return (readChapterIndex + 1) * 1.0f / mBook.getChapterCount() * 100;
+	}
+
+	@Override
 	public boolean adjustReadingProgress(Chapter chapter) {
 		if (renewRandomAccessFile(chapter)) {
 			mReadByteBeginOffset = chapter.getBeginPosition();
@@ -111,6 +120,11 @@ public class OnlineDocument extends Document {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String getReadingInfo() {
+		return mBook.getReadingChapter().getTitle();
 	}
 
 	public static interface ProcessCallback {

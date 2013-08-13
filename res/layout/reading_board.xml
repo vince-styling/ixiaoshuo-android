@@ -7,4 +7,20 @@
             android:id="@+id/readingBoard"
             android:layout_width="match_parent" android:layout_height="match_parent" />
 
+    <LinearLayout android:layout_width="match_parent" android:layout_height="@dimen/reading_board_status_bar_height"
+                  android:paddingLeft="@dimen/reading_board_padding_left" android:paddingRight="@dimen/reading_board_padding_left"
+                  android:layout_alignParentBottom="true" android:gravity="bottom">
+
+        <TextView android:id="@+id/txvCurTime" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:singleLine="true" android:text="12:19" android:textSize="14sp" />
+
+        <TextView android:id="@+id/txvReadingInfo" android:layout_width="0dp" android:layout_height="wrap_content"
+                  android:layout_weight="1" android:gravity="center" android:paddingLeft="4dp" android:paddingRight="4dp"
+                  android:singleLine="true" android:text="卷一 第二十一章 权力的游戏" android:ellipsize="middle" android:textSize="14sp" />
+
+        <TextView android:id="@+id/txvReadingProgress" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:singleLine="true" android:text="18.8%" android:textSize="14sp" />
+
+    </LinearLayout>
+
 </RelativeLayout>

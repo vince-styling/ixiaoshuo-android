@@ -27,7 +27,7 @@ public abstract class Document {
 	protected RenderPaint mPaint;
 
 	private int mMaxPageLineCount;
-	private int mMaxCharCountPerPage;
+	protected int mMaxCharCountPerPage;
 	private int mMaxCharCountPerLine;
 	private int mCurContentHeight;
 
@@ -402,12 +402,16 @@ public abstract class Document {
 		return beginPosition < 1 ? 0 : getSafetyPosition(beginPosition);
 	}
 
+	public String getReadingInfo() {
+		return '《' + mBook.getName() + '》';
+	}
+
 	public boolean hasNextChapter() { return mBook.getNextChapter() != null; }
 	public boolean hasPreviousChapter() { return mBook.getPreviousChapter() != null; }
 	
 //	public abstract boolean adjustReadingProgress(float percentage);
 	public abstract boolean adjustReadingProgress(Chapter chapter);
-//	public abstract float calculateReadingProgress();
+	public abstract float calculateReadingProgress();
 	
 	class ByteMeta {
 		long byteOffset;

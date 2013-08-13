@@ -15,7 +15,8 @@ import com.duowan.mobile.ixiaoshuo.doc.OnlineDocument;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
-import com.duowan.mobile.ixiaoshuo.reader.BaseActivity;
+import com.duowan.mobile.ixiaoshuo.pojo.ColorScheme;
+import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
 import com.duowan.mobile.ixiaoshuo.utils.Encoding;
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
@@ -30,7 +31,7 @@ public class ReadingBoard extends View {
 	RenderPaint mPaint;
 	Document mDoc;
 
-	// added by kevin, to support full-justification text layout
+	// added to support full-justification text layout
 	// make it LARGE enough to hold even 2048 GBK chars per line, rarely possible to reach this limit in reality
 	private float mLayoutPositions[] = new float[4096];
 
@@ -138,8 +139,14 @@ public class ReadingBoard extends View {
 			else
 				contentHeight += mPaint.getLineSpacing();
 		}
+
+		getActivity().refreshStatusBar(mDoc.getReadingInfo(), calculateReadingProgress());
 		mDoc.calculatePagePosition();
 		mDrawableCanvas.restore();
+	}
+
+	public void setColorScheme(ColorScheme colorScheme) {
+		mPaint.setColorScheme(colorScheme);
 	}
 
 	public void forceRedraw() {
@@ -183,8 +190,13 @@ public class ReadingBoard extends View {
 		if(mDoc.adjustReadingProgress(chapter)) forceRedraw();
 	}
 
-	private BaseActivity getActivity() {
-		return (BaseActivity) getContext();
+	private float calculateReadingProgress() {
+		float percentage = mDoc.calculateReadingProgress();
+		return percentage > 100 ? 100 : percentage;
+	}
+
+	private ReaderActivity getActivity() {
+		return (ReaderActivity) getContext();
 	}
 
 	public Book getBook() {

@@ -8,15 +8,21 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+import android.widget.TextView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
+import com.duowan.mobile.ixiaoshuo.pojo.ColorScheme;
 import com.duowan.mobile.ixiaoshuo.ui.ReadingBoard;
+import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 import com.duowan.mobile.ixiaoshuo.utils.ViewUtil;
+
+import java.util.Date;
 
 public class ReaderActivity extends BaseActivity {
 	private static final String TAG = "ReaderActivity";
 	private ReadingBoard mReadingBoard;
+	private TextView mTxvCurTime, mTxvReadingInfo, mTxvReadingProgress;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,10 @@ public class ReaderActivity extends BaseActivity {
 		try {
 			mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
 			mReadingBoard.init(mBook);
+
+			initStatusBar();
+
+			setColorScheme(new ColorScheme(R.drawable.reading_bg_1, 0xff543927));
 		} catch (Exception e) {
 			showErrorConfirmDialog("初始化失败！");
 			Log.e(TAG, e.getMessage(), e);
@@ -72,6 +82,27 @@ public class ReaderActivity extends BaseActivity {
 			}
 			return true;
 		}
+	}
+
+	private void initStatusBar() {
+		mTxvCurTime = (TextView) findViewById(R.id.txvCurTime);
+		mTxvReadingInfo = (TextView) findViewById(R.id.txvReadingInfo);
+		mTxvReadingProgress = (TextView) findViewById(R.id.txvReadingProgress);
+	}
+
+	public void refreshStatusBar(String readingInfo, float readingProgress) {
+		mTxvReadingInfo.setText(readingInfo);
+		mTxvCurTime.setText(StringUtil.dfTime.format(new Date()));
+		mTxvReadingProgress.setText(StringUtil.TWO_DECIMAL_POINT_DF.format(readingProgress) + '%');
+	}
+
+	public void setColorScheme(ColorScheme colorScheme) {
+		colorScheme.initReadingDrawable(getApplicationContext());
+		mReadingBoard.setColorScheme(colorScheme);
+
+		mTxvCurTime.setTextColor(colorScheme.getTextColor());
+		mTxvReadingInfo.setTextColor(colorScheme.getTextColor());
+		mTxvReadingProgress.setTextColor(colorScheme.getTextColor());
 	}
 
 	ProgressDialog mExitDialog;

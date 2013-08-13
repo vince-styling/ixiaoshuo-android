@@ -1,5 +1,8 @@
 package com.duowan.mobile.ixiaoshuo.utils;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+
 /**
  * Various String utility functions.
  * Most of the functions herein are re-implementations of the ones in apache
@@ -96,9 +99,9 @@ public class StringUtil {
 	}
 	
 //	public final static DecimalFormat NO_DECIMAL_POINT_DF = new DecimalFormat("0");
-//	public final static DecimalFormat TWO_DECIMAL_POINT_DF = new DecimalFormat("0.00");
+	public final static DecimalFormat TWO_DECIMAL_POINT_DF = new DecimalFormat("0.00");
 //	public final static SimpleDateFormat dfDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//	public final static SimpleDateFormat dfTime = new SimpleDateFormat("HH:mm");
+	public final static SimpleDateFormat dfTime = new SimpleDateFormat("HH:mm");
 //	public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 //
 //	// format of datetime: 2011-08-24 12:22:11, return 08-24 or 12:22

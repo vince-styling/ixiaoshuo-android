@@ -39,13 +39,21 @@ public class Book {
 	}
 
 	public Chapter getNextChapter() {
-		int index = chapterList.indexOf(getReadingChapter());
+		int index = getReadChapterIndex();
 		return ++index < chapterList.size() ? chapterList.get(index) : null;
 	}
 
 	public Chapter getPreviousChapter() {
-		int index = chapterList.indexOf(getReadingChapter());
+		int index = getReadChapterIndex();
 		return index > 0 ? chapterList.get(--index) : null;
+	}
+
+	public int getReadChapterIndex() {
+		return chapterList.indexOf(getReadingChapter());
+	}
+
+	public int getChapterCount() {
+		return chapterList.size();
 	}
 
 	public List<Chapter> getChapterList() {
