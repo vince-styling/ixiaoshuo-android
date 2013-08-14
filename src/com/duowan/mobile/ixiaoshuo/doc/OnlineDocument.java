@@ -60,7 +60,10 @@ public class OnlineDocument extends Document {
 				fins.close();
 				System.gc();
 			} else {
-				mProcessCallback.fetchChapter(chapter);
+				if (!chapterIsLoading) {
+					chapterIsLoading = true;
+					mProcessCallback.fetchChapter(chapter);
+				}
 				return false;
 			}
 
@@ -120,6 +123,12 @@ public class OnlineDocument extends Document {
 			return true;
 		}
 		return false;
+	}
+
+	private boolean chapterIsLoading;
+	@Override
+	public void turnOffLoadding() {
+		chapterIsLoading = false;
 	}
 
 	@Override

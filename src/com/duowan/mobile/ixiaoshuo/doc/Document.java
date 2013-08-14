@@ -408,10 +408,12 @@ public abstract class Document {
 
 	public boolean hasNextChapter() { return mBook.getNextChapter() != null; }
 	public boolean hasPreviousChapter() { return mBook.getPreviousChapter() != null; }
-	
+
 //	public abstract boolean adjustReadingProgress(float percentage);
 	public abstract boolean adjustReadingProgress(Chapter chapter);
 	public abstract float calculateReadingProgress();
+
+	public abstract void turnOffLoadding();
 	
 	class ByteMeta {
 		long byteOffset;

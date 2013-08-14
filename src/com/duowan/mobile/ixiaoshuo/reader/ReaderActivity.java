@@ -5,9 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.MotionEvent;
 import android.widget.TextView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
@@ -44,6 +41,7 @@ public class ReaderActivity extends BaseActivity {
 
 		try {
 			mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
+			mReadingBoard.setFocusable(true);
 			mReadingBoard.init(book);
 
 			initStatusBar();
@@ -53,34 +51,6 @@ public class ReaderActivity extends BaseActivity {
 			showErrorConfirmDialog("初始化失败！");
 			Log.e(TAG, e.getMessage(), e);
 			return;
-		}
-
-		mGestureDetector = new GestureDetector(new ReaderGestureListener());
-	}
-
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		return mGestureDetector.onTouchEvent(event);
-	}
-
-	private GestureDetector mGestureDetector;
-	class ReaderGestureListener extends SimpleOnGestureListener {
-		@Override
-		public boolean onSingleTapUp(MotionEvent e) {
-			float x = e.getX();
-			float y = e.getY();
-			float portionWidth = mReadingBoard.getWidth() / 3;
-			float portionHeight = mReadingBoard.getHeight() / 3;
-			if(x < portionWidth || (x < portionWidth * 2 && y < portionHeight)) {
-				if(!mReadingBoard.turnPreviousPageAndRedraw()) {
-					if (!mReadingBoard.hasPreviousChapter()) showToastMsg("已到达第一页");
-				}
-			} else if (x > portionWidth * 2 || (x > portionWidth && y > portionHeight * 2)) {
-				if(!mReadingBoard.turnNextPageAndRedraw()) {
-					if (!mReadingBoard.hasNextChapter()) showToastMsg("已到达最后一页");
-				}
-			}
-			return true;
 		}
 	}
 

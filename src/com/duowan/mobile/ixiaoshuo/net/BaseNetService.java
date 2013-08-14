@@ -36,6 +36,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.LinkedList;
 
 public abstract class BaseNetService {
 
@@ -238,7 +239,20 @@ public abstract class BaseNetService {
 		return null;
 	}
 
+	private LinkedList<HttpRequestBase> mHttpRequestList = new LinkedList<HttpRequestBase>();
+
+	public synchronized void abortAll() {
+		while (mHttpRequestList.size() > 0) abortLast();
+	}
+
+	public synchronized void abortLast() {
+		HttpRequestBase request = mHttpRequestList.pollLast();
+		if (request == null || request.isAborted()) return;
+		request.abort();
+	}
+
 	protected final HttpResponse executeHttp(HttpRequestBase request) throws IOException {
+		mHttpRequestList.addLast(request);
 		return mShouldUseProxy ? getHttpClientProxy().execute(request) : getHttpClientGeneral().execute(request);
 	}
 

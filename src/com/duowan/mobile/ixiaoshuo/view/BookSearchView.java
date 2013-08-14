@@ -1,6 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.view;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -59,6 +60,12 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 			public void preExecute() {
 				if (NetService.get().isNetworkAvailable()) {
 					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
+					mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialog) {
+							NetService.get().abortLast();
+						}
+					});
 				} else {
 					mActivity.showToastMsg(R.string.network_disconnect_msg);
 				}
@@ -101,6 +108,12 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 					public void preExecute() {
 						if (NetService.get().isNetworkAvailable()) {
 							mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
+							mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+								@Override
+								public void onCancel(DialogInterface dialog) {
+									NetService.get().abortLast();
+								}
+							});
 						} else {
 							mActivity.showToastMsg(R.string.network_disconnect_msg);
 						}
@@ -167,7 +180,9 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 	private void loadNextPage() {
 		mAdapter.setIsLoadingData(true);
 		NetService.execute(new NetService.NetExecutor<List<Book>>() {
-			public void preExecute() {}
+			public void preExecute() {
+				NetService.get().abortAll();
+			}
 
 			public List<Book> execute() {
 				return NetService.get().bookSearch(mKeyword, mUpdateStatus, ++mPageNo, PAGE_SIZE);
@@ -193,6 +208,12 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 			public void preExecute() {
 				if (NetService.get().isNetworkAvailable()) {
 					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
+					mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialog) {
+							NetService.get().abortLast();
+						}
+					});
 				} else {
 					mActivity.showToastMsg(R.string.network_disconnect_msg);
 				}

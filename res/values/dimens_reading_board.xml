@@ -6,5 +6,6 @@
     <dimen name="reading_board_paragraph_spacing">18dp</dimen>
     <dimen name="reading_board_default_text_size">18sp</dimen>
     <dimen name="reading_board_status_bar_height">30dp</dimen>
+    <dimen name="reading_board_page_shadow_width">20dp</dimen>
     <integer name="reading_board_indent_char_count">1</integer>
 </resources>

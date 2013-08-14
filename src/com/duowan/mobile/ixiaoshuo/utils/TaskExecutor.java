@@ -21,11 +21,11 @@ public class TaskExecutor {
 		}
 	}
 
-	public void suspend() {
+	public synchronized void suspend() {
 		isSuspend = true;
 	}
 
-	public void startExecute() {
+	public synchronized void startExecute() {
 		isSuspend = false;
 		while (mTaskRunnableList.size() > 0) {
 			if (isSuspend) break;
