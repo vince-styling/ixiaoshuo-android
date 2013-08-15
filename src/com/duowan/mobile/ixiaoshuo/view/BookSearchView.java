@@ -174,25 +174,27 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 	}
 
 	private void loadNextPage() {
-		mAdapter.setIsLoadingData(true);
-		NetService.execute(new NetService.NetExecutor<List<Book>>() {
-			public void preExecute() {
-				NetService.get().abortAll();
-			}
-
-			public List<Book> execute() {
-				return NetService.get().bookSearch(mKeyword, mUpdateStatus, ++mPageNo, PAGE_SIZE);
-			}
-
-			public void callback(List<Book> bookList) {
-				mAdapter.setIsLoadingData(false);
-				if (bookList == null || bookList.size() == 0) {
-					mActivity.showToastMsg(R.string.without_data);
-					return;
+		if (NetService.get().isNetworkAvailable()) {
+			mAdapter.setIsLoadingData(true);
+			NetService.execute(new NetService.NetExecutor<List<Book>>() {
+				public void preExecute() {
+					NetService.get().abortAll();
 				}
-				mAdapter.addAll(bookList);
-			}
-		});
+
+				public List<Book> execute() {
+					return NetService.get().bookSearch(mKeyword, mUpdateStatus, ++mPageNo, PAGE_SIZE);
+				}
+
+				public void callback(List<Book> bookList) {
+					mAdapter.setIsLoadingData(false);
+					if (bookList == null || bookList.size() == 0) {
+						mActivity.showToastMsg(R.string.without_data);
+						return;
+					}
+					mAdapter.addAll(bookList);
+				}
+			});
+		}
 	}
 
 	@Override

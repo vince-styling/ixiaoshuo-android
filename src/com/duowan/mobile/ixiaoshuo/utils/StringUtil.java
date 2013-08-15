@@ -2,6 +2,8 @@ package com.duowan.mobile.ixiaoshuo.utils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Various String utility functions.
@@ -126,5 +128,15 @@ public class StringUtil {
 //			return datetime;
 //		}
 //	}
+
+
+	public static boolean isValidUrl(String url) {
+		if(isBlank(url)) return false;
+
+		String strPattern = "^(http|https)://(.+)/(.+)([.]+)(.+)$";
+		Pattern p = Pattern.compile(strPattern);
+		Matcher m = p.matcher(url);
+		return m.matches();
+	}
 
 }

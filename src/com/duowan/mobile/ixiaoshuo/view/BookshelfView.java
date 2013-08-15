@@ -3,8 +3,6 @@ package com.duowan.mobile.ixiaoshuo.view;
 import android.os.Handler;
 import android.os.Message;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.ToggleButton;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
@@ -19,20 +17,20 @@ public class BookshelfView extends ViewBuilder {
 	protected void build() {
 		mView = (ViewGroup) mActivity.getLayoutInflater().inflate(R.layout.book_shelf, null);
 
-		mBookshelfView = new BookshelfEmulateStyleView();
+		mBookshelfView = new BookshelfListStyleView();
 		mBookshelfView.init(mActivity, findViewById(R.id.lsvBookShelf));
 
-		ToggleButton btnStyleSwitch = (ToggleButton) findViewById(R.id.btnStyleSwitch);
-		btnStyleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) {
-					mBookshelfView = new BookshelfEmulateStyleView(mBookshelfView);
-				} else {
-					mBookshelfView = new BookshelfListStyleView(mBookshelfView);
-				}
-			}
-		});
+//		ToggleButton btnStyleSwitch = (ToggleButton) findViewById(R.id.btnStyleSwitch);
+//		btnStyleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				if (isChecked) {
+//					mBookshelfView = new BookshelfEmulateStyleView(mBookshelfView);
+//				} else {
+//					mBookshelfView = new BookshelfListStyleView(mBookshelfView);
+//				}
+//			}
+//		});
 
 		mActivity.setBookShelfRefreshHandler(new Handler() {
 			@Override

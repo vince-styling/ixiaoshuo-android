@@ -1,6 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.net;
 
 import android.content.Context;
+import android.util.Log;
 import com.duowan.mobile.ixiaoshuo.pojo.*;
 import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
@@ -48,7 +49,7 @@ public final class NetService extends BaseNetService {
 				return respond.convert(new TypeReference<List<BookUpdateInfo>>(){});
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -65,7 +66,7 @@ public final class NetService extends BaseNetService {
 				return new String(IOUtil.toByteArray(ins));
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		} finally {
 			closeEntity(entity);
 		}
@@ -79,7 +80,7 @@ public final class NetService extends BaseNetService {
 			Respond respond = handleHttpGet("/book/book_detail.do", params);
 			if (Respond.isCorrect(respond)) return respond.convert(Book.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -93,7 +94,7 @@ public final class NetService extends BaseNetService {
 				return respond.convert(new TypeReference<List<Book>>(){});
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -108,7 +109,7 @@ public final class NetService extends BaseNetService {
 				});
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -122,7 +123,7 @@ public final class NetService extends BaseNetService {
 				return respond.convert(new TypeReference<List<Book>>(){});
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -135,7 +136,7 @@ public final class NetService extends BaseNetService {
 				return respond.convert(new TypeReference<List<Site>>(){});
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -149,7 +150,7 @@ public final class NetService extends BaseNetService {
 				return respond.convert(new TypeReference<List<Book>>(){});
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -165,7 +166,7 @@ public final class NetService extends BaseNetService {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -179,7 +180,7 @@ public final class NetService extends BaseNetService {
 				return respond.convert(new TypeReference<List<Chapter>>(){});
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -197,7 +198,7 @@ public final class NetService extends BaseNetService {
 			Respond respond = handleHttpExecute(httpPost);
 			return Respond.isCorrect(respond);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return false;
 	}
@@ -215,13 +216,13 @@ public final class NetService extends BaseNetService {
 				return respond.convert(VersionUpdate.class);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		}
 		return null;
 	}
 
 	public boolean downloadFile(String url, File file) {
-		if (!mNetworkAvailable) return false;
+		if (!mNetworkAvailable || !StringUtil.isValidUrl(url)) return false;
 		HttpEntity entity = null;
 		try {
 			HttpResponse response = executeHttp(new HttpGet(url));
@@ -236,7 +237,7 @@ public final class NetService extends BaseNetService {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage(), e);
 		} finally {
 			closeEntity(entity);
 		}

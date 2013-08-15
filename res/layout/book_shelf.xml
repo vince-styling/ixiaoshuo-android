@@ -7,10 +7,12 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="50dp"
                       android:background="@drawable/title_bg" android:gravity="center_vertical">
 
+            <!--
             <ToggleButton android:id="@+id/btnStyleSwitch"
                           android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:layout_marginLeft="5dp" android:textOn="" android:textOff=""
                           android:background="@drawable/btn_bookshelf_switch_selector" />
+                          -->
 
             <LinearLayout android:id="@+id/lotMyBookShelf" android:layout_width="0dp" android:layout_height="match_parent"
                           android:layout_weight="1" android:gravity="center">
@@ -18,13 +20,15 @@
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                           android:text="我的书架" android:textSize="24sp" android:textColor="#ffffff" />
 
+                <!--
                 <RadioButton android:id="@+id/btnCleanArrow"
                              android:layout_width="wrap_content" android:layout_height="wrap_content"
                              android:layout_marginLeft="5dp" android:focusable="false" android:clickable="false"
                              android:button="@drawable/book_shelf_clean_arrow_selector" />
-
+                -->
             </LinearLayout>
 
+            <!--
             <RelativeLayout android:layout_width="72dp" android:layout_height="match_parent">
 
                 <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent" android:gravity="center_vertical">
@@ -43,7 +47,7 @@
                            android:src="@drawable/update_tip_num_9a" />
 
             </RelativeLayout>
-
+-->
         </LinearLayout>
 
         <ListView android:id="@+id/lsvBookShelf"

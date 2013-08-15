@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.os.AsyncTask;
+import android.util.Log;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 import com.duowan.mobile.ixiaoshuo.utils.SysUtil;
@@ -39,6 +40,7 @@ import java.net.SocketException;
 import java.util.LinkedList;
 
 public abstract class BaseNetService {
+	protected static final String TAG = "NetService";
 
 	private DefaultHttpClient httpClient;
 	private DefaultHttpClient httpClientProxy;
@@ -260,7 +262,9 @@ public abstract class BaseNetService {
 		if (entity != null) {
 			try {
 				entity.consumeContent();
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage(), e);
+			}
 		}
 	}
 
