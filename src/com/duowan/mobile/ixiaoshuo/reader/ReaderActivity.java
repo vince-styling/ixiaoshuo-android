@@ -5,10 +5,17 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
+import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.pojo.ColorScheme;
 import com.duowan.mobile.ixiaoshuo.ui.ReadingBoard;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
@@ -19,6 +26,7 @@ import java.util.Date;
 public class ReaderActivity extends BaseActivity {
 	private static final String TAG = "ReaderActivity";
 	private ReadingBoard mReadingBoard;
+	private ListView mLsvChapterList;
 	private TextView mTxvCurTime, mTxvReadingInfo, mTxvReadingProgress;
 
 	@Override
@@ -28,7 +36,7 @@ public class ReaderActivity extends BaseActivity {
 		setContentView(R.layout.reading_board);
 
 		int bid = Integer.parseInt(getIntent().getAction());
-		Book book = AppDAO.get().getBookForReader(bid);
+		final Book book = AppDAO.get().getBookForReader(bid);
 
 		if (book == null) {
 			showErrorConfirmDialog("书籍不存在！");
@@ -47,6 +55,27 @@ public class ReaderActivity extends BaseActivity {
 			initStatusBar();
 
 			setColorScheme(new ColorScheme(R.drawable.reading_bg_1, 0xff543927));
+
+			mLsvChapterList = (ListView) findViewById(R.id.lsvChapterList);
+			mLsvChapterList.setAdapter(new ArrayAdapter<Chapter>(this, 0, book.getChapterList()) {
+				@Override
+				public View getView(int position, View convertView, ViewGroup parent) {
+					if (convertView == null) {
+						convertView = getLayoutInflater().inflate(R.layout.book_info_chapter_list_item, null);
+					}
+					Chapter chapter = getItem(position);
+					((TextView) convertView).setText(chapter.getTitle());
+					return convertView;
+				}
+			});
+			mLsvChapterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					mLsvChapterList.setVisibility(View.GONE);
+					mReadingBoard.adjustReadingProgress((Chapter) parent.getItemAtPosition(position));
+					mLsvChapterList.setSelection(position);
+				}
+			});
 		} catch (Exception e) {
 			showErrorConfirmDialog("初始化失败！");
 			Log.e(TAG, e.getMessage(), e);
@@ -73,6 +102,27 @@ public class ReaderActivity extends BaseActivity {
 		mTxvCurTime.setTextColor(colorScheme.getTextColor());
 		mTxvReadingInfo.setTextColor(colorScheme.getTextColor());
 		mTxvReadingProgress.setTextColor(colorScheme.getTextColor());
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK:
+				if (mLsvChapterList.getVisibility() == View.VISIBLE) {
+					mLsvChapterList.setVisibility(View.GONE);
+				} else {
+					finish();
+				}
+				break;
+			case KeyEvent.KEYCODE_MENU:
+				if (mLsvChapterList.getVisibility() == View.GONE) {
+					mLsvChapterList.setVisibility(View.VISIBLE);
+				} else {
+					mLsvChapterList.setVisibility(View.GONE);
+				}
+				break;
+		}
+		return true;
 	}
 
 	ProgressDialog mExitDialog;

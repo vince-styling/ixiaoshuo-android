@@ -10,6 +10,7 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import com.duowan.mobile.ixiaoshuo.R;
@@ -420,6 +421,11 @@ public class ReadingBoard extends View {
 			}
 			return true;
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		return getActivity().onKeyDown(keyCode, event);
 	}
 
 	public void adjustReadingProgress(Chapter chapter) {
