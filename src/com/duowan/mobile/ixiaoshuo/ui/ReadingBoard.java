@@ -53,21 +53,22 @@ public class ReadingBoard extends View {
 	private void createDocument(final Book book) throws Exception {
 		mDoc = new OnlineDocument(book, mPaint, new OnlineDocument.ProcessCallback() {
 			public void fetchChapter(final Chapter chapter) {
+				if (!NetService.get().isNetworkAvailable()) {
+					getActivity().showToastMsg(R.string.network_disconnect_msg);
+					return;
+				}
+
 				NetService.execute(new NetService.NetExecutor<String>() {
 					ProgressDialog mPrgreDialog;
 
 					public void preExecute() {
-						if (NetService.get().isNetworkAvailable()) {
-							mPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, true);
-							mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-								@Override
-								public void onCancel(DialogInterface dialog) {
-									NetService.get().abortLast();
-								}
-							});
-						} else {
-							getActivity().showToastMsg(R.string.network_disconnect_msg);
-						}
+						mPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, true);
+						mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+							@Override
+							public void onCancel(DialogInterface dialog) {
+								NetService.get().abortLast();
+							}
+						});
 					}
 
 					public String execute() {

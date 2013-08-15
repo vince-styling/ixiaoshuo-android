@@ -55,10 +55,10 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 
 		mBtnGoSearch = (ImageButton) findViewById(R.id.btnGoSearch);
 
-		NetService.execute(new NetService.NetExecutor<String[]>() {
-			ProgressDialog mPrgreDialog;
-			public void preExecute() {
-				if (NetService.get().isNetworkAvailable()) {
+		if (NetService.get().isNetworkAvailable()) {
+			NetService.execute(new NetService.NetExecutor<String[]>() {
+				ProgressDialog mPrgreDialog;
+				public void preExecute() {
 					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
 					mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 						@Override
@@ -66,35 +66,33 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 							NetService.get().abortLast();
 						}
 					});
-				} else {
-					mActivity.showToastMsg(R.string.network_disconnect_msg);
-				}
-			}
-
-			public String[] execute() {
-				return NetService.get().getHotKeyWords();
-			}
-
-			public void callback(String[] keywords) {
-				if (mPrgreDialog != null) {
-					if (!mPrgreDialog.isShowing()) return;
-					mPrgreDialog.cancel();
 				}
 
-				if (keywords == null || keywords.length == 0) {
-					mActivity.showToastMsg(R.string.without_data);
-					return;
+				public String[] execute() {
+					return NetService.get().getHotKeyWords();
 				}
 
-				LinearLayout lotKeywordPanel = (LinearLayout) findViewById(R.id.lotKeywordPanel);
-				for (String keyword : keywords) {
-					Button btnKeyword = (Button) mActivity.getLayoutInflater().inflate(R.layout.book_search_keyword_item, null);
-					btnKeyword.setText(keyword);
-					lotKeywordPanel.addView(btnKeyword);
-					btnKeyword.setOnClickListener(BookSearchView.this);
+				public void callback(String[] keywords) {
+					if (mPrgreDialog != null) {
+						if (!mPrgreDialog.isShowing()) return;
+						mPrgreDialog.cancel();
+					}
+
+					if (keywords == null || keywords.length == 0) {
+						mActivity.showToastMsg(R.string.without_data);
+						return;
+					}
+
+					LinearLayout lotKeywordPanel = (LinearLayout) findViewById(R.id.lotKeywordPanel);
+					for (String keyword : keywords) {
+						Button btnKeyword = (Button) mActivity.getLayoutInflater().inflate(R.layout.book_search_keyword_item, null);
+						btnKeyword.setText(keyword);
+						lotKeywordPanel.addView(btnKeyword);
+						btnKeyword.setOnClickListener(BookSearchView.this);
+					}
 				}
-			}
-		});
+			});
+		} else mActivity.showToastMsg(R.string.network_disconnect_msg);
 
 		mBtnGoSearch.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -103,10 +101,10 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 				mKeyword = mEdtSearchKeyword.getText().toString();
 				mUpdateStatus = mBtnFinishType.isChecked() ? Book.STATUS_CONTINUE : Book.STATUS_FINISHED;
 
-				NetService.execute(new NetService.NetExecutor<List<Book>>() {
-					ProgressDialog mPrgreDialog;
-					public void preExecute() {
-						if (NetService.get().isNetworkAvailable()) {
+				if (NetService.get().isNetworkAvailable()) {
+					NetService.execute(new NetService.NetExecutor<List<Book>>() {
+						ProgressDialog mPrgreDialog;
+						public void preExecute() {
 							mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
 							mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 								@Override
@@ -114,31 +112,29 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 									NetService.get().abortLast();
 								}
 							});
-						} else {
-							mActivity.showToastMsg(R.string.network_disconnect_msg);
-						}
-					}
-
-					public List<Book> execute() {
-						return NetService.get().bookSearch(mKeyword, mUpdateStatus, mPageNo, PAGE_SIZE);
-					}
-
-					public void callback(List<Book> bookList) {
-						if (mPrgreDialog != null) {
-							if (!mPrgreDialog.isShowing()) return;
-							mPrgreDialog.cancel();
 						}
 
-						if (bookList == null || bookList.size() == 0) {
-							mActivity.showToastMsg(R.string.without_data);
-							return;
+						public List<Book> execute() {
+							return NetService.get().bookSearch(mKeyword, mUpdateStatus, mPageNo, PAGE_SIZE);
 						}
 
-						mAdapter.setData(bookList);
-						mLsvBookList.setVisibility(View.VISIBLE);
-						mScvKeywords.setVisibility(View.GONE);
-					}
-				});
+						public void callback(List<Book> bookList) {
+							if (mPrgreDialog != null) {
+								if (!mPrgreDialog.isShowing()) return;
+								mPrgreDialog.cancel();
+							}
+
+							if (bookList == null || bookList.size() == 0) {
+								mActivity.showToastMsg(R.string.without_data);
+								return;
+							}
+
+							mAdapter.setData(bookList);
+							mLsvBookList.setVisibility(View.VISIBLE);
+							mScvKeywords.setVisibility(View.GONE);
+						}
+					});
+				} else mActivity.showToastMsg(R.string.network_disconnect_msg);
 			}
 		});
 
@@ -202,11 +198,11 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		final Book book = (Book) parent.getItemAtPosition(position);
-		NetService.execute(new NetService.NetExecutor<Book>() {
-			ProgressDialog mPrgreDialog;
+		if (NetService.get().isNetworkAvailable()) {
+			NetService.execute(new NetService.NetExecutor<Book>() {
+				ProgressDialog mPrgreDialog;
 
-			public void preExecute() {
-				if (NetService.get().isNetworkAvailable()) {
+				public void preExecute() {
 					mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
 					mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 						@Override
@@ -214,29 +210,29 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 							NetService.get().abortLast();
 						}
 					});
-				} else {
-					mActivity.showToastMsg(R.string.network_disconnect_msg);
-				}
-			}
-
-			public Book execute() {
-				return NetService.get().getBookDetail(book.getBookId());
-			}
-
-			public void callback(Book book) {
-				if (mPrgreDialog != null) {
-					if (!mPrgreDialog.isShowing()) return;
-					mPrgreDialog.cancel();
 				}
 
-				if (book == null) {
-					mActivity.showToastMsg(R.string.without_data);
-					return;
+				public Book execute() {
+					return NetService.get().getBookDetail(book.getBookId());
 				}
 
-				mActivity.showView(new BookInfoView(mActivity, book));
-			}
-		});
+				public void callback(Book book) {
+					if (mPrgreDialog != null) {
+						if (!mPrgreDialog.isShowing()) return;
+						mPrgreDialog.cancel();
+					}
+
+					if (book == null) {
+						mActivity.showToastMsg(R.string.without_data);
+						return;
+					}
+
+					mActivity.showView(new BookInfoView(mActivity, book));
+				}
+			});
+		} else {
+			mActivity.showToastMsg(R.string.network_disconnect_msg);
+		}
 	}
 
 	@Override
