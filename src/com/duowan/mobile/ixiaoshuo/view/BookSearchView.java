@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.duowan.mobile.ixiaoshuo.R;
+import com.duowan.mobile.ixiaoshuo.event.BookCoverLoader;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
-import com.duowan.mobile.ixiaoshuo.utils.BookCoverDownloder;
 
 import java.util.List;
 
@@ -156,7 +156,7 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 				holder.txvBookName.setText(book.getName());
 				holder.txvBookAuthor.setText("作者：" + book.getAuthor());
 				holder.txvBookSummary.setText("书籍简介：" + book.getSummary());
-				BookCoverDownloder.loadCover(mActivity, book, holder.imvBookCover);
+				BookCoverLoader.loadCover(mActivity, book, holder.imvBookCover);
 
 				return convertView;
 			}

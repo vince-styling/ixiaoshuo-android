@@ -1,9 +1,8 @@
 package com.duowan.mobile.ixiaoshuo.view;
 
-import android.os.Handler;
-import android.os.Message;
 import android.view.ViewGroup;
 import com.duowan.mobile.ixiaoshuo.R;
+import com.duowan.mobile.ixiaoshuo.event.Notifier;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
 public class BookshelfView extends ViewBuilder {
@@ -32,9 +31,8 @@ public class BookshelfView extends ViewBuilder {
 //			}
 //		});
 
-		mActivity.setBookShelfRefreshHandler(new Handler() {
-			@Override
-			public void handleMessage(Message msg) {
+		mActivity.getReaderApplication().getMainHandler().putNotifier(Notifier.NOTIFIER_BOOKSHELF_REFRESH, new Notifier() {
+			public void onNotified() {
 				mBookshelfView.notifyDataSetChanged();
 			}
 		});
@@ -59,8 +57,8 @@ public class BookshelfView extends ViewBuilder {
 //		btnUpdateBookShelf.setOnClickListener(new View.OnClickListener() {
 //			@Override
 //			public void onClick(View v) {
-//				NetService.execute(new NetService.SimpleNetExecutor() {
-//					public void execute() {
+//				NetService.submitTask(new NetService.SimpleNetExecutor() {
+//					public void submitTask() {
 //						NetService.get().getVersionUpdateInfo();
 //					}
 //				});

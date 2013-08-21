@@ -6,11 +6,11 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
+import com.duowan.mobile.ixiaoshuo.event.BookCoverLoader;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
-import com.duowan.mobile.ixiaoshuo.utils.BookCoverDownloder;
 
 public class BookInfoView extends ViewBuilder implements View.OnClickListener, AdapterView.OnItemClickListener {
 	private Book mBook;
@@ -26,7 +26,7 @@ public class BookInfoView extends ViewBuilder implements View.OnClickListener, A
 		mView = (ViewGroup) mActivity.getLayoutInflater().inflate(R.layout.book_info, null);
 
 		ImageView imvBookCover = (ImageView) findViewById(R.id.imvBookCover);
-		BookCoverDownloder.loadCover(mActivity, mBook, imvBookCover);
+		BookCoverLoader.loadCover(mActivity, mBook, imvBookCover);
 
 		TextView txvBookName = (TextView) findViewById(R.id.txvBookName);
 		txvBookName.setText(mBook.getName());

@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
+import com.duowan.mobile.ixiaoshuo.event.Notifier;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.pojo.ColorScheme;
@@ -136,11 +137,11 @@ public class ReaderActivity extends BaseActivity {
 	protected void onPause() {
 		super.onPause();
 
-		if(mReadingBoard == null) return;
+		if (mReadingBoard == null) return;
 		AppDAO.get().persistReadingStatistics(mReadingBoard.getBook());
 
-		if(isFinishing()) {
-			sendBookShelfRefreshMessage();
+		if (isFinishing()) {
+			getReaderApplication().getMainHandler().sendMessage(Notifier.NOTIFIER_BOOKSHELF_REFRESH);
 		}
 	}
 

@@ -1,40 +1,41 @@
-package com.duowan.mobile.ixiaoshuo.utils;
+package com.duowan.mobile.ixiaoshuo.event;
 
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
 import android.widget.ImageView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.BaseActivity;
+import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
 
 import java.io.File;
 
-public class BookCoverDownloder extends TaskRunnable {
+public class BookCoverLoader extends TaskRunnable {
+	private MainHandler mMainHandler;
 	private ImageView mImageView;
 	private Book mBook;
 
-	public BookCoverDownloder(Book book, ImageView imageView) {
-		this.mBook = book;
-		this.mImageView = imageView;
+	public BookCoverLoader(Book book, ImageView imageView, MainHandler mainHandler) {
+		mBook = book;
+		mImageView = imageView;
 		mImageView.setTag(mBook.getBookId());
+		mMainHandler = mainHandler;
 	}
 
 	@Override
-	public void run() {
+	void execute() {
 		boolean result = NetService.get().downloadFile(mBook.getCoverUrl(), new File(mBook.getLocalCoverPath()));
-		handler.sendEmptyMessage(result ? 1 : 0);
-	}
-
-	Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			if (msg.what != 1 || !validate()) return;
-			Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(mBook.getLocalCoverPath(), mImageView);
-			if (coverBitmap != null) mImageView.setImageBitmap(coverBitmap);
+		if (result) {
+			mMainHandler.sendMessage(new Notifier() {
+				public void onNotified() {
+					if (validate()) {
+						Bitmap coverBitmap = BitmapUtil.loadBitmapInFile(mBook.getLocalCoverPath(), mImageView);
+						if (coverBitmap != null) mImageView.setImageBitmap(coverBitmap);
+					}
+				}
+			});
 		}
-	};
+	}
 
 	@Override
 	boolean validate() {
@@ -53,8 +54,9 @@ public class BookCoverDownloder extends TaskRunnable {
 		if (coverBitmap != null) {
 			imvBookCover.setImageBitmap(coverBitmap);
 		} else {
-			activity.submitTask(new BookCoverDownloder(book, imvBookCover));
-
+			activity.submitTask(
+					new BookCoverLoader(book, imvBookCover, activity.getReaderApplication().getMainHandler())
+			);
 			coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.cover_less, imvBookCover);
 			imvBookCover.setImageBitmap(coverBitmap);
 		}

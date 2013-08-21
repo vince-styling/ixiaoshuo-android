@@ -1,4 +1,4 @@
-package com.duowan.mobile.ixiaoshuo.utils;
+package com.duowan.mobile.ixiaoshuo.event;
 
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
@@ -14,7 +14,7 @@ public class TaskExecutor {
 	}
 
 	public void submitTask(TaskRunnable runnable) {
-		if(isSuspend) {
+		if (isSuspend) {
 			mTaskRunnableList.add(runnable);
 		} else {
 			service.execute(runnable);

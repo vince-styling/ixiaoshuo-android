@@ -1,11 +1,11 @@
 package com.duowan.mobile.ixiaoshuo.reader;
 
 import android.app.Application;
-import android.os.Handler;
 import android.widget.Toast;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
+import com.duowan.mobile.ixiaoshuo.event.MainHandler;
+import com.duowan.mobile.ixiaoshuo.event.TaskExecutor;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
-import com.duowan.mobile.ixiaoshuo.utils.TaskExecutor;
 
 public class ReaderApplication extends Application {
 
@@ -14,7 +14,8 @@ public class ReaderApplication extends Application {
 		super.onCreate();
 		AppDAO.init(this);
 		NetService.init(this);
-		mTaskExecutor = new TaskExecutor(10);
+		mMainHandler = new MainHandler();
+		mTaskExecutor = new TaskExecutor(5);
 	}
 
 	TaskExecutor mTaskExecutor;
@@ -34,13 +35,9 @@ public class ReaderApplication extends Application {
 		mToast.show();
 	}
 
-	private Handler mBookShelfHandler;
-	public void setBookShelfRefreshHandler(Handler handler) {
-		mBookShelfHandler = handler;
-	}
-	public void sendBookShelfRefreshMessage() {
-		if(mBookShelfHandler == null) return;
-		mBookShelfHandler.sendEmptyMessage(0);
+	private MainHandler mMainHandler;
+	public MainHandler getMainHandler() {
+		return mMainHandler;
 	}
 
 }
