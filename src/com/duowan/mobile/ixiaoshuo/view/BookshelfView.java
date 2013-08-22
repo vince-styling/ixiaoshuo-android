@@ -2,7 +2,6 @@ package com.duowan.mobile.ixiaoshuo.view;
 
 import android.view.ViewGroup;
 import com.duowan.mobile.ixiaoshuo.R;
-import com.duowan.mobile.ixiaoshuo.event.Notifier;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
 public class BookshelfView extends ViewBuilder {
@@ -31,11 +30,11 @@ public class BookshelfView extends ViewBuilder {
 //			}
 //		});
 
-		mActivity.getReaderApplication().getMainHandler().putNotifier(Notifier.NOTIFIER_BOOKSHELF_REFRESH, new Notifier() {
-			public void onNotified() {
-				mBookshelfView.notifyDataSetChanged();
-			}
-		});
+//		mActivity.getReaderApplication().getMainHandler().putNotifier(Notifier.NOTIFIER_BOOKSHELF_REFRESH, new Notifier() {
+//			public void onNotified() {
+//				mBookshelfView.notifyDataSetChanged();
+//			}
+//		});
 
 //		final RadioButton btnCleanArrow = (RadioButton) findViewById(R.id.btnCleanArrow);
 //		final LinearLayout lotMyBookShelf = (LinearLayout) findViewById(R.id.lotMyBookShelf);

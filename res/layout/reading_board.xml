@@ -25,7 +25,6 @@
 
     <ListView android:id="@+id/lsvChapterList" android:layout_width="match_parent" android:layout_height="match_parent"
               android:layout_centerInParent="true" android:layout_margin="10dp" android:fastScrollEnabled="true"
-              android:background="@drawable/top_arrow_container"
               android:divider="@drawable/line_dot" android:dividerHeight="1dp" android:visibility="gone" />
 
 </RelativeLayout>

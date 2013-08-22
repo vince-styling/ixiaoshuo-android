@@ -7,21 +7,8 @@
                   android:layout_width="match_parent" android:layout_height="0dp"
                   android:orientation="horizontal" android:layout_weight="1" />
 
-    <RadioGroup android:id="@+id/btnMenuSwitchGrp" android:layout_width="match_parent" android:layout_height="56dp"
-                android:orientation="horizontal" android:background="@drawable/menu_bg">
-
-        <RadioButton android:id="@+id/btnMenuBookshelf"
-                     android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                     android:button="@null" android:background="@drawable/menu_bookshelf_selector" android:checked="true" />
-
-        <RadioButton android:id="@+id/btnMenuOnline"
-                     android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                     android:button="@null" android:background="@drawable/menu_online_selector" />
-
-        <RadioButton android:id="@+id/btnMenuSettings"
-                     android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                     android:button="@null" android:background="@drawable/menu_settings_selector" />
-
-    </RadioGroup>
+    <com.duowan.mobile.ixiaoshuo.ui.MainMenuBar
+            android:layout_width="match_parent" android:layout_height="60dp"
+            android:background="@drawable/menu_bg_layer" />
 
 </LinearLayout>

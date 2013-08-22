@@ -1,56 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:paddingLeft="10dp" android:paddingRight="10dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:orientation="vertical" android:paddingBottom="5dp">
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:background="@drawable/book_shelf_list_item_selector">
+    <RelativeLayout android:layout_width="100dp" android:layout_height="120dp"
+                    android:background="@drawable/book_cover_frame"
+                    android:paddingTop="0dp" android:paddingLeft="2dp" android:paddingRight="2dp" android:paddingBottom="4dp">
 
-        <ImageView android:id="@+id/imvBookCover" android:layout_width="100dp" android:layout_height="120dp"
-                   android:background="@drawable/book_cover_frame"
-                   android:paddingTop="0dp" android:paddingLeft="2dp"
-                   android:paddingRight="2dp" android:paddingBottom="4dp"
+        <ImageView android:id="@+id/imvBookCover" android:layout_width="match_parent" android:layout_height="match_parent"
                    android:src="@drawable/cover_less" android:scaleType="centerCrop" />
 
-        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:orientation="vertical"
-                      android:layout_weight="1" android:layout_marginLeft="5dp">
+        <!--
+        <TextView android:layout_width="35dp" android:layout_height="23dp"
+                  android:background="@drawable/red_flag" android:layout_alignParentTop="true" android:singleLine="true"
+                  android:text="NEW" android:textSize="13sp" android:textColor="#ffffff" android:gravity="center" />
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="23dp" android:layout_alignParentBottom="true"
+                      android:background="@drawable/gray_transparent_bg">
 
-                <TextView android:id="@+id/txvBookName"
-                          android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:singleLine="true" android:ellipsize="middle"
-                          android:text="鬼吹灯二之精绝古城" android:textSize="20sp" android:textColor="#333333" />
+            <TextView android:layout_width="35dp" android:layout_height="match_parent"
+                      android:background="@drawable/green_flag" android:singleLine="true"
+                      android:text="连载" android:textSize="13sp" android:textColor="#ffffff" android:gravity="center" />
 
-                <TextView android:id="@+id/txvBookAuthor" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:layout_marginLeft="5dp" android:singleLine="true" android:ellipsize="end"
-                          android:text="天下霸唱 著" android:textSize="14sp" android:textColor="#666666" />
-
-            </LinearLayout>
-
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                          android:orientation="vertical" android:layout_marginTop="5dp">
-
-                <TextView android:id="@+id/txvReadProgress" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="已读80%" android:textSize="14sp" android:textColor="#666666" />
-
-                <TextView android:id="@+id/txvRemainChapters" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:layout_marginTop="10dp" android:layout_marginBottom="10dp"
-                          android:text="128章节未读" android:textSize="14sp" android:textColor="#666666" />
-
-                <TextView android:id="@+id/txvNewlyChapter" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:singleLine="true" android:ellipsize="middle"
-                          android:text="更新至：第二百二十七章 浮棺里的活死人" android:textSize="14sp" android:textColor="#666666" />
-
-            </LinearLayout>
+            <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+                      android:gravity="center_vertical" android:paddingLeft="2dp" android:singleLine="true"
+                      android:text="999章未读" android:textSize="12sp" android:textColor="#ffffff" />
 
         </LinearLayout>
+        -->
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <Button android:id="@+id/txvBookStatus" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:background="@drawable/blue_cricle_flag" android:focusable="false" android:clickable="false"
-            android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginTop="30dp"
-            android:text="连载" android:textSize="14sp" android:textColor="#ffffff" />
+    <TextView android:id="@+id/txvBookName"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_marginTop="1dp" android:paddingLeft="2dp" android:paddingRight="2dp"
+              android:text="鬼吹灯第三部之精绝古城" android:textSize="14sp" android:textColor="#88511d"
+              android:gravity="center" android:singleLine="true" android:ellipsize="middle" />
 
-</RelativeLayout>
+</LinearLayout>

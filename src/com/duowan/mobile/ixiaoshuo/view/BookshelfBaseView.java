@@ -27,13 +27,13 @@ public abstract class BookshelfBaseView implements OnItemLongClickListener, OnIt
 		this.mLsvBookShelf = bookshelfView.mLsvBookShelf;
 		this.mActivity = bookshelfView.mActivity;
 		this.mBookList = bookshelfView.mBookList;
-		initBookShelf();
+//		initBookShelf();
 	}
 
 	public void init(MainActivity activity, View lsvBookShelf) {
 		this.mLsvBookShelf = (ListView) lsvBookShelf;
 		this.mActivity = activity;
-		initBookShelf();
+//		initBookShelf();
 	}
 
 	private void initBookShelf() {

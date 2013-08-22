@@ -31,7 +31,7 @@
 
         <Button android:id="@+id/btnGoRead" android:layout_width="match_parent" android:layout_height="50dp"
                 android:text="立即阅读" android:textSize="24sp" android:textColor="#ffffff"
-                android:layout_marginTop="10dp" android:background="@drawable/btn_1_orange_selector" />
+                android:layout_marginTop="10dp" />
 
         <TextView android:layout_width="match_parent" android:layout_height="1dp"
                   android:layout_marginTop="10dp" android:background="@drawable/line_dot" />
@@ -49,6 +49,6 @@
 
     <ImageView android:layout_width="80dp" android:layout_height="80dp"
                android:layout_alignParentTop="true" android:layout_alignParentRight="true"
-               android:src="@drawable/book_status_label_continue" />
+               android:src="@drawable/book_cover_frame" />
 
 </RelativeLayout>

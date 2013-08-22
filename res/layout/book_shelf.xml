@@ -1,76 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/lotBookshelf" xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout android:id="@+id/lotBookshelf" xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="60dp"
+                  android:background="@drawable/title_bg_three_item">
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="50dp"
-                      android:background="@drawable/title_bg" android:gravity="center_vertical">
 
-            <!--
-            <ToggleButton android:id="@+id/btnStyleSwitch"
-                          android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:layout_marginLeft="5dp" android:textOn="" android:textOff=""
-                          android:background="@drawable/btn_bookshelf_switch_selector" />
-                          -->
+        <Button android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:background="@null"
+                android:text="有声" android:textSize="20sp" android:textColor="#b1d596" />
 
-            <LinearLayout android:id="@+id/lotMyBookShelf" android:layout_width="0dp" android:layout_height="match_parent"
-                          android:layout_weight="1" android:gravity="center">
+        <Button android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:background="@null"
+                android:text="本地" android:textSize="20sp" android:textColor="#b1d596" />
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                          android:text="我的书架" android:textSize="24sp" android:textColor="#ffffff" />
-
-                <!--
-                <RadioButton android:id="@+id/btnCleanArrow"
-                             android:layout_width="wrap_content" android:layout_height="wrap_content"
-                             android:layout_marginLeft="5dp" android:focusable="false" android:clickable="false"
-                             android:button="@drawable/book_shelf_clean_arrow_selector" />
-                -->
-            </LinearLayout>
-
-            <!--
-            <RelativeLayout android:layout_width="72dp" android:layout_height="match_parent">
-
-                <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent" android:gravity="center_vertical">
-                    <Button android:id="@+id/btnUpdateBookShelf"
-                            android:layout_width="wrap_content" android:layout_height="33dp"
-                            android:text="更新" android:textSize="16sp" android:textColor="#ffffff"
-                            android:paddingLeft="12dp" android:paddingRight="12dp" android:gravity="center"
-                            android:background="@drawable/btn_orange_selector" />
-                </LinearLayout>
-
-                <ImageView android:id="@+id/txtInprogressTaskCount"
-                           android:layout_width="20dp" android:layout_height="20dp"
-                           android:layout_marginTop="2dp" android:layout_marginRight="2dp"
-                           android:layout_alignParentRight="true" android:layout_alignParentTop="true"
-                           android:focusable="false" android:clickable="false"
-                           android:src="@drawable/update_tip_num_9a" />
-
-            </RelativeLayout>
--->
-        </LinearLayout>
-
-        <ListView android:id="@+id/lsvBookShelf"
-                  android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                  android:layout_marginTop="5dp" android:layout_marginBottom="5dp" android:fastScrollEnabled="true"
-                  android:divider="@android:color/transparent" android:dividerHeight="10dp" />
+        <Button android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:background="@drawable/title_item_selected"
+                android:text="文字" android:textSize="20sp" android:textColor="#fefffc" />
 
     </LinearLayout>
 
-    <LinearLayout android:id="@+id/lotBookShelfClean" android:layout_width="120dp" android:layout_height="wrap_content"
-                  android:orientation="vertical" android:layout_centerHorizontal="true" android:layout_marginTop="45dp"
-                  android:background="@drawable/top_arrow_container" android:visibility="gone">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp"
+                  android:layout_weight="1" android:gravity="center" android:background="@drawable/book_shelf_bg_drawable">
 
-        <Button android:layout_width="match_parent" android:layout_height="50dp"
-                android:background="@drawable/book_shelf_clean_first_menu_selector"
-                android:text="整理书架" android:textSize="20sp" android:textColor="#454545" />
+        <ListView android:id="@+id/lsvBookShelf" android:visibility="gone"
+                  android:layout_width="match_parent" android:layout_height="match_parent" android:fastScrollEnabled="true"
+                  android:divider="@drawable/book_shelf_list_divider" android:dividerHeight="6dp" />
 
-        <ImageView android:layout_width="match_parent" android:layout_height="1dp" android:background="@drawable/line_dot" />
-
-        <Button android:layout_width="match_parent" android:layout_height="50dp"
-                android:background="@drawable/book_shelf_clean_last_menu_selector"
-                android:text="本地书籍" android:textSize="20sp" android:textColor="#454545" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="暂无书籍" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
