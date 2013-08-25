@@ -3,32 +3,36 @@
         android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="60dp"
-                  android:background="@drawable/title_bg_three_item">
+                  android:background="@drawable/title_bg_layer" android:gravity="center"
+                  android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="6dp" android:paddingBottom="10dp">
 
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                      android:background="@drawable/title_bg_content_area">
 
-        <Button android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:background="@null"
-                android:text="有声" android:textSize="20sp" android:textColor="#b1d596" />
+            <Button android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:background="@drawable/title_item_selected"
+                    android:text="文字" android:textSize="20sp" android:textColor="#fefffc" />
 
-        <Button android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:background="@null"
-                android:text="本地" android:textSize="20sp" android:textColor="#b1d596" />
+            <Button android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:background="@null"
+                    android:text="有声" android:textSize="20sp" android:textColor="#b1d596" />
 
-        <Button android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:background="@drawable/title_item_selected"
-                android:text="文字" android:textSize="20sp" android:textColor="#fefffc" />
+            <Button android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:background="@null"
+                    android:text="本地" android:textSize="20sp" android:textColor="#b1d596" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp"
-                  android:layout_weight="1" android:gravity="center" android:background="@drawable/book_shelf_bg_drawable">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+                  android:background="@drawable/book_shelf_bg_layer" android:gravity="center">
 
         <ListView android:id="@+id/lsvBookShelf" android:visibility="gone"
                   android:layout_width="match_parent" android:layout_height="match_parent" android:fastScrollEnabled="true"
                   android:divider="@drawable/book_shelf_list_divider" android:dividerHeight="6dp" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="暂无书籍" />
+        <include layout="@layout/book_shelf_without_book" />
 
     </LinearLayout>
 

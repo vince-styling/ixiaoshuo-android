@@ -10,25 +10,6 @@
         <ImageView android:id="@+id/imvBookCover" android:layout_width="match_parent" android:layout_height="match_parent"
                    android:src="@drawable/cover_less" android:scaleType="centerCrop" />
 
-        <!--
-        <TextView android:layout_width="35dp" android:layout_height="23dp"
-                  android:background="@drawable/red_flag" android:layout_alignParentTop="true" android:singleLine="true"
-                  android:text="NEW" android:textSize="13sp" android:textColor="#ffffff" android:gravity="center" />
-
-        <LinearLayout android:layout_width="match_parent" android:layout_height="23dp" android:layout_alignParentBottom="true"
-                      android:background="@drawable/gray_transparent_bg">
-
-            <TextView android:layout_width="35dp" android:layout_height="match_parent"
-                      android:background="@drawable/green_flag" android:singleLine="true"
-                      android:text="连载" android:textSize="13sp" android:textColor="#ffffff" android:gravity="center" />
-
-            <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-                      android:gravity="center_vertical" android:paddingLeft="2dp" android:singleLine="true"
-                      android:text="999章未读" android:textSize="12sp" android:textColor="#ffffff" />
-
-        </LinearLayout>
-        -->
-
     </RelativeLayout>
 
     <TextView android:id="@+id/txvBookName"

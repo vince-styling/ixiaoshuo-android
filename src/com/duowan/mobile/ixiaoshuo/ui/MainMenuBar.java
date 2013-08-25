@@ -28,7 +28,7 @@ public class MainMenuBar extends View {
 	private SparseArray<MenuItem> mMenuItems;
 	public static final int MENU_BOOKSHELF	= 10;
 	public static final int MENU_FINDER		= 20;
-	public static final int MENU_DETECT		= 30;
+	public static final int MENU_DETECTOR 	= 30;
 	public static final int MENU_SEARCH		= 40;
 
 	private int mPadding;
@@ -50,7 +50,7 @@ public class MainMenuBar extends View {
 			}
 		}));
 
-		mMenuItems.put(MENU_DETECT, new MenuItem(R.drawable.menu_detect_on, R.drawable.menu_detect_off, new ClickEvent() {
+		mMenuItems.put(MENU_DETECTOR, new MenuItem(R.drawable.menu_detector_on, R.drawable.menu_detector_off, new ClickEvent() {
 			public void onClick() {
 				getActivity().showToastMsg("点击了雷达菜单");
 			}

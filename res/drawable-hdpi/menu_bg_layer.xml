@@ -2,6 +2,6 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/menu_bg" />
     <item>
-        <bitmap android:src="@drawable/menu_bg_stripes" android:tileMode="repeat" />
+        <bitmap android:src="@drawable/menu_bg_stripe" android:tileMode="repeat" />
     </item>
 </layer-list>

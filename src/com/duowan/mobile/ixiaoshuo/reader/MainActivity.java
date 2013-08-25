@@ -17,21 +17,6 @@ public class MainActivity extends BaseActivity {
 
 		mLotMainContent = (ScrollLayout) findViewById(R.id.lotMainContent);
 		mLotMainContent.showView(new BookshelfView(MainActivity.this));
-
-//		final Button mBtnMenuBookshelf, mBtnMenuFinder, mBtnMenuDetect, mBtnMenuSearch;
-//		mBtnMenuBookshelf = (Button) findViewById(R.id.btnMenuBookshelf);
-//		mBtnMenuFinder = (Button) findViewById(R.id.btnMenuFinder);
-//		mBtnMenuDetect = (Button) findViewById(R.id.btnMenuDetect);
-//		mBtnMenuSearch = (Button) findViewById(R.id.btnMenuSearch);
-
-//		mBtnMenuBookshelf.setOnClickListener(new View.OnClickListener(){
-//			public void onClick(View btnView) {
-//				mBtnMenuBookshelf.setBackgroundResource(R.drawable.menu_bookshelf_layer_list);
-//			}
-//		});
-//		mBtnMenuFinder.setOnClickListener(this);
-//		mBtnMenuDetect.setOnClickListener(this);
-//		mBtnMenuSearch.setOnClickListener(this);
 	}
 
 	public void showView(ViewBuilder builder) {
