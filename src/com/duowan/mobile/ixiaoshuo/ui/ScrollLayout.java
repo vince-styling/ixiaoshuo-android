@@ -25,12 +25,21 @@ public class ScrollLayout extends LinearLayout {
 		if (view != null) {
 			if (builder.isReusable()) {
 				view.setVisibility(View.VISIBLE);
-			} else {
-				removeView(view);
-				addView(builder.getView());
-			}
-		} else {
-			addView(builder.getView());
+			} else addView(builder);
+		} else addView(builder);
+	}
+
+	private void addView(ViewBuilder builder) {
+		addView(builder.getView());
+		builder.init();
+		builder.getView().setTag(builder);
+	}
+
+	public void resumeView(ViewBuilder builder) {
+		View view = findViewById(builder.getViewId());
+		if (view != null) {
+			builder = (ViewBuilder) view.getTag();
+			if (builder != null) builder.resume();
 		}
 	}
 

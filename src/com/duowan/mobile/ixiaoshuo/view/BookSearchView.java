@@ -11,7 +11,7 @@ import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
 import java.util.List;
 
-public class BookSearchView extends ViewBuilder implements View.OnFocusChangeListener, View.OnClickListener,
+public class BookSearchView extends ViewBuilder implements View.OnClickListener,
 		AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
 	public BookSearchView(MainActivity activity) {
@@ -35,7 +35,10 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 	@Override
 	protected void build() {
 //		mView = (ViewGroup) mActivity.getLayoutInflater().inflate(R.layout.book_search, null);
-//
+	}
+
+	@Override
+	public void init() {
 //		mEdtSearchKeyword = (EditText) findViewById(R.id.edtSearchKeyword);
 //		mEdtSearchKeyword.setOnFocusChangeListener(this);
 //
@@ -238,12 +241,6 @@ public class BookSearchView extends ViewBuilder implements View.OnFocusChangeLis
 	public void onClick(View btnView) {
 		mEdtSearchKeyword.setText(((Button) btnView).getText());
 		mEdtSearchKeyword.requestFocus();
-	}
-
-	@Override
-	public void onFocusChange(View view, boolean hasFocus) {
-//		View parentView = (View) view.getParent();
-//		parentView.setBackgroundResource(hasFocus ? R.drawable.book_search_bg_pressed : R.drawable.book_search_bg);
 	}
 
 	@Override

@@ -23,8 +23,11 @@ public class BookInfoView extends ViewBuilder implements View.OnClickListener, A
 
 	@Override
 	protected void build() {
-		mView = (ViewGroup) mActivity.getLayoutInflater().inflate(R.layout.book_info, null);
+		mView = mActivity.getLayoutInflater().inflate(R.layout.book_info, null);
+	}
 
+	@Override
+	public void init() {
 		ImageView imvBookCover = (ImageView) findViewById(R.id.imvBookCover);
 		BookCoverLoader.loadCover(mActivity, mBook, imvBookCover);
 

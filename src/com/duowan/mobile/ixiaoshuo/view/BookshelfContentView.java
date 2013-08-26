@@ -18,21 +18,45 @@ import com.duowan.mobile.ixiaoshuo.ui.CommonMenuDialog;
 
 import java.util.List;
 
-public class BookshelfContentView implements OnItemLongClickListener, OnItemClickListener {
+public class BookshelfContentView extends ViewBuilder implements OnItemLongClickListener, OnItemClickListener {
 	protected BaseAdapter mAdapter;
 	protected List<Book> mBookList;
 
-	protected ListView mLsvBookShelf;
 	protected View mLotWithoutBooks;
 
-	public void init(View lsvBookShelf, View lotWithoutBooks) {
-		mLsvBookShelf = (ListView) lsvBookShelf;
-		mLotWithoutBooks = lotWithoutBooks;
-		reloadBookShelf();
+	public BookshelfContentView(MainActivity activity) {
+		this.mViewId = R.id.lsvBookShelfText;
+		this.mActivity = activity;
+	}
+
+	@Override
+	protected void build() {
+		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_text_listview, null);
+	}
+
+	@Override
+	public void init() {
+		mLotWithoutBooks = mActivity.findViewById(R.id.lotWithoutBooks);
+		resume();
+	}
+
+	@Override
+	public void resume() {
+		mBookList = AppDAO.get().getBookList();
+		if (mBookList.size() > 0) {
+			initListView();
+			mAdapter.notifyDataSetChanged();
+			mLotWithoutBooks.setVisibility(View.GONE);
+			getListView().setVisibility(View.VISIBLE);
+		} else {
+			initWithoutBookLayout();
+			getListView().setVisibility(View.GONE);
+			mLotWithoutBooks.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private void initListView() {
-		if (mLsvBookShelf.getAdapter() != null) return;
+		if (getListView().getAdapter() != null) return;
 		mAdapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
@@ -81,9 +105,9 @@ public class BookshelfContentView implements OnItemLongClickListener, OnItemClic
 //				Button txvBookStatus;
 			}
 		};
-		mLsvBookShelf.setAdapter(mAdapter);
-		mLsvBookShelf.setOnItemClickListener(this);
-		mLsvBookShelf.setOnItemLongClickListener(this);
+		getListView().setAdapter(mAdapter);
+		getListView().setOnItemClickListener(this);
+		getListView().setOnItemLongClickListener(this);
 	}
 
 	private boolean isInitWithoutBook;
@@ -105,20 +129,6 @@ public class BookshelfContentView implements OnItemLongClickListener, OnItemClic
 		});
 
 		isInitWithoutBook = true;
-	}
-
-	public void reloadBookShelf() {
-		mBookList = AppDAO.get().getBookList();
-		if (mBookList.size() > 0) {
-			initListView();
-			mAdapter.notifyDataSetChanged();
-			mLotWithoutBooks.setVisibility(View.GONE);
-			mLsvBookShelf.setVisibility(View.VISIBLE);
-		} else {
-			initWithoutBookLayout();
-			mLsvBookShelf.setVisibility(View.GONE);
-			mLotWithoutBooks.setVisibility(View.VISIBLE);
-		}
 	}
 
 	@Override
@@ -143,9 +153,9 @@ public class BookshelfContentView implements OnItemLongClickListener, OnItemClic
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								AppDAO.get().deleteBook(book);
-								reloadBookShelf();
 								menuDialog.cancel();
 								dialog.cancel();
+								resume();
 							}
 						});
 						builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -179,8 +189,8 @@ public class BookshelfContentView implements OnItemLongClickListener, OnItemClic
 		}
 	}
 
-	private MainActivity getActivity() {
-		return (MainActivity) mLsvBookShelf.getContext();
+	private ListView getListView() {
+		return (ListView) mView;
 	}
 
 }

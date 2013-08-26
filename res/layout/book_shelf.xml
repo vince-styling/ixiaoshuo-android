@@ -9,15 +9,15 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
                       android:background="@drawable/title_bg_content_area">
 
-            <Button android:layout_width="0dp" android:layout_height="wrap_content"
+            <Button android:id="@+id/btnTextBookshelf" android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1" android:background="@drawable/title_item_selected"
                     android:text="文字" android:textSize="20sp" android:textColor="#fefffc" />
 
-            <Button android:layout_width="0dp" android:layout_height="wrap_content"
+            <Button android:id="@+id/btnVoiceBookshelf" android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1" android:background="@null"
                     android:text="有声" android:textSize="20sp" android:textColor="#b1d596" />
 
-            <Button android:layout_width="0dp" android:layout_height="wrap_content"
+            <Button android:id="@+id/btnLocalBookshelf" android:layout_width="0dp" android:layout_height="wrap_content"
                     android:layout_weight="1" android:background="@null"
                     android:text="本地" android:textSize="20sp" android:textColor="#b1d596" />
 
@@ -25,15 +25,14 @@
 
     </LinearLayout>
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                  android:background="@drawable/book_shelf_bg_layer" android:gravity="center">
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                 android:background="@drawable/book_shelf_bg_layer">
 
-        <ListView android:id="@+id/lsvBookShelf" android:visibility="gone"
-                  android:layout_width="match_parent" android:layout_height="match_parent" android:fastScrollEnabled="true"
-                  android:divider="@drawable/book_shelf_list_divider" android:dividerHeight="6dp" />
+        <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotBookShelfContent"
+              android:layout_width="match_parent" android:layout_height="match_parent" />
 
         <include layout="@layout/book_shelf_without_book" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
