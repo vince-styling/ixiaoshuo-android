@@ -31,13 +31,12 @@ public class WithoutBookLayout extends LinearLayout {
 		bgDrawable.setBounds(0, 0, getWidth(), getHeight());
 		bgDrawable.draw(drawCanvas);
 
-		List<int[]> transparentPixels = new ArrayList<int[]>(250);
-		for (int x = 0; x < bitmap.getWidth(); x++) {
-			for (int y = 0; y < bitmap.getHeight(); y++) {
-				if (bitmap.getPixel(x, y) == Color.TRANSPARENT) {
-					transparentPixels.add(new int[]{x, y});
-				} else if (y == 0) break;
-			}
+		List<int[]> transparentPixels = new ArrayList<int[]>(350);
+		for (int y = 0; y < bitmap.getHeight(); y++) {				// top
+			detectTransparentPixel(bitmap, transparentPixels, y);
+		}
+		for (int y = bitmap.getHeight() - 1; y > -1; y--) {			// bottom
+			detectTransparentPixel(bitmap, transparentPixels, y);
 		}
 
 		BitmapDrawable stripeDrawable = (BitmapDrawable) getResources().getDrawable(R.drawable.book_shelf_without_book_stripe);
@@ -52,6 +51,22 @@ public class WithoutBookLayout extends LinearLayout {
 		}
 
 		canvas.drawBitmap(bitmap, 0, 0, null);
+	}
+
+	private void detectTransparentPixel(Bitmap bitmap, List<int[]> transparentPixels, int y) {
+		// left corner
+		for (int x = 0; x < bitmap.getWidth(); x++) {
+			if (bitmap.getPixel(x, y) == Color.TRANSPARENT) {
+				transparentPixels.add(new int[]{x, y});
+			} else break;
+		}
+
+		// right corner
+		for (int x = bitmap.getWidth() - 1; x > -1; x--) {
+			if (bitmap.getPixel(x, y) == Color.TRANSPARENT) {
+				transparentPixels.add(new int[]{x, y});
+			} else break;
+		}
 	}
 
 }
