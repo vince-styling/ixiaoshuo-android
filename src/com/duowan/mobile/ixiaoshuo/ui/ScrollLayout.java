@@ -50,6 +50,6 @@ public class ScrollLayout extends LinearLayout {
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-
 	}
+
 }

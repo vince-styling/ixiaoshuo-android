@@ -26,4 +26,8 @@ public class SysUtil {
 		return "";
 	}
 
+	public static void killAppProcess() {
+		android.os.Process.killProcess(android.os.Process.myPid());
+	}
+
 }
