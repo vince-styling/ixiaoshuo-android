@@ -35,11 +35,13 @@ public class ScrollLayout extends LinearLayout {
 		builder.getView().setTag(builder);
 	}
 
-	public void resumeView(ViewBuilder builder) {
-		View view = findViewById(builder.getViewId());
-		if (view != null) {
-			builder = (ViewBuilder) view.getTag();
-			if (builder != null) builder.resume();
+	public void resumeView() {
+		for (int index = 0; index < getChildCount(); index++) {
+			View childView = getChildAt(index);
+			if (childView.getVisibility() == View.VISIBLE) {
+				ViewBuilder builder = (ViewBuilder) childView.getTag();
+				builder.resume();
+			}
 		}
 	}
 
@@ -50,15 +52,26 @@ public class ScrollLayout extends LinearLayout {
 				for (int index = 0; index < getChildCount(); index++) {
 					View childView = getChildAt(index);
 					if (childView.getVisibility() == View.VISIBLE) {
+						// dispatch key event to child view(maybe also ScrollLayout)
+						ViewBuilder builder = (ViewBuilder) childView.getTag();
+						if (builder.onKeyDown(keyCode, event)) return true;
+
+						// if current shown view was top
 						if (index == 0) return false;
+
+						// hide current view
 						childView.setVisibility(View.GONE);
-						getChildAt(--index).setVisibility(View.VISIBLE);
+
+						// get back view and show it
+						builder = (ViewBuilder) getChildAt(--index).getTag();
+						builder.show();
+
 						return true;
 					}
 				}
 				break;
 		}
-		return super.onKeyDown(keyCode, event);
+		return false;
 	}
 
 }

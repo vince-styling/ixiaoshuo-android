@@ -1,5 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.view;
 
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
@@ -8,6 +9,7 @@ public abstract class ViewBuilder {
 	protected int mViewId;
 	protected View mView;
 	protected MainActivity mActivity;
+	protected OnShowListener mShowListener;
 
 	public View getView() {
 		if (mView == null) {
@@ -31,6 +33,16 @@ public abstract class ViewBuilder {
 	// when focus on, resume the view
 	public void resume() {}
 
+	// show view and do something like show event
+	public void show() {
+		mView.setVisibility(View.VISIBLE);
+		if (mShowListener != null) mShowListener.onShow();
+	}
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		return false;
+	}
+
 	protected final View findViewById(int viewId) {
 		return mView.findViewById(viewId);
 	}
@@ -45,6 +57,10 @@ public abstract class ViewBuilder {
 
 	public final MainActivity getActivity() {
 		return mActivity;
+	}
+
+	public static interface OnShowListener {
+		void onShow();
 	}
 
 }

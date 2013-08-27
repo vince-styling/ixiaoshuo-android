@@ -5,12 +5,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
-import com.duowan.mobile.ixiaoshuo.event.BookCoverLoader;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
@@ -18,20 +19,15 @@ import com.duowan.mobile.ixiaoshuo.ui.CommonMenuDialog;
 
 import java.util.List;
 
-public class BookshelfContentView extends ViewBuilder implements OnItemLongClickListener, OnItemClickListener {
+public abstract class BookshelfBaseListView extends ViewBuilder implements OnItemLongClickListener, OnItemClickListener {
 	protected BaseAdapter mAdapter;
 	protected List<Book> mBookList;
 
 	protected View mLotWithoutBooks;
 
-	public BookshelfContentView(MainActivity activity) {
-		this.mViewId = R.id.lsvBookShelfText;
-		this.mActivity = activity;
-	}
-
-	@Override
-	protected void build() {
-		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_text_listview, null);
+	public BookshelfBaseListView(MainActivity activity, int viewId) {
+		mActivity = activity;
+		mViewId = viewId;
 	}
 
 	@Override
@@ -60,7 +56,7 @@ public class BookshelfContentView extends ViewBuilder implements OnItemLongClick
 		mAdapter = new BaseAdapter() {
 			@Override
 			public int getCount() {
-				return mBookList.size();
+				return mBookList != null ? mBookList.size() : 0;
 			}
 
 			@Override
@@ -75,40 +71,15 @@ public class BookshelfContentView extends ViewBuilder implements OnItemLongClick
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				Holder holder;
-				if (convertView == null) {
-					convertView = getActivity().getLayoutInflater().inflate(R.layout.book_shelf_list_item, null);
-					holder = new Holder();
-					holder.imvBookCover = (ImageView) convertView.findViewById(R.id.imvBookCover);
-					holder.txvBookName = (TextView) convertView.findViewById(R.id.txvBookName);
-//					holder.txvBookAuthor = (TextView) convertView.findViewById(R.id.txvBookAuthor);
-					convertView.setTag(holder);
-				} else {
-					holder = (Holder) convertView.getTag();
-				}
-
-				Book book = getItem(position);
-				BookCoverLoader.loadCover(getActivity(), book, holder.imvBookCover);
-
-				holder.txvBookName.setText(book.getName());
-
-				return convertView;
-			}
-
-			class Holder {
-				ImageView imvBookCover;
-				TextView txvBookName;
-//				TextView txvBookAuthor;
-//				TextView txvReadProgress;
-//				TextView txvRemainChapters;
-//				TextView txvNewlyChapter;
-//				Button txvBookStatus;
+				return getAdapterView(position, convertView);
 			}
 		};
 		getListView().setAdapter(mAdapter);
 		getListView().setOnItemClickListener(this);
 		getListView().setOnItemLongClickListener(this);
 	}
+
+	protected abstract View getAdapterView(int position, View convertView);
 
 	private boolean isInitWithoutBook;
 	private void initWithoutBookLayout() {
