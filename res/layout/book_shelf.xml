@@ -2,9 +2,9 @@
 <LinearLayout android:id="@+id/lotBookshelf" xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="60dp"
-                  android:background="@drawable/title_bg_layer" android:gravity="center"
-                  android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="6dp" android:paddingBottom="10dp">
+    <view class="com.duowan.mobile.ixiaoshuo.ui.TitleBarLayout"
+          android:layout_width="match_parent" android:layout_height="60dp" android:gravity="center"
+          android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="6dp" android:paddingBottom="10dp">
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
                       android:background="@drawable/title_bg_content_area">
@@ -23,7 +23,7 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </view>
 
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
                  android:background="@drawable/book_shelf_bg_layer">
