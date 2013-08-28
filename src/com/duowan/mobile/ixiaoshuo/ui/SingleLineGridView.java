@@ -11,10 +11,7 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
-import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
-import com.duowan.mobile.ixiaoshuo.view.BookFinderView;
-import com.duowan.mobile.ixiaoshuo.view.BookshelfView;
 
 public abstract class SingleLineGridView extends View {
 	public SingleLineGridView(Context context) {
@@ -66,6 +63,11 @@ public abstract class SingleLineGridView extends View {
 			canvas.translate(itemWidth, 0);
 		}
 		canvas.restore();
+	}
+
+	public void selectItem(int itemId) {
+		mSelectedItemId = itemId;
+		invalidate();
 	}
 
 	@Override

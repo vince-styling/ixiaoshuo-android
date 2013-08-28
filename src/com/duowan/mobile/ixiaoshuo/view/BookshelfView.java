@@ -11,10 +11,13 @@ import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
 
 public class BookshelfView extends ViewBuilder {
 	private ScrollLayout mLotBookShelfContent;
+	Button mBtnTextBookshelf, mBtnVoiceBookshelf, mBtnLocalBookshelf;
 
-	public BookshelfView(MainActivity activity) {
-		this.mViewId = R.id.lotBookshelf;
-		this.mActivity = activity;
+
+	public BookshelfView(MainActivity activity, OnShowListener onShowListener) {
+		mShowListener = onShowListener;
+		mViewId = R.id.lotBookshelf;
+		mActivity = activity;
 	}
 
 	@Override
@@ -26,62 +29,76 @@ public class BookshelfView extends ViewBuilder {
 	public void init() {
 		mLotBookShelfContent = (ScrollLayout) findViewById(R.id.lotBookShelfContent);
 
-		final Button btnTextBookshelf = (Button) findViewById(R.id.btnTextBookshelf);
-		final Button btnVoiceBookshelf = (Button) findViewById(R.id.btnVoiceBookshelf);
-		final Button btnLocalBookshelf = (Button) findViewById(R.id.btnLocalBookshelf);
+		mBtnTextBookshelf = (Button) findViewById(R.id.btnTextBookshelf);
+		mBtnVoiceBookshelf = (Button) findViewById(R.id.btnVoiceBookshelf);
+		mBtnLocalBookshelf = (Button) findViewById(R.id.btnLocalBookshelf);
 
-		btnTextBookshelf.setOnClickListener(new View.OnClickListener() {
+		mBtnTextBookshelf.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mLotBookShelfContent.showView(new BookshelfTextListView(mActivity, new OnShowListener() {
 					@Override
 					public void onShow() {
-						btnTextBookshelf.performClick();
+						highlightBtn(mBtnTextBookshelf);
 					}
 				}));
-				turnOnButton(btnTextBookshelf);
-				turnOffButton(btnVoiceBookshelf);
-				turnOffButton(btnLocalBookshelf);
+				highlightBtn(mBtnTextBookshelf);
 			}
 		});
 
-		btnVoiceBookshelf.setOnClickListener(new View.OnClickListener() {
+		mBtnVoiceBookshelf.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mLotBookShelfContent.showView(new BookshelfVoiceListView(mActivity, new OnShowListener() {
 					@Override
 					public void onShow() {
-						btnVoiceBookshelf.performClick();
+						highlightBtn(mBtnVoiceBookshelf);
 					}
 				}));
-				turnOnButton(btnVoiceBookshelf);
-				turnOffButton(btnTextBookshelf);
-				turnOffButton(btnLocalBookshelf);
+				highlightBtn(mBtnVoiceBookshelf);
 			}
 		});
 
-		btnLocalBookshelf.setOnClickListener(new View.OnClickListener() {
+		mBtnLocalBookshelf.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mLotBookShelfContent.showView(new BookshelfLocalListView(mActivity, new OnShowListener() {
 					@Override
 					public void onShow() {
-						btnLocalBookshelf.performClick();
+						highlightBtn(mBtnLocalBookshelf);
 					}
 				}));
-				turnOnButton(btnLocalBookshelf);
-				turnOffButton(btnTextBookshelf);
-				turnOffButton(btnVoiceBookshelf);
+				highlightBtn(mBtnLocalBookshelf);
 			}
 		});
 
-		btnTextBookshelf.performClick();
+		mBtnTextBookshelf.performClick();
 
 		mActivity.getReaderApplication().getMainHandler().putNotifier(Notifier.NOTIFIER_BOOKSHELF_REFRESH, new Notifier() {
 			public void onNotified() {
 				mLotBookShelfContent.resumeView();
 			}
 		});
+	}
+
+	private void highlightBtn(Button btnView) {
+		if (btnView == mBtnTextBookshelf) {
+			turnOnButton(mBtnTextBookshelf);
+		} else {
+			turnOffButton(mBtnTextBookshelf);
+		}
+
+		if (btnView == mBtnVoiceBookshelf) {
+			turnOnButton(mBtnVoiceBookshelf);
+		} else {
+			turnOffButton(mBtnVoiceBookshelf);
+		}
+
+		if (btnView == mBtnLocalBookshelf) {
+			turnOnButton(mBtnLocalBookshelf);
+		} else {
+			turnOffButton(mBtnLocalBookshelf);
+		}
 	}
 
 	@Override

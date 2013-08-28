@@ -5,9 +5,10 @@ import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
 public class BookFinderView extends ViewBuilder {
 
-	public BookFinderView(MainActivity activity) {
-		this.mViewId = R.id.lotBookFinder;
-		this.mActivity = activity;
+	public BookFinderView(MainActivity activity, OnShowListener onShowListener) {
+		mShowListener = onShowListener;
+		mViewId = R.id.lotBookFinder;
+		mActivity = activity;
 	}
 
 	@Override

@@ -18,13 +18,13 @@ public class ScrollLayout extends LinearLayout {
 
 	public void showView(ViewBuilder builder) {
 		for (int i = 0; i < getChildCount(); i++) {
-			getChildAt(i).setVisibility(View.GONE);
+			((ViewBuilder) getChildAt(i).getTag()).pushBack();
 		}
 
 		View view = findViewById(builder.getViewId());
 		if (view != null) {
 			if (builder.isReusable()) {
-				view.setVisibility(View.VISIBLE);
+				((ViewBuilder) view.getTag()).bringToFront();
 			} else addView(builder);
 		} else addView(builder);
 	}
@@ -32,16 +32,14 @@ public class ScrollLayout extends LinearLayout {
 	private void addView(ViewBuilder builder) {
 		addView(builder.getView());
 		builder.init();
+		builder.bringToFront();
 		builder.getView().setTag(builder);
 	}
 
 	public void resumeView() {
 		for (int index = 0; index < getChildCount(); index++) {
-			View childView = getChildAt(index);
-			if (childView.getVisibility() == View.VISIBLE) {
-				ViewBuilder builder = (ViewBuilder) childView.getTag();
-				builder.resume();
-			}
+			ViewBuilder builder = (ViewBuilder) getChildAt(index).getTag();
+			if (builder.isInFront()) builder.resume();
 		}
 	}
 
@@ -51,20 +49,20 @@ public class ScrollLayout extends LinearLayout {
 			case KeyEvent.KEYCODE_BACK:
 				for (int index = 0; index < getChildCount(); index++) {
 					View childView = getChildAt(index);
-					if (childView.getVisibility() == View.VISIBLE) {
+					ViewBuilder builder = (ViewBuilder) childView.getTag();
+					if (builder.isInFront()) {
 						// dispatch key event to child view(maybe also ScrollLayout)
-						ViewBuilder builder = (ViewBuilder) childView.getTag();
 						if (builder.onKeyDown(keyCode, event)) return true;
 
 						// if current shown view was top
 						if (index == 0) return false;
 
 						// hide current view
-						childView.setVisibility(View.GONE);
+						builder.pushBack();
 
 						// get back view and show it
 						builder = (ViewBuilder) getChildAt(--index).getTag();
-						builder.show();
+						builder.bringToFront();
 
 						return true;
 					}

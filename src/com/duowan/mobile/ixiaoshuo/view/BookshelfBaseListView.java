@@ -39,16 +39,25 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 	@Override
 	public void resume() {
 		mBookList = AppDAO.get().getBookList();
-		if (mBookList.size() > 0) {
+		super.resume();
+	}
+
+	@Override
+	public void bringToFront() {
+		if (mIsInFront) return;
+
+		if (mBookList != null && mBookList.size() > 0) {
 			initListView();
 			mAdapter.notifyDataSetChanged();
+			mView.setVisibility(View.VISIBLE);
 			mLotWithoutBooks.setVisibility(View.GONE);
-			getListView().setVisibility(View.VISIBLE);
 		} else {
 			initWithoutBookLayout();
-			getListView().setVisibility(View.GONE);
+			mView.setVisibility(View.GONE);
 			mLotWithoutBooks.setVisibility(View.VISIBLE);
 		}
+		if (mShowListener != null) mShowListener.onShow();
+		mIsInFront = true;
 	}
 
 	private void initListView() {

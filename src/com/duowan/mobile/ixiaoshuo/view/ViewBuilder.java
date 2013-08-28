@@ -8,6 +8,7 @@ import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 public abstract class ViewBuilder {
 	protected int mViewId;
 	protected View mView;
+	protected boolean mIsInFront;
 	protected MainActivity mActivity;
 	protected OnShowListener mShowListener;
 
@@ -31,12 +32,25 @@ public abstract class ViewBuilder {
 	public abstract void init();
 
 	// when focus on, resume the view
-	public void resume() {}
+	public void resume() {
+		bringToFront();
+	}
 
-	// show view and do something like show event
-	public void show() {
-		mView.setVisibility(View.VISIBLE);
+	// show view and do something like onShow event
+	public void bringToFront() {
+		if (mIsInFront) return;
 		if (mShowListener != null) mShowListener.onShow();
+		mView.setVisibility(View.VISIBLE);
+		mIsInFront = true;
+	}
+
+	public void pushBack() {
+		mView.setVisibility(View.GONE);
+		mIsInFront = false;
+	}
+
+	public boolean isInFront() {
+		return mIsInFront;
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

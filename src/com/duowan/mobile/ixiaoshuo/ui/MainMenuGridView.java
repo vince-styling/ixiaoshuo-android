@@ -6,6 +6,7 @@ import android.util.SparseArray;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.view.BookFinderView;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfView;
+import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class MainMenuGridView extends SingleLineGridView {
 	public MainMenuGridView(Context context) {
@@ -27,13 +28,13 @@ public class MainMenuGridView extends SingleLineGridView {
 
 		mGridItems.put(MENU_BOOKSHELF, new GridItem(R.drawable.menu_bookshelf_on, R.drawable.menu_bookshelf_off, new ClickEvent() {
 			public void onClick() {
-				getActivity().showView(new BookshelfView(getActivity()));
+				getActivity().showView(buildViewBuilder(BookshelfView.class));
 			}
 		}));
 
 		mGridItems.put(MENU_FINDER, new GridItem(R.drawable.menu_finder_on, R.drawable.menu_finder_off, new ClickEvent() {
 			public void onClick() {
-				getActivity().showView(new BookFinderView(getActivity()));
+				getActivity().showView(buildViewBuilder(BookFinderView.class));
 			}
 		}));
 
@@ -54,6 +55,27 @@ public class MainMenuGridView extends SingleLineGridView {
 		mHighlightDrawable = getResources().getDrawable(R.drawable.menu_bg_pressed);
 
 		mSelectedItemId = MENU_BOOKSHELF;
+	}
+
+	public ViewBuilder buildViewBuilder(Class<? extends ViewBuilder> clazz) {
+		if (clazz == BookshelfView.class) {
+			return new BookshelfView(getActivity(), new ViewBuilder.OnShowListener() {
+				@Override
+				public void onShow() {
+					selectItem(MENU_BOOKSHELF);
+				}
+			});
+		}
+
+		if (clazz == BookFinderView.class) {
+			return new BookFinderView(getActivity(), new ViewBuilder.OnShowListener() {
+				@Override
+				public void onShow() {
+					selectItem(MENU_FINDER);
+				}
+			});
+		}
+		return null;
 	}
 
 }

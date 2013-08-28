@@ -3,6 +3,7 @@ package com.duowan.mobile.ixiaoshuo.reader;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import com.duowan.mobile.ixiaoshuo.R;
+import com.duowan.mobile.ixiaoshuo.ui.MainMenuGridView;
 import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
 import com.duowan.mobile.ixiaoshuo.utils.SysUtil;
 import com.duowan.mobile.ixiaoshuo.view.BookshelfView;
@@ -16,8 +17,10 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		MainMenuGridView mMainMenuView = (MainMenuGridView) findViewById(R.id.mainMenuView);
+
 		mLotMainContent = (ScrollLayout) findViewById(R.id.lotMainContent);
-		mLotMainContent.showView(new BookshelfView(MainActivity.this));
+		showView(mMainMenuView.buildViewBuilder(BookshelfView.class));
 	}
 
 	public void showView(ViewBuilder builder) {
