@@ -91,9 +91,9 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 
 	protected abstract View getAdapterView(int position, View convertView);
 
-	private boolean isInitWithoutBook;
+	private boolean mIsInitWithoutBook;
 	private void initWithoutBookLayout() {
-		if (isInitWithoutBook) return;
+		if (mIsInitWithoutBook) return;
 
 		mLotWithoutBooks.findViewById(R.id.lotGoFinder).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -109,7 +109,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 			}
 		});
 
-		isInitWithoutBook = true;
+		mIsInitWithoutBook = true;
 	}
 
 	@Override

@@ -33,7 +33,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -50,8 +49,6 @@ public abstract class BaseNetService {
 	private String API;
 	protected int versionCode;
 	protected String versionName;
-
-	protected ObjectMapper mapper;
 
 	public static final String CTWAP_USERNAME = "ctwap@mycdma.cn";
 	public static final String CTWAP_PASSWORD = "vnet.mobi";
@@ -82,8 +79,6 @@ public abstract class BaseNetService {
 		versionCode = SysUtil.getVersionCode(context);
 		versionName = SysUtil.getVersionName(context);
 
-		mapper = GObjectMapper.get();
-
 		updateNetworkInfo(context);
 
 		context.registerReceiver(new BroadcastReceiver() {
@@ -93,6 +88,7 @@ public abstract class BaseNetService {
 		}, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 	}
 
+	// TODO : 想办法在其它线程内初始化httpclient
 	private HttpClient getHttpClientGeneral() {
 		if(httpClient == null) {
 			HttpParams params = new BasicHttpParams();
@@ -164,7 +160,7 @@ public abstract class BaseNetService {
 		ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = manager.getActiveNetworkInfo();
 
-		if(info != null && (info.isConnected() || info.isRoaming())) {
+		if (info != null && (info.isConnected() || info.isRoaming())) {
 			if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
 				mIsUseCmwap = CMWAP.equals(info.getExtraInfo());
 				mIsUseCtwap = CTWAP.equals(info.getExtraInfo());
@@ -178,6 +174,7 @@ public abstract class BaseNetService {
 			}
 			mNetworkAvailable = true;
 		} else mNetworkAvailable = false;
+		Log.d(TAG, "updateNetworkInfo : NetworkAvailable : " + mNetworkAvailable + " ShouldUseProxy : " + mShouldUseProxy);
 	}
 
 	public final synchronized boolean testNetworkIsAvailable (Context ctx) {
@@ -207,21 +204,25 @@ public abstract class BaseNetService {
 
 	protected HttpGet makeHttpGet(String pageName, String params) {
 		String url = makeUrl(pageName, params);
+		Log.d(TAG, "makeHttpGet : " + url);
 		return new HttpGet(url);
 	}
 
 	protected HttpResponse executeHttpGet(String pageName, String params) throws IOException {
 		String url = makeUrl(pageName, params);
+		Log.d(TAG, "executeHttpGet : " + url);
 		return executeHttp(new HttpGet(url));
 	}
 
 	protected HttpPost makeHttpPost(String pageName) {
 		String url = makeUrl(pageName, null);
+		Log.d(TAG, "makeHttpPost : " + url);
 		return new HttpPost(url);
 	}
 
 //	protected HttpResponse executeHttpPost(String pageName, String params) throws IOException {
 //		String url = makeUrl(pageName, params);
+//		Log.d(TAG, "executeHttpPost : " + url);
 //		return executeHttp(new HttpPost(url));
 //	}
 
@@ -233,7 +234,7 @@ public abstract class BaseNetService {
 			if (statusCode == HttpStatus.SC_OK) {
 				entity = response.getEntity();
 				String json = new String(EntityUtils.toByteArray(entity));
-				return mapper.readValue(json, Respond.class);
+				return GObjectMapper.get().readValue(json, Respond.class);
 			}
 		} finally {
 			closeEntity(entity);

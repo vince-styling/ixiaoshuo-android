@@ -25,10 +25,25 @@
             android:layout_width="match_parent" android:layout_height="60dp"
             android:background="@drawable/book_shelf_bg_layer" />
 
-    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:background="@color/finder_booklist_bg">
 
         <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotBookFinderContent"
                 android:layout_width="match_parent" android:layout_height="match_parent" />
+
+        <RelativeLayout android:id="@+id/lotNetworkUnavaliable"
+                        android:layout_width="320dp" android:layout_height="200dp"
+                        android:visibility="gone" android:layout_centerInParent="true">
+
+            <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
+                       android:layout_marginBottom="10dp" android:layout_marginRight="10dp"
+                       android:src="@drawable/network_unavaliable_tip" />
+
+            <Button android:id="@+id/btnFinderRetry" android:layout_width="100dp" android:layout_height="56dp"
+                    android:background="@drawable/network_unavaliable_btn_retry_selector"
+                    android:layout_alignParentBottom="true" android:layout_alignParentRight="true" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

@@ -1,18 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content" android:layout_height="wrap_content"
-              android:orientation="vertical" android:paddingBottom="5dp">
+              android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 
-    <TextView android:id="@+id/txvBookName"
-              android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:layout_marginTop="1dp" android:paddingLeft="2dp" android:paddingRight="2dp"
-              android:text="鬼吹灯第三部之精绝古城" android:textSize="14sp" android:textColor="#88511d"
-              android:gravity="center" android:singleLine="true" android:ellipsize="middle" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:orientation="vertical" android:padding="10dp">
 
-    <TextView android:id="@+id/txvBookSummary"
-              android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:layout_marginTop="1dp" android:paddingLeft="2dp" android:paddingRight="2dp"
-              android:text="鬼吹灯第三部之精绝古城" android:textSize="14sp" android:textColor="#88511d"
-              android:gravity="center" android:singleLine="true" android:ellipsize="middle" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
+
+                <TextView android:id="@+id/txvBookName"
+                          android:layout_width="wrap_content" android:layout_height="wrap_content"
+                          android:textSize="18sp" android:textColor="#4d4d4d" android:singleLine="true" android:ellipsize="end" />
+
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/red_flag">
+
+                    <TextView android:id="@+id/txvBookStatus1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                              android:textSize="11sp" android:textColor="#ffffff" android:singleLine="true" />
+
+                    <TextView android:id="@+id/txvBookStatus2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                              android:text="双" android:textSize="11sp" android:textColor="#ffffff" android:singleLine="true"
+                              android:drawableLeft="@drawable/red_flag_split" android:drawablePadding="2dp"
+                              android:paddingLeft="2dp" android:visibility="gone" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView android:id="@+id/txvBookCapacity"
+                      android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:layout_marginLeft="5dp" android:layout_marginRight="5dp"
+                      android:textSize="13sp" android:textColor="#bdbdbc" android:singleLine="true" />
+
+            <TextView android:id="@+id/txvBookTips"
+                      android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/book_tips_bg"
+                      android:textSize="15sp" android:textColor="#e9a002" android:singleLine="true" />
+
+        </LinearLayout>
+
+        <TextView android:id="@+id/txvBookSummary"
+                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:textSize="16sp" android:textColor="#808080" android:singleLine="true" android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/lotDivider" android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:background="@drawable/finder_booklist_divider_layer" />
 
 </LinearLayout>

@@ -2,6 +2,8 @@ package com.duowan.mobile.ixiaoshuo.utils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,35 +102,67 @@ public class StringUtil {
 		return src.replaceAll("[\r]*[\n]*[　]*[ ]*", "");
 	}
 	
-//	public final static DecimalFormat NO_DECIMAL_POINT_DF = new DecimalFormat("0");
+	public final static DecimalFormat NO_DECIMAL_POINT_DF = new DecimalFormat("0");
+	public final static DecimalFormat ONE_DECIMAL_POINT_DF = new DecimalFormat("0.0");
 	public final static DecimalFormat TWO_DECIMAL_POINT_DF = new DecimalFormat("0.00");
-//	public final static SimpleDateFormat dfDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public final static SimpleDateFormat dfDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	public final static SimpleDateFormat dfTime = new SimpleDateFormat("HH:mm");
 //	public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-//
-//	// format of datetime: 2011-08-24 12:22:11, return 08-24 or 12:22
-//	public static CharSequence formatDateTime(String datetime) {
-//		try {
-//			Calendar cal1 = Calendar.getInstance();
-//			cal1.setTime(dfDateTime.parse(datetime));
-//			Calendar cal2 = Calendar.getInstance();
-//			cal2.setTime(new Date());
-//			cal1.add(Calendar.HOUR, 1);
-//			if (cal1.after(cal2)) {
-//				cal1.add(Calendar.HOUR, -1);
-//				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 60000) + "分钟前";
-//			}
-//			cal1.add(Calendar.HOUR, 23);
-//			if (cal1.after(cal2)) {
-//				cal1.add(Calendar.HOUR, -24);
-//				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 3600000) + "小时前";
-//			}
-//			return datetime.subSequence(0, 10);
-//		} catch (Exception ex) {
-//			return datetime;
-//		}
-//	}
 
+	public static CharSequence getDiffWithNow(String datetime) {
+		try {
+			Calendar cal1 = Calendar.getInstance();
+			cal1.setTime(dfDateTime.parse(datetime));
+
+			Calendar cal2 = Calendar.getInstance();
+			cal2.setTime(new Date());
+
+			cal1.add(Calendar.HOUR, 1);
+			if (cal1.after(cal2)) {
+				cal1.add(Calendar.HOUR, -1);
+				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 60000) + "分钟前";
+			}
+
+			cal1.add(Calendar.HOUR, 23);
+			if (cal1.after(cal2)) {
+				cal1.add(Calendar.HOUR, -24);
+				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 3600000) + "小时前";
+			}
+
+			cal1.add(Calendar.DAY_OF_YEAR, 30);
+			if (cal1.after(cal2)) {
+				cal1.add(Calendar.DAY_OF_YEAR, -31);
+				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 86400000) + "天前";
+			}
+
+			return datetime.subSequence(5, 10);
+		} catch (Exception ex) {}
+		return "";
+	}
+
+	public static String formatSpaceSize(long file_size) {
+		if (file_size < 1024) { // 不足1K
+			return file_size + "B";
+		} else if (file_size < 1024 * 1024) { // 不足1M
+			return NO_DECIMAL_POINT_DF.format((double) file_size / 1024) + "KB";
+		} else if (file_size < 1024 * 1024 * 1024) { // 不足1G
+			return NO_DECIMAL_POINT_DF.format((double) file_size / 1024 / 1024) + "MB";
+		} else {
+			return ONE_DECIMAL_POINT_DF.format((double) file_size / 1024 / 1024 / 1024) + "GB";
+		}
+	}
+
+	public static String formatWordsCount(long capacity) {
+		String countStr;
+		if (capacity < 1000) {
+			countStr = String.valueOf(capacity);
+		} else if (capacity < 10000) {
+			countStr = (capacity / 1000) + "千";
+		} else {
+			countStr = ONE_DECIMAL_POINT_DF.format((double) capacity / 10000) + '万';
+		}
+		return countStr + '字';
+	}
 
 	public static boolean isValidUrl(String url) {
 		if(isBlank(url)) return false;
@@ -137,6 +171,33 @@ public class StringUtil {
 		Pattern p = Pattern.compile(strPattern);
 		Matcher m = p.matcher(url);
 		return m.matches();
+	}
+
+	public static String trimEmpty(String content) {
+		if (content == null) return content;
+		content = content.replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "");
+		content = content.replaceAll(" ", "").replaceAll("　", "").replaceAll(" ", "");
+		return content;
+	}
+
+	public static void main(String[] args) throws Exception {
+//		System.out.println(getDiffWithNow("2013-09-02 20:02:24"));
+
+		System.out.println(formatSpaceSize(100));
+		System.out.println(formatSpaceSize(1000));
+		System.out.println(formatSpaceSize(2000));
+		System.out.println(formatSpaceSize(298900));
+		System.out.println(formatSpaceSize(298900000));
+		System.out.println(formatSpaceSize(8090000000l));
+
+		System.out.println(formatWordsCount(100));
+		System.out.println(formatWordsCount(700));
+		System.out.println(formatWordsCount(1200));
+		System.out.println(formatWordsCount(7839));
+		System.out.println(formatWordsCount(420000));
+		System.out.println(formatWordsCount(424000));
+		System.out.println(formatWordsCount(428000));
+		System.out.println(formatWordsCount(8090000000l));
 	}
 
 }

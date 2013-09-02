@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="finder_booklist_bg">#fffbf7</color>
+    <color name="finder_booklist_bg_pressed">#fff4e5</color>
+</resources>

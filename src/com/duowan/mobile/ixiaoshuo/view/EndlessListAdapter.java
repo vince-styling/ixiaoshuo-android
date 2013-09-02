@@ -1,6 +1,5 @@
 package com.duowan.mobile.ixiaoshuo.view;
 
-import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -15,16 +14,8 @@ import java.util.List;
  * origins : https://github.com/mttkay/droid-fu
  */
 public abstract class EndlessListAdapter<T> extends BaseAdapter {
-
-	private boolean isLoadingData;
-
-	private View progressView;
-
 	private ArrayList<T> data = new ArrayList<T>();
-
-	public EndlessListAdapter(Activity activity, AbsListView listView, int progressItemLayoutResId) {
-		this.progressView = activity.getLayoutInflater().inflate(progressItemLayoutResId, listView, false);
-	}
+	private boolean isLoadingData;
 
 	/**
 	 * {@inheritDoc}
@@ -106,10 +97,17 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 
 	@Override
 	public final View getView(int position, View convertView, ViewGroup parent) {
-		return isPositionOfProgressElement(position) ? progressView : doGetView(position, convertView, parent);
+		return isPositionOfProgressElement(position) ? getProgressView() : getView(position, convertView);
 	}
 
-	protected abstract View doGetView(int position, View convertView, ViewGroup parent);
+	protected abstract View getView(int position, View convertView);
+
+	private View progressView;
+	protected View getProgressView() {
+		if (progressView == null) progressView = initProgressView();
+		return progressView;
+	}
+	protected abstract View initProgressView();
 
 	private boolean isPositionOfProgressElement(int position) {
 		return isLoadingData && position == data.size();

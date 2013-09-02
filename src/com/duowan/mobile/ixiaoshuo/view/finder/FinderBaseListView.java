@@ -1,10 +1,11 @@
 package com.duowan.mobile.ixiaoshuo.view.finder;
 
+import android.view.Display;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
@@ -16,10 +17,11 @@ import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public abstract class FinderBaseListView extends ViewBuilder implements AbsListView.OnScrollListener, OnItemClickListener {
 	protected EndlessListAdapter<Book> mAdapter;
+	private View mLotNetworkUnavaliable;
 
-	protected int mPageNo;
+	protected int mPageNo = 1;
 	protected final static int PAGE_ITEM_COUNT = 40;
-	private boolean mHasNextPage = true;
+	protected boolean mHasNextPage = true;
 
 	public FinderBaseListView(MainActivity activity, int viewId) {
 		mActivity = activity;
@@ -30,10 +32,26 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	public void init() {
 		if (getListView().getAdapter() != null) return;
 
-		mAdapter = new EndlessListAdapter<Book>(mActivity, getListView(), R.layout.contents_loading) {
+		mLotNetworkUnavaliable = mActivity.findViewById(R.id.lotNetworkUnavaliable);
+		Button btnFinderRetry = (Button) mLotNetworkUnavaliable.findViewById(R.id.btnFinderRetry);
+		btnFinderRetry.setOnClickListener(new View.OnClickListener() {
 			@Override
-			protected View doGetView(int position, View convertView, ViewGroup parent) {
+			public void onClick(View v) {
+				loadNextPage();
+			}
+		});
+
+		mAdapter = new EndlessListAdapter<Book>() {
+			@Override
+			protected View getView(int position, View convertView) {
 				return getAdapterView(position, convertView);
+			}
+			@Override
+			protected View initProgressView() {
+				View progressView = getActivity().getLayoutInflater().inflate(R.layout.contents_loading, null);
+				Display display = getActivity().getWindowManager().getDefaultDisplay();
+				progressView.setLayoutParams(new AbsListView.LayoutParams(display.getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
+				return progressView;
 			}
 		};
 		getListView().setAdapter(mAdapter);
@@ -54,11 +72,16 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 		if (!mHasNextPage) return;
 
 		if (!NetService.get().isNetworkAvailable()) {
-			getActivity().showToastMsg(R.string.network_disconnect_msg);
+			if (mAdapter.getItemCount() > 0) {
+				getActivity().showToastMsg(R.string.network_disconnect_msg);
+			} else {
+				mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
+			}
 			return;
 		}
 
 		mAdapter.setIsLoadingData(true);
+		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		NetService.execute(new NetService.NetExecutor<PaginationList<Book>>() {
 			public void preExecute() {}
 
@@ -69,12 +92,16 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 			public void callback(PaginationList<Book> bookList) {
 				mAdapter.setIsLoadingData(false);
 				if (bookList == null || bookList.size() == 0) {
-					getActivity().showToastMsg(R.string.without_data);
-					mHasNextPage = false;
+					if (mAdapter.getItemCount() > 0) {
+						getActivity().showToastMsg(R.string.without_data);
+					} else {
+						mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
+					}
 					return;
 				}
 				mHasNextPage = bookList.hasNextPage();
 				mAdapter.addAll(bookList);
+				mPageNo++;
 			}
 		});
 	}
@@ -91,7 +118,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 		}
 	}
 
-	private ListView getListView() {
+	protected ListView getListView() {
 		return (ListView) mView;
 	}
 

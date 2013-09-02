@@ -1,6 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.pojo;
 
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
+import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 import java.util.List;
 
@@ -14,10 +15,11 @@ public class Book {
 	private String coverUrl;
 	private String summary;
 
-	private String type;
+	// TODO : 所有返回列表的接口，记得同时返回type！！！！！
+	private String type = TYPE_TEXT;
 	private boolean isBothType;
 
-	private int capacity;		// 容量：字数 or 字节数
+	private long capacity;		// 容量：字数 or 字节数
 
 	private String catId;
 	private String catName;
@@ -128,7 +130,11 @@ public class Book {
 	}
 
 	public String getUpdateStatusStr() {
-		return updateStatus == 1 ? "连载" : "完结";
+		return updateStatus == STATUS_CONTINUE ? "连载" : "完结";
+	}
+
+	public String getUpdateStatusSimpleStr() {
+		return updateStatus == STATUS_CONTINUE ? "连" : "完";
 	}
 
 	public int getUpdateStatus() {
@@ -165,7 +171,7 @@ public class Book {
 	}
 
 	public void setSummary(String summary) {
-		this.summary = summary;
+		this.summary = StringUtil.trimEmpty(summary);
 	}
 
 	public String getWebsiteName() {
@@ -208,8 +214,13 @@ public class Book {
 		this.isBothType = isBothType;
 	}
 
-	public int getCapacity() {
+	public long getCapacity() {
 		return capacity;
+	}
+
+	public String getCapacityStr() {
+		if (type.equals(TYPE_TEXT)) return StringUtil.formatWordsCount(capacity);
+		return StringUtil.formatSpaceSize(capacity);
 	}
 
 	public void setCapacity(int capacity) {
