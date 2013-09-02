@@ -1,5 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.net;
 
+import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -54,6 +55,10 @@ public class Respond {
 			}
 		}
 		return GObjectMapper.get().convertValue(data, clazz);
+	}
+
+	public <T> PaginationList<T> convertPaginationList(Class<T> clazz) {
+		return PaginationList.convert((Map<String, Object>) data, clazz);
 	}
 
 }

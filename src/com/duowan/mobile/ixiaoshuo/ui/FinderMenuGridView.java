@@ -4,8 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import com.duowan.mobile.ixiaoshuo.R;
-import com.duowan.mobile.ixiaoshuo.view.BookFinderView;
-import com.duowan.mobile.ixiaoshuo.view.BookshelfView;
+import com.duowan.mobile.ixiaoshuo.view.finder.FinderNewlyBookListView;
+import com.duowan.mobile.ixiaoshuo.view.finder.FinderView;
+import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class FinderMenuGridView extends SingleLineGridView {
 	public FinderMenuGridView(Context context) {
@@ -16,8 +17,8 @@ public class FinderMenuGridView extends SingleLineGridView {
 		super(context, attrs);
 	}
 
-	public static final int MENU_NEW			= 10;
-	public static final int MENU_HOT			= 20;
+	public static final int MENU_NEWLY			= 10;
+	public static final int MENU_HOTTEST		= 20;
 	public static final int MENU_FINISHED		= 30;
 	public static final int MENU_CATEGORIES		= 40;
 
@@ -25,13 +26,13 @@ public class FinderMenuGridView extends SingleLineGridView {
 	protected void init() {
 		mGridItems = new SparseArray<GridItem>(4);
 
-		mGridItems.put(MENU_NEW, new GridItem(R.drawable.finder_new_on, R.drawable.finder_new_off, new ClickEvent() {
+		mGridItems.put(MENU_NEWLY, new GridItem(R.drawable.finder_new_on, R.drawable.finder_new_off, new ClickEvent() {
 			public void onClick() {
-				getActivity().showToastMsg("点击了最新菜单");
+				mFinderView.showView(buildViewBuilder(MENU_NEWLY));
 			}
 		}));
 
-		mGridItems.put(MENU_HOT, new GridItem(R.drawable.finder_hot_on, R.drawable.finder_hot_off, new ClickEvent() {
+		mGridItems.put(MENU_HOTTEST, new GridItem(R.drawable.finder_hot_on, R.drawable.finder_hot_off, new ClickEvent() {
 			public void onClick() {
 				getActivity().showToastMsg("点击了热门菜单");
 			}
@@ -50,8 +51,23 @@ public class FinderMenuGridView extends SingleLineGridView {
 		}));
 
 		mPaddingTop = getResources().getDimensionPixelSize(R.dimen.finderMenuPadding);
+	}
 
-		mSelectedItemId = MENU_NEW;
+	public ViewBuilder buildViewBuilder(int menuId) {
+		if (menuId == MENU_NEWLY) {
+			return new FinderNewlyBookListView(getActivity(), new ViewBuilder.OnShowListener() {
+				@Override
+				public void onShow() {
+					selectItem(MENU_NEWLY);
+				}
+			});
+		}
+		return null;
+	}
+
+	private FinderView mFinderView;
+	public void setFinderView(FinderView finderView) {
+		mFinderView = finderView;
 	}
 
 }

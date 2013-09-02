@@ -11,9 +11,17 @@ public class Book {
 	private String websiteName;
 	private String name;
 	private String author;
-	private String category;
 	private String coverUrl;
 	private String summary;
+
+	private String type;
+	private boolean isBothType;
+
+	private int capacity;		// 容量：字数 or 字节数
+
+	private String catId;
+	private String catName;
+
 	private String lastUpdateTime;
 	private int readerCount;
 
@@ -21,9 +29,9 @@ public class Book {
 	public static final int STATUS_CONTINUE = 1; // 连载
 	public static final int STATUS_FINISHED = 3; // 完结
 
-	public static final String RANK_WEEK	= "week";
-	public static final String RANK_MONTH	= "month";
-	public static final String RANK_TOTAL	= "total";
+	public static final String TYPE_TEXT	= "text";		// 文字书籍
+	public static final String TYPE_VOICE	= "voice";		// 有声书籍
+	public static final String TYPE_LOCAL	= "local";		// 本地书籍
 
 	private List<Chapter> chapterList;
 
@@ -131,12 +139,9 @@ public class Book {
 		this.updateStatus = updateStatus;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
+	// TODO : 临时方法，要记得找接口开发人把命名改回来！！！！
+	public void setUpdate_status(int update_status) {
+		this.updateStatus = update_status;
 	}
 
 	public String getCoverUrl() {
@@ -185,6 +190,46 @@ public class Book {
 
 	public void setReaderCount(int readerCount) {
 		this.readerCount = readerCount;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public boolean isBothType() {
+		return isBothType;
+	}
+
+	public void setIsBothType(boolean isBothType) {
+		this.isBothType = isBothType;
+	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
+	public String getCatId() {
+		return catId;
+	}
+
+	public void setCatId(String catId) {
+		this.catId = catId;
+	}
+
+	public String getCatName() {
+		return catName;
+	}
+
+	public void setCatName(String catName) {
+		this.catName = catName;
 	}
 
 }

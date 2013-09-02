@@ -1,4 +1,4 @@
-package com.duowan.mobile.ixiaoshuo.view;
+package com.duowan.mobile.ixiaoshuo.view.bookshelf;
 
 import android.view.View;
 import android.widget.ImageView;

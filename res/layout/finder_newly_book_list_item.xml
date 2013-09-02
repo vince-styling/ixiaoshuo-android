@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:orientation="vertical" android:paddingBottom="5dp">
+
+    <TextView android:id="@+id/txvBookName"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_marginTop="1dp" android:paddingLeft="2dp" android:paddingRight="2dp"
+              android:text="鬼吹灯第三部之精绝古城" android:textSize="14sp" android:textColor="#88511d"
+              android:gravity="center" android:singleLine="true" android:ellipsize="middle" />
+
+    <TextView android:id="@+id/txvBookSummary"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_marginTop="1dp" android:paddingLeft="2dp" android:paddingRight="2dp"
+              android:text="鬼吹灯第三部之精绝古城" android:textSize="14sp" android:textColor="#88511d"
+              android:gravity="center" android:singleLine="true" android:ellipsize="middle" />
+
+</LinearLayout>

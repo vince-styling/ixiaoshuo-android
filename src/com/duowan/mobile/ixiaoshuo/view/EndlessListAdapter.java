@@ -61,10 +61,7 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 	 * @return the actual number of data items in this adapter, ignoring the progress item.
 	 */
 	public int getItemCount() {
-		if (data != null) {
-			return data.size();
-		}
-		return 0;
+		return data != null ? data.size() : 0;
 	}
 
 	/**
@@ -76,10 +73,7 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 
 	@Override
 	public T getItem(int position) {
-		if (data == null) {
-			return null;
-		}
-		return data.get(position);
+		return data != null ? data.get(position) : null;
 	}
 
 	@Override
@@ -148,9 +142,7 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 
 	public void addAll(List<T> items, boolean redrawList) {
 		data.addAll(items);
-		if (redrawList) {
-			notifyDataSetChanged();
-		}
+		if (redrawList) notifyDataSetChanged();
 	}
 
 	public void clear() {
@@ -200,4 +192,5 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 		boolean lastItemReached = (totalItemCount > 0) && (totalItemCount - visibleItemCount == firstVisibleItem);
 		return !isLoadingData && lastItemReached;
 	}
+
 }

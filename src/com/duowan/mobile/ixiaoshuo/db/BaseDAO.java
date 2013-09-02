@@ -262,7 +262,7 @@ public class BaseDAO {
 			for (int index = 0; index < columnNames.length; index++) {
 				columnNames[index] = convertColumnName(columnNames[index]);
 				for (Method method : clazz.getMethods()) {
-					if ((method.getName().equalsIgnoreCase(methodPrefix + columnNames[index]))) {
+					if (method.getName().equalsIgnoreCase(methodPrefix + columnNames[index])) {
 						Class paramType = method.getParameterTypes()[0];
 						if (paramType == String.class)
 							method.invoke(entity, cursor.getString(index));

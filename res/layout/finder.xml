@@ -21,7 +21,7 @@
 
     </view>
 
-    <com.duowan.mobile.ixiaoshuo.ui.FinderMenuGridView
+    <com.duowan.mobile.ixiaoshuo.ui.FinderMenuGridView android:id="@+id/finderMenuView"
             android:layout_width="match_parent" android:layout_height="60dp"
             android:background="@drawable/book_shelf_bg_layer" />
 

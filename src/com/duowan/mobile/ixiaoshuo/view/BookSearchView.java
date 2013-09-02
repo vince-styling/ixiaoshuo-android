@@ -20,7 +20,7 @@ public class BookSearchView extends ViewBuilder implements View.OnClickListener,
 	}
 
 	private int mPageNo = 1;
-	private final static int PAGE_SIZE = 40;
+	private final static int PAGE_ITEM_COUNT = 40;
 
 	String mKeyword;
 	int mUpdateStatus;
@@ -115,7 +115,7 @@ public class BookSearchView extends ViewBuilder implements View.OnClickListener,
 //						}
 //
 //						public List<Book> execute() {
-//							return NetService.get().bookSearch(mKeyword, mUpdateStatus, mPageNo, PAGE_SIZE);
+//							return NetService.get().bookSearch(mKeyword, mUpdateStatus, mPageNo, PAGE_ITEM_COUNT);
 //						}
 //
 //						public void callback(List<Book> bookList) {
@@ -182,7 +182,7 @@ public class BookSearchView extends ViewBuilder implements View.OnClickListener,
 				}
 
 				public List<Book> execute() {
-					return NetService.get().bookSearch(mKeyword, mUpdateStatus, ++mPageNo, PAGE_SIZE);
+					return NetService.get().bookSearch(mKeyword, mUpdateStatus, ++mPageNo, PAGE_ITEM_COUNT);
 				}
 
 				public void callback(List<Book> bookList) {

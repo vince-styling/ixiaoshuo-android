@@ -4,8 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import com.duowan.mobile.ixiaoshuo.R;
-import com.duowan.mobile.ixiaoshuo.view.BookFinderView;
-import com.duowan.mobile.ixiaoshuo.view.BookshelfView;
+import com.duowan.mobile.ixiaoshuo.view.finder.FinderView;
+import com.duowan.mobile.ixiaoshuo.view.bookshelf.BookshelfView;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class MainMenuGridView extends SingleLineGridView {
@@ -28,13 +28,13 @@ public class MainMenuGridView extends SingleLineGridView {
 
 		mGridItems.put(MENU_BOOKSHELF, new GridItem(R.drawable.menu_bookshelf_on, R.drawable.menu_bookshelf_off, new ClickEvent() {
 			public void onClick() {
-				getActivity().showView(buildViewBuilder(BookshelfView.class));
+				getActivity().showView(buildViewBuilder(MENU_BOOKSHELF));
 			}
 		}));
 
 		mGridItems.put(MENU_FINDER, new GridItem(R.drawable.menu_finder_on, R.drawable.menu_finder_off, new ClickEvent() {
 			public void onClick() {
-				getActivity().showView(buildViewBuilder(BookFinderView.class));
+				getActivity().showView(buildViewBuilder(MENU_FINDER));
 			}
 		}));
 
@@ -53,12 +53,10 @@ public class MainMenuGridView extends SingleLineGridView {
 		mPaddingTop = getResources().getDimensionPixelSize(R.dimen.globalMenuPadding);
 
 		mHighlightDrawable = getResources().getDrawable(R.drawable.menu_bg_pressed);
-
-		mSelectedItemId = MENU_BOOKSHELF;
 	}
 
-	public ViewBuilder buildViewBuilder(Class<? extends ViewBuilder> clazz) {
-		if (clazz == BookshelfView.class) {
+	public ViewBuilder buildViewBuilder(int menuId) {
+		if (menuId == MENU_BOOKSHELF) {
 			return new BookshelfView(getActivity(), new ViewBuilder.OnShowListener() {
 				@Override
 				public void onShow() {
@@ -67,8 +65,8 @@ public class MainMenuGridView extends SingleLineGridView {
 			});
 		}
 
-		if (clazz == BookFinderView.class) {
-			return new BookFinderView(getActivity(), new ViewBuilder.OnShowListener() {
+		if (menuId == MENU_FINDER) {
+			return new FinderView(getActivity(), new ViewBuilder.OnShowListener() {
 				@Override
 				public void onShow() {
 					selectItem(MENU_FINDER);

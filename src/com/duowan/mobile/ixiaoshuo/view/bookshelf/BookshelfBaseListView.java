@@ -1,4 +1,4 @@
-package com.duowan.mobile.ixiaoshuo.view;
+package com.duowan.mobile.ixiaoshuo.view.bookshelf;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,6 +16,7 @@ import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
 import com.duowan.mobile.ixiaoshuo.ui.CommonMenuDialog;
+import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 import java.util.List;
 

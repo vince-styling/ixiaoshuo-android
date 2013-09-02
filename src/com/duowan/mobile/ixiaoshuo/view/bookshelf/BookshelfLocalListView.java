@@ -1,4 +1,4 @@
-package com.duowan.mobile.ixiaoshuo.view;
+package com.duowan.mobile.ixiaoshuo.view.bookshelf;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -8,16 +8,16 @@ import com.duowan.mobile.ixiaoshuo.event.BookCoverLoader;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
-public class BookshelfVoiceListView extends BookshelfBaseListView {
+public class BookshelfLocalListView extends BookshelfBaseListView {
 
-	public BookshelfVoiceListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lsvBookShelfVoice);
+	public BookshelfLocalListView(MainActivity activity, OnShowListener onShowListener) {
+		super(activity, R.id.lsvBookShelfLocal);
 		mShowListener = onShowListener;
 	}
 
 	@Override
 	protected void build() {
-		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_voice_listview, null);
+		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_local_listview, null);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.duowan.mobile.ixiaoshuo.view;
+package com.duowan.mobile.ixiaoshuo.view.bookshelf;
 
 import android.graphics.Color;
 import android.view.KeyEvent;
@@ -8,9 +8,10 @@ import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.event.Notifier;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
+import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class BookshelfView extends ViewBuilder {
-	private ScrollLayout mLotBookShelfContent;
+	private ScrollLayout mLotMainContent;
 	Button mBtnTextBookshelf, mBtnVoiceBookshelf, mBtnLocalBookshelf;
 
 
@@ -27,7 +28,7 @@ public class BookshelfView extends ViewBuilder {
 
 	@Override
 	public void init() {
-		mLotBookShelfContent = (ScrollLayout) findViewById(R.id.lotBookShelfContent);
+		mLotMainContent = (ScrollLayout) findViewById(R.id.lotBookShelfContent);
 
 		mBtnTextBookshelf = (Button) findViewById(R.id.btnTextBookshelf);
 		mBtnVoiceBookshelf = (Button) findViewById(R.id.btnVoiceBookshelf);
@@ -36,7 +37,7 @@ public class BookshelfView extends ViewBuilder {
 		mBtnTextBookshelf.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mLotBookShelfContent.showView(new BookshelfTextListView(mActivity, new OnShowListener() {
+				mLotMainContent.showView(new BookshelfTextListView(mActivity, new OnShowListener() {
 					@Override
 					public void onShow() {
 						highlightBtn(mBtnTextBookshelf);
@@ -49,7 +50,7 @@ public class BookshelfView extends ViewBuilder {
 		mBtnVoiceBookshelf.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mLotBookShelfContent.showView(new BookshelfVoiceListView(mActivity, new OnShowListener() {
+				mLotMainContent.showView(new BookshelfVoiceListView(mActivity, new OnShowListener() {
 					@Override
 					public void onShow() {
 						highlightBtn(mBtnVoiceBookshelf);
@@ -62,7 +63,7 @@ public class BookshelfView extends ViewBuilder {
 		mBtnLocalBookshelf.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mLotBookShelfContent.showView(new BookshelfLocalListView(mActivity, new OnShowListener() {
+				mLotMainContent.showView(new BookshelfLocalListView(mActivity, new OnShowListener() {
 					@Override
 					public void onShow() {
 						highlightBtn(mBtnLocalBookshelf);
@@ -76,7 +77,7 @@ public class BookshelfView extends ViewBuilder {
 
 		mActivity.getReaderApplication().getMainHandler().putNotifier(Notifier.NOTIFIER_BOOKSHELF_REFRESH, new Notifier() {
 			public void onNotified() {
-				mLotBookShelfContent.resumeView();
+				mLotMainContent.resumeView();
 			}
 		});
 	}
@@ -103,7 +104,7 @@ public class BookshelfView extends ViewBuilder {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return mLotBookShelfContent.onKeyDown(keyCode, event);
+		return mLotMainContent.onKeyDown(keyCode, event);
 	}
 
 	private void turnOnButton(Button btnView) {

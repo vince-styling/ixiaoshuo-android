@@ -6,7 +6,6 @@ import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.ui.MainMenuGridView;
 import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
 import com.duowan.mobile.ixiaoshuo.utils.SysUtil;
-import com.duowan.mobile.ixiaoshuo.view.BookshelfView;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class MainActivity extends BaseActivity {
@@ -17,10 +16,10 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		MainMenuGridView mMainMenuView = (MainMenuGridView) findViewById(R.id.mainMenuView);
-
 		mLotMainContent = (ScrollLayout) findViewById(R.id.lotMainContent);
-		showView(mMainMenuView.buildViewBuilder(BookshelfView.class));
+
+		MainMenuGridView mainMenuView = (MainMenuGridView) findViewById(R.id.mainMenuView);
+		showView(mainMenuView.buildViewBuilder(MainMenuGridView.MENU_BOOKSHELF));
 	}
 
 	public void showView(ViewBuilder builder) {

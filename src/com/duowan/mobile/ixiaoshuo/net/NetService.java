@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import com.duowan.mobile.ixiaoshuo.pojo.*;
 import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
+import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -85,10 +86,66 @@ public final class NetService extends BaseNetService {
 		return null;
 	}
 
-	public List<Book> bookSearch(String keyword, int updateStatus, int pageNo, int pageSize) {
+	public List<Category> getCategories(String type) {
 		if (!mNetworkAvailable) return null;
 		try {
-			String params = "keyword=" + keyword + "&updateStatus=" + updateStatus + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
+			String params = "type=" + type;
+			Respond respond = handleHttpGet("/book/get_categories.do", params);
+			if (Respond.isCorrect(respond)) {
+				return respond.convert(new TypeReference<List<Category>>(){});
+			}
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public PaginationList<Book> getBookListByCategory(String type, int catId, int pageNo, int pageItemCount) {
+		if (!mNetworkAvailable) return null;
+		try {
+			String params = "type=" + type + "&catId=" + catId + "&pageNo=" + pageNo + "&pageItemCount=" + pageItemCount;
+			Respond respond = handleHttpGet("/book/list_bycategory.do", params);
+			if (Respond.isCorrect(respond)) {
+				return respond.convertPaginationList(Book.class);
+			}
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public PaginationList<Book> getNewlyBookList(String type, int pageNo, int pageItemCount) {
+		if (!mNetworkAvailable) return null;
+		try {
+			String params = "type=" + type + "&pageNo=" + pageNo + "&pageItemCount=" + pageItemCount;
+			Respond respond = handleHttpGet("/book/list_bynewly.do", params);
+			if (Respond.isCorrect(respond)) {
+				return respond.convertPaginationList(Book.class);
+			}
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public PaginationList<Book> getHottestBookList(String type, int pageNo, int pageItemCount) {
+		if (!mNetworkAvailable) return null;
+		try {
+			String params = "type=" + type + "&pageNo=" + pageNo + "&pageItemCount=" + pageItemCount;
+			Respond respond = handleHttpGet("/book/list_byhottest.do", params);
+			if (Respond.isCorrect(respond)) {
+				return respond.convertPaginationList(Book.class);
+			}
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public List<Book> bookSearch(String keyword, int updateStatus, int pageNo, int pageItemCount) {
+		if (!mNetworkAvailable) return null;
+		try {
+			String params = "keyword=" + keyword + "&updateStatus=" + updateStatus + "&pageNo=" + pageNo + "&pageItemCount=" + pageItemCount;
 			Respond respond = handleHttpGet("/book/book_search.do", params);
 			if (Respond.isCorrect(respond)) {
 				return respond.convert(new TypeReference<List<Book>>(){});
@@ -99,55 +156,14 @@ public final class NetService extends BaseNetService {
 		return null;
 	}
 
-	public List<Book> getReadingBookList(int pageNo, int pageSize) {
+	public List<Book> getReadingBookList(int pageNo, int pageItemCount) {
 		if (!mNetworkAvailable) return null;
 		try {
-			String params = "pageNo=" + pageNo + "&pageSize=" + pageSize;
+			String params = "pageNo=" + pageNo + "&pageItemCount=" + pageItemCount;
 			Respond respond = handleHttpGet("/book/reading_ranking.do", params);
 			if (Respond.isCorrect(respond)) {
 				return respond.convert(new TypeReference<List<Book>>() {
 				});
-			}
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	public List<Book> getBookRanking(String type, int pageNo, int pageSize) {
-		if (!mNetworkAvailable) return null;
-		try {
-			String params = "type=" + type + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
-			Respond respond = handleHttpGet("/book/book_ranking.do", params);
-			if (Respond.isCorrect(respond)) {
-				return respond.convert(new TypeReference<List<Book>>(){});
-			}
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	public List<Site> getSiteRankingList() {
-		if (!mNetworkAvailable) return null;
-		try {
-			Respond respond = handleHttpGet("/get_site_list_ranking.do", null);
-			if (Respond.isCorrect(respond)) {
-				return respond.convert(new TypeReference<List<Site>>(){});
-			}
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	public List<Book> getSiteBookRanking(int siteId, int pageNo, int pageSize) {
-		if (!mNetworkAvailable) return null;
-		try {
-			String params = "siteId=" + siteId + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
-			Respond respond = handleHttpGet("/book/site_ranking.do", params);
-			if (Respond.isCorrect(respond)) {
-				return respond.convert(new TypeReference<List<Book>>(){});
 			}
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage(), e);
