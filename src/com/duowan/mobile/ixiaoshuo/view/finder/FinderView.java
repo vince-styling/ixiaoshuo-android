@@ -1,5 +1,6 @@
 package com.duowan.mobile.ixiaoshuo.view.finder;
 
+import android.view.KeyEvent;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.ui.FinderMenuGridView;
@@ -31,6 +32,11 @@ public class FinderView extends ViewBuilder {
 
 	public void showView(ViewBuilder builder) {
 		mLotMainContent.showView(builder);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		return mLotMainContent.onKeyDown(keyCode, event);
 	}
 
 }

@@ -7,18 +7,17 @@ import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.event.BookCoverLoader;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
-import com.duowan.mobile.ixiaoshuo.view.bookshelf.BookshelfBaseListView;
 
 public class BookshelfVoiceListView extends BookshelfBaseListView {
 
 	public BookshelfVoiceListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lsvBookShelfVoice);
-		mShowListener = onShowListener;
+		super(activity, R.id.lsvBookShelfVoice, onShowListener);
 	}
 
 	@Override
 	protected void build() {
-		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_voice_listview, null);
+		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_listview, null);
+		mView.setId(mViewId);
 	}
 
 	@Override

@@ -6,12 +6,11 @@ import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
-import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
-public class FinderNewlyBookListView extends FinderBaseListView {
+public class FinderUpdatesBookListView extends FinderBaseListView {
 
-	public FinderNewlyBookListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lsvFinderNewlyBooks, onShowListener);
+	public FinderUpdatesBookListView(MainActivity activity, OnShowListener onShowListener) {
+		super(activity, R.id.lsvFinderUpdatesBooks, onShowListener);
 	}
 
 	@Override
@@ -22,11 +21,12 @@ public class FinderNewlyBookListView extends FinderBaseListView {
 
 	@Override
 	protected PaginationList<Book> loadData() {
-		return NetService.get().getNewlyBookList(Book.TYPE_TEXT, mPageNo, PAGE_ITEM_COUNT);
+		return NetService.get().getBookListByUpdateStatus(Book.TYPE_TEXT, Book.STATUS_FINISHED, mPageNo, PAGE_ITEM_COUNT);
 	}
 
 	@Override
 	protected void setBookTips(TextView txvBookTips, Book book) {
-		txvBookTips.setText(StringUtil.getDiffWithNow(book.getLastUpdateTime()));
+		txvBookTips.setText(book.getCatName());
 	}
+
 }

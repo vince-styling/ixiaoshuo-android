@@ -80,7 +80,7 @@ public class BookInfoView extends ViewBuilder implements View.OnClickListener, A
 	}
 
 	@Override
-	public boolean isReusable() {
+	protected boolean isReusable() {
 		return false;
 	}
 

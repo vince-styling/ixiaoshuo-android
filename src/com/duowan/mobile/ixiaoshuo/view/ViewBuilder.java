@@ -2,6 +2,7 @@ package com.duowan.mobile.ixiaoshuo.view;
 
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 
@@ -28,16 +29,16 @@ public abstract class ViewBuilder {
 	// build the view
 	protected abstract void build();
 
-	// init view such as attach events or set visibility, should invoke after build(), because we will get view by Activity sometime
+	// init view such as attach events or set visibility, should invoke after build(),
+	// because we will get view by Activity sometime
 	public abstract void init();
 
-	// when focus on, resume the view
+	// always use resume() to show view
 	public void resume() {
 		bringToFront();
 	}
 
-	// show view and do something like onShow event
-	public void bringToFront() {
+	protected void bringToFront() {
 		if (mIsInFront) return;
 		if (mShowListener != null) mShowListener.onShow();
 		mView.setVisibility(View.VISIBLE);
@@ -45,8 +46,10 @@ public abstract class ViewBuilder {
 	}
 
 	public void pushBack() {
-		mView.setVisibility(View.GONE);
 		mIsInFront = false;
+		mView.setVisibility(View.GONE);
+		// if view cannot use again, we should be remove it
+		if (!isReusable()) ((ViewGroup) mView.getParent()).removeView(mView);
 	}
 
 	public boolean isInFront() {
@@ -65,7 +68,12 @@ public abstract class ViewBuilder {
 		return mViewId;
 	}
 
-	public boolean isReusable() {
+	protected boolean isReusable() {
+		return true;
+	}
+
+	// when responding back key event, we'll ask this method before show view again
+	public boolean canShowBack() {
 		return true;
 	}
 

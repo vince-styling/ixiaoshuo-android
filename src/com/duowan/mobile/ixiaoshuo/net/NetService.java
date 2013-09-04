@@ -100,6 +100,20 @@ public final class NetService extends BaseNetService {
 		return null;
 	}
 
+	public PaginationList<Book> getBookListByUpdateStatus(String type, int updateStatus, int pageNo, int pageItemCount) {
+		if (!mNetworkAvailable) return null;
+		try {
+			String params = "type=" + type + "&updateStatus=" + updateStatus + "&pageNo=" + pageNo + "&pageItemCount=" + pageItemCount;
+			Respond respond = handleHttpGet("/book/list_bystatus.do", params);
+			if (Respond.isCorrect(respond)) {
+				return respond.convertPaginationList(Book.class);
+			}
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return null;
+	}
+
 	public PaginationList<Book> getBookListByCategory(String type, int catId, int pageNo, int pageItemCount) {
 		if (!mNetworkAvailable) return null;
 		try {

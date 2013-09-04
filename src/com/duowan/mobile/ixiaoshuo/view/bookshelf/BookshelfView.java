@@ -14,7 +14,6 @@ public class BookshelfView extends ViewBuilder {
 	private ScrollLayout mLotMainContent;
 	Button mBtnTextBookshelf, mBtnVoiceBookshelf, mBtnLocalBookshelf;
 
-
 	public BookshelfView(MainActivity activity, OnShowListener onShowListener) {
 		mShowListener = onShowListener;
 		mViewId = R.id.lotBookshelf;

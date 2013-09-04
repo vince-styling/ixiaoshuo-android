@@ -120,7 +120,9 @@ public class StringUtil {
 			cal1.add(Calendar.HOUR, 1);
 			if (cal1.after(cal2)) {
 				cal1.add(Calendar.HOUR, -1);
-				return ((cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 60000) + "分钟前";
+				long diffInSecond = (cal2.getTimeInMillis() - cal1.getTimeInMillis()) / 1000;
+				long diffInMinute = diffInSecond / 60;
+				return diffInMinute == 0 ? diffInSecond + "秒前" : diffInMinute + "分钟前";
 			}
 
 			cal1.add(Calendar.HOUR, 23);

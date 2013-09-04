@@ -23,16 +23,14 @@ public class ScrollLayout extends LinearLayout {
 
 		View view = findViewById(builder.getViewId());
 		if (view != null) {
-			if (builder.isReusable()) {
-				((ViewBuilder) view.getTag()).bringToFront();
-			} else addView(builder);
+			((ViewBuilder) view.getTag()).resume();
 		} else addView(builder);
 	}
 
 	private void addView(ViewBuilder builder) {
 		addView(builder.getView());
 		builder.init();
-		builder.bringToFront();
+		builder.resume();
 		builder.getView().setTag(builder);
 	}
 
@@ -61,10 +59,15 @@ public class ScrollLayout extends LinearLayout {
 						builder.pushBack();
 
 						// get back view and show it
-						builder = (ViewBuilder) getChildAt(--index).getTag();
-						builder.bringToFront();
+						while (--index >= 0) {
+							builder = (ViewBuilder) getChildAt(index).getTag();
+							if (builder.canShowBack()) {
+								builder.resume();
+								return true;
+							}
+						}
 
-						return true;
+						return false;
 					}
 				}
 				break;

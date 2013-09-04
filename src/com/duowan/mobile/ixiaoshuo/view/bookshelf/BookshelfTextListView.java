@@ -11,13 +11,13 @@ import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 public class BookshelfTextListView extends BookshelfBaseListView {
 
 	public BookshelfTextListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lsvBookShelfText);
-		mShowListener = onShowListener;
+		super(activity, R.id.lsvBookShelfText, onShowListener);
 	}
 
 	@Override
 	protected void build() {
-		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_text_listview, null);
+		mView = mActivity.getLayoutInflater().inflate(R.layout.book_shelf_listview, null);
+		mView.setId(mViewId);
 	}
 
 	@Override

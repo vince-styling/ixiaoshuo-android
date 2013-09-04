@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- about bookshelf -->
+    <item name="lsvBookShelfText" type="id" />
+    <item name="lsvBookShelfVoice" type="id" />
+    <item name="lsvBookShelfLocal" type="id" />
+
+    <!-- about finder -->
+    <item name="lsvFinderCategoryBooks" type="id" />
+    <item name="lsvFinderUpdatesBooks" type="id" />
+    <item name="lsvFinderHottestBooks" type="id" />
+    <item name="lsvFinderNewlyBooks" type="id" />
+
+</resources>

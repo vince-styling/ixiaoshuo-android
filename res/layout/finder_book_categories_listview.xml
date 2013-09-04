@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/lsvFinderNewlyBooks" android:visibility="gone"
+          android:id="@+id/lsvFinderBookCategories" android:visibility="gone"
           android:layout_width="match_parent" android:layout_height="match_parent"
-          android:fastScrollEnabled="true" android:background="#fffbf7"
           android:listSelector="@drawable/finder_booklist_bg_selector"
-          android:divider="@null" android:dividerHeight="0dp" />
+          android:divider="@color/finder_category_list_divier" android:dividerHeight="2dp" />

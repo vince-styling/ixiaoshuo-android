@@ -26,7 +26,8 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 
 	protected View mLotWithoutBooks;
 
-	public BookshelfBaseListView(MainActivity activity, int viewId) {
+	public BookshelfBaseListView(MainActivity activity, int viewId, OnShowListener onShowListener) {
+		mShowListener = onShowListener;
 		mActivity = activity;
 		mViewId = viewId;
 	}
@@ -44,7 +45,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 	}
 
 	@Override
-	public void bringToFront() {
+	protected void bringToFront() {
 		if (mIsInFront) return;
 
 		if (mBookList != null && mBookList.size() > 0) {
