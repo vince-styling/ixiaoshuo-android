@@ -1,6 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.view.finder;
 
 import android.view.KeyEvent;
+import android.view.View;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
@@ -20,8 +21,9 @@ public class FinderCategoriesView extends ViewBuilder {
 	}
 
 	@Override
-	public void init() {
+	public void resume() {
 		showView(new FinderCategoryListView(getActivity(), this));
+		super.resume();
 	}
 
 	public void showView(ViewBuilder builder) {

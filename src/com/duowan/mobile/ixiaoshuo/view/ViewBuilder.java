@@ -31,7 +31,7 @@ public abstract class ViewBuilder {
 
 	// init view such as attach events or set visibility, should invoke after build(),
 	// because we will get view by Activity sometime
-	public abstract void init();
+	public void init() {}
 
 	// always use resume() to show view
 	public void resume() {
