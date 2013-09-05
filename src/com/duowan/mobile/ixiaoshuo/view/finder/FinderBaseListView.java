@@ -45,8 +45,10 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 					holder.txvBookName = (TextView) convertView.findViewById(R.id.txvBookName);
 					holder.txvBookSummary = (TextView) convertView.findViewById(R.id.txvBookSummary);
 
+					holder.lotBookStatus = convertView.findViewById(R.id.lotBookStatus);
 					holder.txvBookStatus1 = (TextView) convertView.findViewById(R.id.txvBookStatus1);
 					holder.txvBookStatus2 = (TextView) convertView.findViewById(R.id.txvBookStatus2);
+					holder.imvBookStatusSplit = (ImageView) convertView.findViewById(R.id.imvBookStatusSplit);
 
 					holder.txvBookTips = (TextView) convertView.findViewById(R.id.txvBookTips);
 					holder.txvBookCapacity = (TextView) convertView.findViewById(R.id.txvBookCapacity);
@@ -61,12 +63,14 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 				Book book = mAdapter.getItem(position);
 
-				holder.txvBookStatus1.setText(book.getUpdateStatusSimpleStr());
-				holder.txvBookStatus2.setVisibility(book.isBothType() ? View.VISIBLE : View.GONE);
-
 				holder.txvBookName.setText(book.getName());
 				holder.txvBookSummary.setText(book.getSummary());
 				holder.txvBookCapacity.setText(book.getCapacityStr());
+
+				holder.txvBookStatus1.setVisibility(book.isFinished() ? View.VISIBLE : View.GONE);
+				holder.txvBookStatus2.setVisibility(book.isBothType() ? View.VISIBLE : View.GONE);
+				holder.lotBookStatus.setVisibility(holder.txvBookStatus1.getVisibility() == View.VISIBLE || holder.txvBookStatus2.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
+				holder.imvBookStatusSplit.setVisibility(holder.txvBookStatus1.getVisibility() == View.VISIBLE && holder.txvBookStatus2.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
 
 				setBookTips(holder.txvBookTips, book);
 
@@ -177,6 +181,8 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 		TextView txvBookCapacity;
 		TextView txvBookTips;
 		View lotDivider;
+		ImageView imvBookStatusSplit;
+		View lotBookStatus;
 	}
 
 	protected ListView getListView() {

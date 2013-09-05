@@ -8,7 +8,7 @@
                   android:orientation="horizontal" android:layout_weight="1" />
 
     <com.duowan.mobile.ixiaoshuo.ui.MainMenuGridView android:id="@+id/mainMenuView"
-            android:layout_width="match_parent" android:layout_height="60dp"
+            android:layout_width="match_parent" android:layout_height="56dp"
             android:background="@drawable/menu_bg_layer" />
 
 </LinearLayout>
