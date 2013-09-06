@@ -62,7 +62,7 @@ public class ReaderActivity extends BaseActivity {
 				@Override
 				public View getView(int position, View convertView, ViewGroup parent) {
 					if (convertView == null) {
-						convertView = getLayoutInflater().inflate(R.layout.book_info_chapter_list_item, null);
+						convertView = getLayoutInflater().inflate(R.layout.reader_chapter_list_item, null);
 					}
 					Chapter chapter = getItem(position);
 					((TextView) convertView).setText(chapter.getTitle());

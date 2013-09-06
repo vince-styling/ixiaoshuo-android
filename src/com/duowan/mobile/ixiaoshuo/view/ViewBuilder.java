@@ -60,7 +60,7 @@ public abstract class ViewBuilder {
 		return false;
 	}
 
-	protected final View findViewById(int viewId) {
+	protected View findViewById(int viewId) {
 		return mView.findViewById(viewId);
 	}
 

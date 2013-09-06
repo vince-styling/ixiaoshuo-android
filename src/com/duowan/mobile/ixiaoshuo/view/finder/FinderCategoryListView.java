@@ -119,7 +119,9 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		mCategoriesView.showView(new FinderCategoryBookListView(mAdapter.getItem(position).getCatId(), getActivity()));
+		Category category = mAdapter.getItem(position);
+		if (category == null) return;
+		mCategoriesView.showView(new FinderCategoryBookListView(category.getCatId(), mActivity));
 	}
 
 	protected ListView getListView() {

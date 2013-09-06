@@ -1,5 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.view.finder;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.view.Display;
 import android.view.View;
 import android.widget.*;
@@ -9,6 +11,7 @@ import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
+import com.duowan.mobile.ixiaoshuo.view.BookInfoView;
 import com.duowan.mobile.ixiaoshuo.view.EndlessListAdapter;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
@@ -37,7 +40,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 			protected View getView(int position, View convertView) {
 				Holder holder;
 				if (convertView == null) {
-					convertView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_list_item, null);
+					convertView = mActivity.getLayoutInflater().inflate(R.layout.finder_book_list_item, null);
 
 					holder = new Holder();
 					holder.lotDivider = convertView.findViewById(R.id.lotDivider);
@@ -64,7 +67,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 				Book book = mAdapter.getItem(position);
 
 				holder.txvBookName.setText(book.getName());
-				holder.txvBookSummary.setText(book.getSummary());
+				holder.txvBookSummary.setText(book.getPlainSummary());
 				holder.txvBookCapacity.setText(book.getCapacityStr());
 
 				holder.txvBookStatus1.setVisibility(book.isFinished() ? View.VISIBLE : View.GONE);
@@ -84,8 +87,8 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 			@Override
 			protected View initProgressView() {
-				View progressView = getActivity().getLayoutInflater().inflate(R.layout.contents_loading, null);
-				Display display = getActivity().getWindowManager().getDefaultDisplay();
+				View progressView = mActivity.getLayoutInflater().inflate(R.layout.contents_loading, null);
+				Display display = mActivity.getWindowManager().getDefaultDisplay();
 				progressView.setLayoutParams(new AbsListView.LayoutParams(display.getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
 				return progressView;
 			}
@@ -121,7 +124,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 		if (!NetService.get().isNetworkAvailable()) {
 			if (mAdapter.getItemCount() > 0) {
-				getActivity().showToastMsg(R.string.network_disconnect_msg);
+				mActivity.showToastMsg(R.string.network_disconnect_msg);
 			} else {
 				mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
 			}
@@ -142,7 +145,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 				if (bookList == null || bookList.size() == 0) {
 					if (isInFront()) {
 						if (mAdapter.getItemCount() > 0) {
-							getActivity().showToastMsg(R.string.without_data);
+							mActivity.showToastMsg(R.string.without_data);
 						} else {
 							mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
 						}
@@ -160,8 +163,44 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		final Book book = (Book) parent.getItemAtPosition(position);
-		if (book != null) getActivity().showToastMsg("点击了《" + book.getName() + "》");
+		Book book = (Book) parent.getItemAtPosition(position);
+		if (book == null) return;
+
+		if (!NetService.get().isNetworkAvailable()) {
+			mActivity.showToastMsg(R.string.network_disconnect_msg);
+			return;
+		}
+
+		final int bookId = book.getBookId();
+		NetService.execute(new NetService.NetExecutor<Book>() {
+			ProgressDialog mPrgreDialog;
+
+			public void preExecute() {
+				mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
+				mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						NetService.get().abortLast();
+					}
+				});
+			}
+
+			public Book execute() {
+				return NetService.get().getBookDetail(bookId);
+			}
+
+			public void callback(Book bookDetail) {
+				boolean isShowing = mPrgreDialog.isShowing();
+				if (isShowing) mPrgreDialog.cancel(); else return;
+
+				if (bookDetail == null) {
+					mActivity.showToastMsg(R.string.without_data);
+					return;
+				}
+
+				mActivity.showView(new BookInfoView(mActivity, bookDetail));
+			}
+		});
 	}
 
 	@Override

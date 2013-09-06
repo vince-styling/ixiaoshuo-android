@@ -13,7 +13,9 @@ public class Book {
 	private String name;
 	private String author;
 	private String coverUrl;
+
 	private String summary;
+	private boolean isOriginSummary = true;
 
 	// TODO : 所有返回列表的接口，记得同时返回type！！！！！
 	private String type = TYPE_TEXT;
@@ -174,8 +176,24 @@ public class Book {
 		return summary;
 	}
 
+	public String getPlainSummary() {
+		if (isOriginSummary) {
+			summary = StringUtil.trimAsPlainText(summary);
+			isOriginSummary = false;
+		}
+		return summary;
+	}
+
+	public String getFormattedSummary() {
+		if (isOriginSummary) {
+			summary = StringUtil.trimAsFormattedText(summary);
+			isOriginSummary = false;
+		}
+		return summary;
+	}
+
 	public void setSummary(String summary) {
-		this.summary = StringUtil.trimEmpty(summary);
+		this.summary = summary;
 	}
 
 	public String getWebsiteName() {

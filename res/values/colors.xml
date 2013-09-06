@@ -3,4 +3,5 @@
     <color name="finder_booklist_bg">#fffbf7</color>
     <color name="finder_booklist_bg_pressed">#fff4e5</color>
     <color name="finder_category_list_divier">#faf1e7</color>
+    <color name="book_info_chapter_list_divier">#f9ede1</color>
 </resources>

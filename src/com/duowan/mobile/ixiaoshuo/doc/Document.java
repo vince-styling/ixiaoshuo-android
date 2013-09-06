@@ -7,6 +7,7 @@ import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.ui.RenderPaint;
 import com.duowan.mobile.ixiaoshuo.utils.CharsetUtil;
 import com.duowan.mobile.ixiaoshuo.utils.Encoding;
+import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -21,8 +22,6 @@ import java.util.LinkedList;
  */
 public abstract class Document {
 	protected static final String TAG = "Document";
-	private final static char NEW_LINE_CHAR = '\n';
-	private final static String NEW_LINE_STR = "\n";
 
 	protected RenderPaint mPaint;
 
@@ -186,7 +185,7 @@ public abstract class Document {
 			} else {
 				// try finding a NEWLINE(paragraph boundary)
 				while (beginCharOffset > 0) {
-					if(mContentBuf.lastIndexOf(NEW_LINE_STR, beginCharOffset) != -1)
+					if(mContentBuf.lastIndexOf(StringUtil.NEW_LINE_STR, beginCharOffset) != -1)
 						break;
 					--beginCharOffset;
 				}
@@ -197,13 +196,13 @@ public abstract class Document {
 			// is for separating the last paragraph of the previous page and the first paragraph of the 
 			// current page(if it does exist), we don't need it because we are going to segment the text
 			// by paragraphs of the previous page(only the previous page, not the current page)
-			if(mContentBuf.charAt(endCharOffset - 1) == NEW_LINE_CHAR) {
+			if(mContentBuf.charAt(endCharOffset - 1) == StringUtil.NEW_LINE_CHAR) {
 				--endCharOffset;	// ignore last newline of the previous page
 			}
 			// from the end to the beginning, we search for the first newline(of course, the actual *first* newline might have 
 			// already been skipped, then we are searching for the second one if you are confusing^_^)
 			int lineCharOffset = beginCharOffset;
-			int newlineOffset = mContentBuf.lastIndexOf(NEW_LINE_STR, endCharOffset - 1);
+			int newlineOffset = mContentBuf.lastIndexOf(StringUtil.NEW_LINE_STR, endCharOffset - 1);
 
 			// found a newline in previous page
 			if (newlineOffset != -1) {
@@ -212,7 +211,7 @@ public abstract class Document {
 				int lineCount = 0;
 				while (endCharOffset > beginCharOffset) {
 					if (lineCharOffset == endCharOffset) {
-						newlineOffset = mContentBuf.lastIndexOf(NEW_LINE_STR, endCharOffset - 1);
+						newlineOffset = mContentBuf.lastIndexOf(StringUtil.NEW_LINE_STR, endCharOffset - 1);
 						if(newlineOffset != -1) {
 							lineCharOffset = newlineOffset + 1;
 						} else { 
@@ -249,7 +248,7 @@ public abstract class Document {
 			int contentHeight = 0;
 			for (int i = 0; i < mCharOffsetList.size(); ++i) {
 				if (contentHeight > 0) {
-					boolean isNewline = mContentBuf.charAt(mCharOffsetList.get(i - 1) - 1) == NEW_LINE_CHAR;
+					boolean isNewline = mContentBuf.charAt(mCharOffsetList.get(i - 1) - 1) == StringUtil.NEW_LINE_CHAR;
 					if(isNewline) contentHeight += mPaint.getParagraphSpacing();
 					else contentHeight += mPaint.getLineSpacing();
 				}
@@ -293,14 +292,14 @@ public abstract class Document {
 
 		int index = mPageCharOffsetInBuffer + mCharCountOfPage;
 		if (index == mNewlineIndex) {
-			mNewlineIndex = mContentBuf.indexOf(NEW_LINE_STR, mNewlineIndex);
+			mNewlineIndex = mContentBuf.indexOf(StringUtil.NEW_LINE_STR, mNewlineIndex);
 			mEndCharIndex = (mNewlineIndex != -1) ? mNewlineIndex : mContentBuf.length();
 		}
 
 		boolean needIndent = false;
 		if (mPaint.getFirstLineIndent().length() > 0) {
 			if (index > 0) {
-				needIndent = mContentBuf.charAt(index - 1) == NEW_LINE_CHAR;
+				needIndent = mContentBuf.charAt(index - 1) == StringUtil.NEW_LINE_CHAR;
 			} else {
 				needIndent = determineParagraphIndent();
 			}
@@ -364,11 +363,11 @@ public abstract class Document {
 			int lenRead = mRandBookFile.read(tempContentBuf);
 
 			int skippedBytes = CharsetUtil.getByteCountOfFirstIncompleteChar(tempContentBuf, lenRead, mEncoding);
-			if (tempContentBuf[skippedBytes] == NEW_LINE_CHAR) {
+			if (tempContentBuf[skippedBytes] == StringUtil.NEW_LINE_CHAR) {
 				++skippedBytes;
 			} else if (tempContentBuf[skippedBytes] == '\r') {
 				++skippedBytes;
-				if (tempContentBuf[skippedBytes] == NEW_LINE_CHAR)
+				if (tempContentBuf[skippedBytes] == StringUtil.NEW_LINE_CHAR)
 					++skippedBytes;
 			}
 			return fileBeginPosition + skippedBytes;
@@ -390,7 +389,7 @@ public abstract class Document {
 			mRandBookFile.read(tempBytes);
 
 			String charStr = new String(tempBytes, mEncoding.getName());
-			return charStr.charAt(charStr.length() - 1) == NEW_LINE_CHAR;
+			return charStr.charAt(charStr.length() - 1) == StringUtil.NEW_LINE_CHAR;
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
 		}

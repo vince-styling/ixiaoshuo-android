@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
           android:layout_width="match_parent" android:layout_height="wrap_content"
-          android:gravity="center_vertical" android:paddingTop="10dp" android:paddingBottom="10dp"
-          android:textColor="#000000" android:textSize="16sp" />
+          android:paddingLeft="12dp" android:paddingRight="12dp" android:gravity="center_vertical">
+
+    <TextView android:id="@+id/txvChapterTitle"
+              android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+              android:paddingTop="15dp" android:paddingBottom="15dp"
+              android:textSize="16sp" android:textColor="#724e2b" />
+
+    <TextView android:layout_width="1dp" android:layout_height="match_parent"
+              android:background="@color/book_info_chapter_list_divier" />
+
+    <Button android:id="@+id/btnChapterGotoRead"
+            android:layout_width="30dp" android:layout_height="30dp" android:layout_marginLeft="10dp"
+            android:background="@drawable/book_info_chapter_btn_goto_read"
+            android:clickable="false" android:focusable="false" />
+
+</LinearLayout>

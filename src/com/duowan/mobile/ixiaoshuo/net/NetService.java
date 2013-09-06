@@ -74,11 +74,26 @@ public final class NetService extends BaseNetService {
 		return null;
 	}
 
+	public PaginationList<Chapter> getBookChapterList(int bookId, int lastChapterId, int pageNo, int pageItemCount) {
+		if (!mNetworkAvailable) return null;
+		return Chapter.getChapterList(pageNo, pageItemCount);
+//		try {
+			// TODO : lastChapterId 参数名写错了！
+//			String params = "bookId=" + bookId + "&lastChapaterId=" + lastChapterId + "&pageNo=" + pageNo + "&pageItemCount=" + pageItemCount;
+//			Respond respond = handleHttpGet("/book/newly_chapter.do", params);
+//			if (Respond.isCorrect(respond)) {
+//				return respond.convertPaginationList(Chapter.class);
+//			}
+//		} catch (IOException e) {
+//			Log.e(TAG, e.getMessage(), e);
+//		}
+//		return null;
+	}
+
 	public Book getBookDetail(int bookId) {
 		if (!mNetworkAvailable) return null;
 		try {
-			String params = "bookId=" + bookId;
-			Respond respond = handleHttpGet("/book/book_detail.do", params);
+			Respond respond = handleHttpGet("/book/detail.do", "bookId=" + bookId);
 			if (Respond.isCorrect(respond)) return respond.convert(Book.class);
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage(), e);

@@ -7,6 +7,7 @@ import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.BaseActivity;
 import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
+import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 import java.io.File;
 
@@ -54,9 +55,9 @@ public class BookCoverLoader extends TaskRunnable {
 		if (coverBitmap != null) {
 			imvBookCover.setImageBitmap(coverBitmap);
 		} else {
-			activity.submitTask(
-					new BookCoverLoader(book, imvBookCover, activity.getReaderApplication().getMainHandler())
-			);
+			if (StringUtil.isValidUrl(book.getCoverUrl())) {
+				activity.submitTask(new BookCoverLoader(book, imvBookCover, activity.getReaderApplication().getMainHandler()));
+			}
 			coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.cover_less, imvBookCover);
 			imvBookCover.setImageBitmap(coverBitmap);
 		}

@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
  * @author vince
  */
 public class StringUtil {
+	public final static char NEW_LINE_CHAR = '\n';
+	public final static String NEW_LINE_STR = "\n";
 	
 	public static String trim(String text) {
 		if(text == null) return "";
@@ -175,11 +177,25 @@ public class StringUtil {
 		return m.matches();
 	}
 
-	public static String trimEmpty(String content) {
+	public static String trimAsPlainText(String content) {
 		if (content == null) return content;
 		content = content.replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "");
 		content = content.replaceAll(" ", "").replaceAll("　", "").replaceAll(" ", "");
 		return content;
+	}
+
+	public static final String lineIndentText = "　　";
+	public static String trimAsFormattedText(String content) {
+		content = content.replaceAll(" ", "").replaceAll("　", "").replaceAll(" ", "");
+		content = content.replaceAll("\t", "").replaceAll("\r", "\n");
+
+		String text = NEW_LINE_STR + NEW_LINE_STR;
+		while (content.contains(text)) {
+			content = content.replaceAll(text, NEW_LINE_STR);
+		}
+
+		content = content.replaceAll(NEW_LINE_STR, NEW_LINE_STR + lineIndentText);
+		return content.indexOf(lineIndentText) == 0 ? content : lineIndentText + content;
 	}
 
 	public static void main(String[] args) throws Exception {
