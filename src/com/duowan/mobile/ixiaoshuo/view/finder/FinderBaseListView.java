@@ -22,8 +22,10 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	protected int mPageNo = 1;
 	protected final static int PAGE_ITEM_COUNT = 20;
 	protected boolean mHasNextPage = true;
+	protected String mBookType;
 
-	public FinderBaseListView(MainActivity activity, int viewId, OnShowListener onShowListener) {
+	public FinderBaseListView(String bookType, MainActivity activity, int viewId, OnShowListener onShowListener) {
+		mBookType = bookType;
 		mShowListener = onShowListener;
 		mActivity = activity;
 		mViewId = viewId;

@@ -1,18 +1,19 @@
 package com.duowan.mobile.ixiaoshuo.view.finder;
 
 import android.view.KeyEvent;
-import android.view.View;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class FinderCategoriesView extends ViewBuilder {
+	private String mBookType;
 
-	public FinderCategoriesView(MainActivity activity, OnShowListener onShowListener) {
+	public FinderCategoriesView(String bookType, MainActivity activity, OnShowListener onShowListener) {
 		mViewId = R.id.lotFinderCategoriesContent;
 		mShowListener = onShowListener;
 		mActivity = activity;
+		mBookType = bookType;
 	}
 
 	@Override
@@ -33,6 +34,10 @@ public class FinderCategoriesView extends ViewBuilder {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		return mView.onKeyDown(keyCode, event);
+	}
+
+	public String getBookType() {
+		return mBookType;
 	}
 
 	private ScrollLayout getScrollLayout() {

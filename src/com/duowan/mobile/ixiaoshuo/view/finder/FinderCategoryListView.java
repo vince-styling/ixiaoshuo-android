@@ -6,7 +6,6 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
-import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.Category;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.view.EndlessListAdapter;
@@ -99,7 +98,7 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 			public void preExecute() {}
 
 			public List<Category> execute() {
-				return NetService.get().getCategories(Book.TYPE_TEXT);
+				return NetService.get().getCategories(mCategoriesView.getBookType());
 			}
 
 			public void callback(List<Category> categoryList) {
@@ -121,7 +120,7 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Category category = mAdapter.getItem(position);
 		if (category == null) return;
-		mCategoriesView.showView(new FinderCategoryBookListView(category.getCatId(), mActivity));
+		mCategoriesView.showView(new FinderCategoryBookListView(category.getCatId(), mCategoriesView.getBookType(), mActivity));
 	}
 
 	protected ListView getListView() {

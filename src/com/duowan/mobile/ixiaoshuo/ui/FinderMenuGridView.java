@@ -16,6 +16,8 @@ public class FinderMenuGridView extends SingleLineGridView {
 		super(context, attrs);
 	}
 
+	private String mBookType;
+
 	public static final int MENU_NEWLY			= 10;
 	public static final int MENU_HOTTEST		= 20;
 	public static final int MENU_UPDATES        = 30;
@@ -55,7 +57,7 @@ public class FinderMenuGridView extends SingleLineGridView {
 	public ViewBuilder buildViewBuilder(int menuId) {
 		switch (menuId) {
 			case MENU_NEWLY:
-				return new FinderNewlyBookListView(getActivity(), new ViewBuilder.OnShowListener() {
+				return new FinderNewlyBookListView(mBookType, getActivity(), new ViewBuilder.OnShowListener() {
 					@Override
 					public void onShow() {
 						selectItem(MENU_NEWLY);
@@ -63,7 +65,7 @@ public class FinderMenuGridView extends SingleLineGridView {
 				});
 
 			case MENU_HOTTEST:
-				return new FinderHottestBookListView(getActivity(), new ViewBuilder.OnShowListener() {
+				return new FinderHottestBookListView(mBookType, getActivity(), new ViewBuilder.OnShowListener() {
 					@Override
 					public void onShow() {
 						selectItem(MENU_HOTTEST);
@@ -71,7 +73,7 @@ public class FinderMenuGridView extends SingleLineGridView {
 				});
 
 			case MENU_UPDATES:
-				return new FinderUpdatesBookListView(getActivity(), new ViewBuilder.OnShowListener() {
+				return new FinderUpdatesBookListView(mBookType, getActivity(), new ViewBuilder.OnShowListener() {
 					@Override
 					public void onShow() {
 						selectItem(MENU_UPDATES);
@@ -79,7 +81,7 @@ public class FinderMenuGridView extends SingleLineGridView {
 				});
 
 			case MENU_CATEGORIES:
-				return new FinderCategoriesView(getActivity(), new ViewBuilder.OnShowListener() {
+				return new FinderCategoriesView(mBookType, getActivity(), new ViewBuilder.OnShowListener() {
 					@Override
 					public void onShow() {
 						selectItem(MENU_CATEGORIES);
@@ -92,6 +94,10 @@ public class FinderMenuGridView extends SingleLineGridView {
 	private FinderView mFinderView;
 	public void setFinderView(FinderView finderView) {
 		mFinderView = finderView;
+	}
+
+	public void setBookType(String bookType) {
+		mBookType = bookType;
 	}
 
 }

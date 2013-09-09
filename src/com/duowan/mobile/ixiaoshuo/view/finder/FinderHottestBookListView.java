@@ -9,8 +9,8 @@ import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 
 public class FinderHottestBookListView extends FinderBaseListView {
 
-	public FinderHottestBookListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lsvFinderHottestBooks, onShowListener);
+	public FinderHottestBookListView(String bookType, MainActivity activity, OnShowListener onShowListener) {
+		super(bookType, activity, R.id.lsvFinderHottestBooks, onShowListener);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class FinderHottestBookListView extends FinderBaseListView {
 
 	@Override
 	protected PaginationList<Book> loadData() {
-		return NetService.get().getHottestBookList(Book.TYPE_TEXT, mPageNo, PAGE_ITEM_COUNT);
+		return NetService.get().getHottestBookList(mBookType, mPageNo, PAGE_ITEM_COUNT);
 	}
 
 	@Override

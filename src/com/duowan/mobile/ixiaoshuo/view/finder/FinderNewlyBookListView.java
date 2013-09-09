@@ -10,8 +10,8 @@ import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 public class FinderNewlyBookListView extends FinderBaseListView {
 
-	public FinderNewlyBookListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lsvFinderNewlyBooks, onShowListener);
+	public FinderNewlyBookListView(String bookType, MainActivity activity, OnShowListener onShowListener) {
+		super(bookType, activity, R.id.lsvFinderNewlyBooks, onShowListener);
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class FinderNewlyBookListView extends FinderBaseListView {
 
 	@Override
 	protected PaginationList<Book> loadData() {
-		return NetService.get().getNewlyBookList(Book.TYPE_TEXT, mPageNo, PAGE_ITEM_COUNT);
+		return NetService.get().getNewlyBookList(mBookType, mPageNo, PAGE_ITEM_COUNT);
 	}
 
 	@Override

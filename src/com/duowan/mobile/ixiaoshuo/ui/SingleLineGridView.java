@@ -105,6 +105,10 @@ public abstract class SingleLineGridView extends View {
 		void onClick();
 	}
 
+	public int getSelectedItemId() {
+		return mSelectedItemId == 0 ? mGridItems.keyAt(0) : mSelectedItemId;
+	}
+
 	protected MainActivity getActivity() {
 		return (MainActivity) getContext();
 	}

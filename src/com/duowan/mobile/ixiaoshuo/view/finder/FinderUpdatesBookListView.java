@@ -9,8 +9,8 @@ import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 
 public class FinderUpdatesBookListView extends FinderBaseListView {
 
-	public FinderUpdatesBookListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lsvFinderUpdatesBooks, onShowListener);
+	public FinderUpdatesBookListView(String bookType, MainActivity activity, OnShowListener onShowListener) {
+		super(bookType, activity, R.id.lsvFinderUpdatesBooks, onShowListener);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class FinderUpdatesBookListView extends FinderBaseListView {
 
 	@Override
 	protected PaginationList<Book> loadData() {
-		return NetService.get().getBookListByUpdateStatus(Book.TYPE_TEXT, Book.STATUS_FINISHED, mPageNo, PAGE_ITEM_COUNT);
+		return NetService.get().getBookListByUpdateStatus(mBookType, Book.STATUS_FINISHED, mPageNo, PAGE_ITEM_COUNT);
 	}
 
 	@Override
