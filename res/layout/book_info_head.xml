@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/lotBookInfo"
-              android:layout_width="match_parent" android:layout_height="match_parent"
-              android:orientation="vertical" android:background="#ffffff">
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:duowan="http://schemas.android.com/apk/res/com.duowan.mobile.ixiaoshuo"
+        android:id="@+id/lotBookInfo"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:background="#ffffff">
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="180dp" android:orientation="vertical"
                   android:background="@drawable/book_shelf_bg_layer">
@@ -87,19 +89,11 @@
 
     </LinearLayout>
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
-                  android:paddingLeft="10dp" android:paddingRight="15dp" android:paddingTop="12dp" android:paddingBottom="12dp">
-
-        <TextView android:id="@+id/txvBookSummary"
-                  android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:textSize="15sp" android:textColor="#2b2b2b" android:maxLines="5" android:ellipsize="end" />
-
-        <Button android:id="@+id/btnSummaryShowAll"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:gravity="right" android:text="展开" android:textColor="#909090" android:textSize="16sp"
-                android:background="@drawable/book_info_btn_show_all_selector" />
-
-    </LinearLayout>
+    <com.duowan.mobile.ixiaoshuo.ui.EllipseEndTextView
+            android:id="@+id/txvBookSummary"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="10dp"
+            duowan:textSize="15sp" duowan:textColor="#2b2b2b" duowan:maxLines="5"
+            duowan:collapseBackground="@drawable/book_info_btn_expand_selector" />
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:paddingLeft="10dp" android:paddingTop="5dp" android:paddingBottom="5dp"

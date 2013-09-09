@@ -184,7 +184,6 @@ public class StringUtil {
 		return content;
 	}
 
-	public static final String lineIndentText = "　　";
 	public static String trimAsFormattedText(String content) {
 		content = content.replaceAll(" ", "").replaceAll("　", "").replaceAll(" ", "");
 		content = content.replaceAll("\t", "").replaceAll("\r", "\n");
@@ -194,8 +193,7 @@ public class StringUtil {
 			content = content.replaceAll(text, NEW_LINE_STR);
 		}
 
-		content = content.replaceAll(NEW_LINE_STR, NEW_LINE_STR + lineIndentText);
-		return content.indexOf(lineIndentText) == 0 ? content : lineIndentText + content;
+		return content;
 	}
 
 	public static void main(String[] args) throws Exception {

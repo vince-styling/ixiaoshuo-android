@@ -12,6 +12,7 @@ import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
+import com.duowan.mobile.ixiaoshuo.ui.EllipseEndTextView;
 import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
 
@@ -66,36 +67,9 @@ public class BookInfoView extends ViewBuilder implements AbsListView.OnScrollLis
 		TextView txvBookCapacity = (TextView) findViewById(R.id.txvBookCapacity);
 		txvBookCapacity.setText("字数：" + mBook.getCapacityStr());
 
-//		final Button btnSummaryShowAll = (Button) findViewById(R.id.btnSummaryShowAll);
 
-		final TextView txvBookSummary = (TextView) findViewById(R.id.txvBookSummary);
-//		txvBookSummary.setListener(new EllipsizingTextView.OnFinishDrawListener() {
-//			@Override
-//			public void onFinish() {
-//				int lineCount = txvBookSummary.getLineCount();
-//				int ellipsizedWidth = txvBookSummary.getLayout().getEllipsizedWidth();
-//				int ellipsisCount = txvBookSummary.getLayout().getEllipsisCount(lineCount);
-//				if (lineCount > 3) {
-//					btnSummaryShowAll.setVisibility(View.GONE);
-//				}
-//			}
-//		});
-		txvBookSummary.setText("简介：\n" + mBook.getFormattedSummary());
-
-//		ViewTreeObserver vto = txvBookSummary.getViewTreeObserver();
-//		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//			@Override
-//			public void onGlobalLayout() {
-//				ViewTreeObserver obs = txvBookSummary.getViewTreeObserver();
-//				obs.removeGlobalOnLayoutListener(this);
-//				int lineCount = txvBookSummary.getLineCount();
-//				int ellipsizedWidth = txvBookSummary.getLayout().getEllipsizedWidth();
-//				int ellipsisCount = txvBookSummary.getLayout().getEllipsisCount(lineCount);
-//				if (lineCount > 3) {
-//					btnSummaryShowAll.setVisibility(View.GONE);
-//				}
-//			}
-//		});
+		final EllipseEndTextView txvBookSummary = (EllipseEndTextView) findViewById(R.id.txvBookSummary);
+		txvBookSummary.setText(mBook.getFormattedSummary());
 
 		Button btnGotoRead = (Button) findViewById(R.id.btnGotoRead);
 		btnGotoRead.setOnClickListener(new View.OnClickListener() {
