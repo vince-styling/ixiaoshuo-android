@@ -56,7 +56,7 @@ public class BookInfoView extends ViewBuilder implements AbsListView.OnScrollLis
 		txvBookName.setText(mBook.getName());
 
 		TextView txvBookStatus = (TextView) findViewById(R.id.txvBookStatus);
-		txvBookStatus.setText(mBook.getUpdateStatusStr());
+		txvBookStatus.setText(mBook.getSimpleUpdateStatusStr());
 
 		TextView txvBookAuthor = (TextView) findViewById(R.id.txvBookAuthor);
 		txvBookAuthor.setText("作者：" + mBook.getAuthor());

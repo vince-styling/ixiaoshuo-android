@@ -135,6 +135,10 @@ public class Book {
 		return updateStatus == STATUS_CONTINUE ? "连载" : "完结";
 	}
 
+	public String getSimpleUpdateStatusStr() {
+		return updateStatus == STATUS_CONTINUE ? "连" : "完";
+	}
+
 	public boolean isContinue() {
 		return updateStatus == STATUS_CONTINUE;
 	}
