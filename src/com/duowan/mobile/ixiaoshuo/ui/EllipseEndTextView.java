@@ -18,6 +18,7 @@ import java.util.ArrayList;
  */
 public class EllipseEndTextView extends View {
 	private int mCollapseBackground;
+	private int mLineSpacing;
 
 	public EllipseEndTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -25,6 +26,7 @@ public class EllipseEndTextView extends View {
 
 		mStrEllipsis = "...";
 		mMaxLineCount = typeArray.getInteger(R.styleable.EllipseEndTextView_maxLines, 5);
+		mLineSpacing = typeArray.getDimensionPixelSize(R.styleable.EllipseEndTextView_lineSpacing, 0);
 
 		mPaint = new TextPaint();
 		mPaint.setColor(typeArray.getColor(R.styleable.EllipseEndTextView_textColor, Color.BLACK));
@@ -116,7 +118,14 @@ public class EllipseEndTextView extends View {
 				mDrawLineCount = mLines.size();
 				mExpanded = true;
 			}
-			result = mDrawLineCount * (int) (-mAscent + mPaint.descent()) + getPaddingTop() + getPaddingBottom();
+
+			int textHeight = (int) (-mAscent + mPaint.descent());
+			result = getPaddingTop() + getPaddingBottom();
+			if (mDrawLineCount > 0) {
+				result += mDrawLineCount * textHeight + (mDrawLineCount - 1) * mLineSpacing;
+			} else {
+				result += textHeight;
+			}
 
 			// Respect AT_MOST value if that was what is called for by measureSpec.
 			if (specMode == MeasureSpec.AT_MOST) result = Math.min(result, specSize);
@@ -180,30 +189,29 @@ public class EllipseEndTextView extends View {
 	protected void onDraw(Canvas canvas) {
 		int renderWidth = canvas.getWidth() - getPaddingLeft() - getPaddingRight();
 		float x = getPaddingLeft();
-		float y = getPaddingTop() + (-mAscent);
+		float y = getPaddingTop() - mAscent;
 
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < mDrawLineCount; i++) {
-			// Draw the current line.
-			int start = mLines.get(i)[0];
-			int end = mLines.get(i)[1];
+			sb.append(mText, mLines.get(i)[0], mLines.get(i)[1]);
 
 			// Draw the ellipsis if necessary.
 			if (!mExpanded && mDrawLineCount - i == 1) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(mText, start, end);
-
 				float lineDrawWidth = mPaint.measureText(sb);
 				float ellipsisWidth = mPaint.measureText(mStrEllipsis);
 				while (lineDrawWidth + ellipsisWidth > renderWidth) {
 					sb.deleteCharAt(sb.length() - 1);
 					lineDrawWidth = mPaint.measureText(sb);
 				}
+				sb.append(mStrEllipsis);
+			}
 
-				canvas.drawText(sb.append(mStrEllipsis), 0, sb.length(), x, y, mPaint);
-			} else canvas.drawText(mText, start, end, x, y, mPaint);
+			// Draw the current line.
+			canvas.drawText(sb, 0, sb.length(), x, y, mPaint);
 
-			y += (-mAscent + mPaint.descent());
+			y += (-mAscent + mPaint.descent()) + mLineSpacing;
 			if (y > canvas.getHeight()) break;
+			sb.delete(0, sb.length());
 		}
 	}
 

@@ -92,7 +92,7 @@
     <com.duowan.mobile.ixiaoshuo.ui.EllipseEndTextView
             android:id="@+id/txvBookSummary"
             android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="10dp"
-            duowan:textSize="15sp" duowan:textColor="#2b2b2b" duowan:maxLines="5"
+            duowan:textSize="15sp" duowan:textColor="#2b2b2b" duowan:maxLines="4" duowan:lineSpacing="10dp"
             duowan:collapseBackground="@drawable/book_info_btn_expand_selector" />
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
