@@ -4,4 +4,14 @@
     <color name="finder_booklist_bg_pressed">#fff4e5</color>
     <color name="finder_category_list_divier">#faf1e7</color>
     <color name="book_info_chapter_list_divier">#f9ede1</color>
+    <color name="bookshelf_listview_bg_pressed">#fff5e0</color>
+    
+    
+    <color name="search_type_txt_color">#636363</color>
+    <color name="reading_board_chapter_list_bg">#f4efe6</color>
+    <color name="reading_board_chapter_list_bg_pressed">#fdfbf6</color>
+    <color name="reading_board_chapter_list_item">#626262</color>
+    <color name="reading_board_chapter_list_item_reading">#76ac1c</color>
+    <color name="reading_board_btn_text_on">#7bb114</color>
+    <color name="reading_board_btn_text_off">#d5d5d5</color>
 </resources>

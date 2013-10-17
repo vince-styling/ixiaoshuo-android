@@ -1,30 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="match_parent" android:layout_height="match_parent">
 
     <com.duowan.mobile.ixiaoshuo.ui.ReadingBoard
             android:id="@+id/readingBoard"
             android:layout_width="match_parent" android:layout_height="match_parent" />
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="@dimen/reading_board_status_bar_height"
+    <TextView android:id="@+id/txvReadingInfo"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:gravity="center_horizontal" android:layout_alignParentTop="true"
+              android:singleLine="true" android:ellipsize="middle" android:textSize="14sp"
+              android:paddingLeft="@dimen/reading_board_padding_left" android:paddingRight="@dimen/reading_board_padding_left" />
+
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="@dimen/reading_board_status_bar_height"
                   android:paddingLeft="@dimen/reading_board_padding_left" android:paddingRight="@dimen/reading_board_padding_left"
                   android:layout_alignParentBottom="true" android:gravity="bottom">
 
-        <TextView android:id="@+id/txvCurTime" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:singleLine="true" android:text="12:19" android:textSize="14sp" />
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical">
 
-        <TextView android:id="@+id/txvReadingInfo" android:layout_width="0dp" android:layout_height="wrap_content"
-                  android:layout_weight="1" android:gravity="center" android:paddingLeft="4dp" android:paddingRight="4dp"
-                  android:singleLine="true" android:text="卷一 第二十一章 权力的游戏" android:ellipsize="middle" android:textSize="14sp" />
+            <com.duowan.mobile.ixiaoshuo.ui.BatteryView
+                    android:id="@+id/batteryView"
+                    android:layout_width="20dp"
+                    android:layout_height="10dp" />
 
-        <TextView android:id="@+id/txvReadingProgress" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:singleLine="true" android:text="18.8%" android:textSize="14sp" />
+            <TextView
+                    android:id="@+id/txvCurTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+        </LinearLayout>
+
+
+        <TextView android:id="@+id/txvRemainChapterInfo"
+                  android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true" android:singleLine="true" android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <include android:id="@+id/lotChapterList" layout="@layout/reading_board_chapter_list" />
+
+    <RelativeLayout
+            android:id="@+id/lotReadingHeadbar"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:gravity="center_vertical"
+            android:layout_alignParentTop="true"
+            android:visibility="gone"
+            android:background="@drawable/reading_board_headbar_bg">
+
+        <Button android:id="@+id/btnExit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/reading_board_arrow"
+                android:layout_alignParentLeft="true" />
+
+        <Button android:id="@+id/btnGotoVoiceBook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/reading_board_headset_selector"
+                android:visibility="gone"
+                android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:orientation="vertical" android:layout_alignParentBottom="true">
+
+        <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotSecondaryMenu"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:background="@drawable/reading_board_menu_content_bg" android:visibility="gone" />
+
+        <com.duowan.mobile.ixiaoshuo.ui.ReadingMenu
+                android:id="@+id/readingMainMenu"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:background="@drawable/reading_board_menu_bg"
+                android:visibility="gone" />
 
     </LinearLayout>
-
-    <ListView android:id="@+id/lsvChapterList" android:layout_width="match_parent" android:layout_height="match_parent"
-              android:layout_centerInParent="true" android:layout_margin="10dp" android:fastScrollEnabled="true"
-              android:divider="@drawable/line_dot" android:dividerHeight="1dp" android:visibility="gone" />
 
 </RelativeLayout>

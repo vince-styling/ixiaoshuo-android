@@ -19,8 +19,14 @@ public class Tables {
 					"cover_url varchar(200), " +
 					"summary text, " +
 					"update_status int, " +
+					"type varchar(10), " +
+					"was_both_type tinyint(1), " +
 					"website_id int, " +
 					"website_name varchar(60), " +
+					"cat_id int, " +
+					"cat_name varchar(20), " +
+					"temporary_flag tinyint(1), " +
+					"last_read_time datetime, " +
 					"create_time datetime default (datetime('now','localtime'))" +
 					")";
 		}
@@ -37,6 +43,7 @@ public class Tables {
 					"chapter_id integer, " +
 					"title varchar(200), " +
 					"read_status int, " +
+					"capacity int, " +
 					"begin_position int, " +
 					"create_time datetime default (datetime('now','localtime')), " +
 					"primary key(bid, chapter_id)" +

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/lsvBookShelfText" android:visibility="gone"
-          android:layout_width="match_parent" android:layout_height="match_parent" android:fastScrollEnabled="true"
-          android:divider="@drawable/book_shelf_list_divider" android:dividerHeight="6dp" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent" android:layout_height="match_parent"
+              android:padding="5dp" android:background="@android:color/transparent">
+
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:background="@drawable/book_shelf_listview_container">
+
+        <ListView android:id="@+id/lsvBookShelf"
+                  android:layout_width="match_parent" android:layout_height="match_parent"
+                  android:divider="@drawable/book_shelf_list_divider" android:dividerHeight="6dp"
+                  android:listSelector="@drawable/book_shelf_listview_bg_selector"
+                  android:layout_marginBottom="3dp" android:fastScrollEnabled="true"
+                  android:cacheColorHint="@android:color/transparent" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:layout_alignParentBottom="true"
+                      android:background="@drawable/book_shelf_listview_bg_bottom_divider_layer" />
+
+    </RelativeLayout>
+
+</LinearLayout>

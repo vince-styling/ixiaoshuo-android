@@ -2,56 +2,46 @@ package com.duowan.mobile.ixiaoshuo.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import com.duowan.mobile.ixiaoshuo.R;
+import com.duowan.mobile.ixiaoshuo.event.OnGridItemClickListener;
+import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 import com.duowan.mobile.ixiaoshuo.view.finder.*;
 
-public class FinderMenuGridView extends SingleLineGridView {
-	public FinderMenuGridView(Context context) {
-		super(context);
-	}
+public class FinderMenuGridView extends GridView {
+	private String mBookType;
+
+	public static final int MENU_NEWLY = 10;
+	public static final int MENU_HOTTEST = 20;
+	public static final int MENU_UPDATES = 30;
+	public static final int MENU_CATEGORIES = 40;
 
 	public FinderMenuGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-	}
 
-	private String mBookType;
-
-	public static final int MENU_NEWLY			= 10;
-	public static final int MENU_HOTTEST		= 20;
-	public static final int MENU_UPDATES        = 30;
-	public static final int MENU_CATEGORIES		= 40;
-
-	@Override
-	protected void init() {
-		mGridItems = new SparseArray<GridItem>(4);
-
-		mGridItems.put(MENU_NEWLY, new GridItem(R.drawable.finder_new_on, R.drawable.finder_new_off, new ClickEvent() {
-			public void onClick() {
-				mFinderView.showView(buildViewBuilder(MENU_NEWLY));
+		putItem(new GridItem(R.drawable.finder_new_on, R.drawable.finder_new_off, new OnGridItemClickListener(MENU_NEWLY) {
+			public void onGridItemClick() {
+				mFinderView.showView(buildViewBuilder(getGridItemId()));
 			}
 		}));
 
-		mGridItems.put(MENU_HOTTEST, new GridItem(R.drawable.finder_hot_on, R.drawable.finder_hot_off, new ClickEvent() {
-			public void onClick() {
-				mFinderView.showView(buildViewBuilder(MENU_HOTTEST));
+		putItem(new GridItem(R.drawable.finder_hot_on, R.drawable.finder_hot_off, new OnGridItemClickListener(MENU_HOTTEST) {
+			public void onGridItemClick() {
+				mFinderView.showView(buildViewBuilder(getGridItemId()));
 			}
 		}));
 
-		mGridItems.put(MENU_UPDATES, new GridItem(R.drawable.finder_finished_on, R.drawable.finder_finished_off, new ClickEvent() {
-			public void onClick() {
-				mFinderView.showView(buildViewBuilder(MENU_UPDATES));
+		putItem(new GridItem(R.drawable.finder_finished_on, R.drawable.finder_finished_off, new OnGridItemClickListener(MENU_UPDATES) {
+			public void onGridItemClick() {
+				mFinderView.showView(buildViewBuilder(getGridItemId()));
 			}
 		}));
 
-		mGridItems.put(MENU_CATEGORIES, new GridItem(R.drawable.finder_categories_on, R.drawable.finder_categories_off, new ClickEvent() {
-			public void onClick() {
-				mFinderView.showView(buildViewBuilder(MENU_CATEGORIES));
+		putItem(new GridItem(R.drawable.finder_categories_on, R.drawable.finder_categories_off, new OnGridItemClickListener(MENU_CATEGORIES) {
+			public void onGridItemClick() {
+				mFinderView.showView(buildViewBuilder(getGridItemId()));
 			}
 		}));
-
-		mPaddingTop = getResources().getDimensionPixelSize(R.dimen.finderMenuPadding);
 	}
 
 	public ViewBuilder buildViewBuilder(int menuId) {
@@ -94,6 +84,10 @@ public class FinderMenuGridView extends SingleLineGridView {
 	private FinderView mFinderView;
 	public void setFinderView(FinderView finderView) {
 		mFinderView = finderView;
+	}
+
+	protected MainActivity getActivity() {
+		return (MainActivity) getContext();
 	}
 
 	public void setBookType(String bookType) {

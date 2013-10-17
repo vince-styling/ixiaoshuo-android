@@ -1,6 +1,8 @@
 package com.duowan.mobile.ixiaoshuo.net;
 
+import android.text.TextUtils;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
+import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -40,6 +42,13 @@ public class NetUtil {
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(paramList));
 		} catch (UnsupportedEncodingException e) {}
+	}
+
+	public static String bookDomainPrefix(String type) {
+		if (TextUtils.isEmpty(type) || type.equals(Book.TYPE_TEXT)) {
+            return "";
+        }
+		return '_' + Book.TYPE_VOICE;
 	}
 
 	public static void main(String[] args) throws Exception {

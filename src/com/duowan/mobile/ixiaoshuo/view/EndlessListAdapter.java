@@ -2,7 +2,6 @@ package com.duowan.mobile.ixiaoshuo.view;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
@@ -65,6 +64,14 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 	@Override
 	public T getItem(int position) {
 		return data != null ? data.get(position) : null;
+	}
+
+	public T getFirstItem() {
+		return hasItems() ? data.get(0) : null;
+	}
+
+	public T getLastItem() {
+		return hasItems() ? data.get(data.size() - 1) : null;
 	}
 
 	@Override
@@ -153,36 +160,6 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	/**
-	 * Call this method from {@link android.widget.AbsListView.OnScrollListener#onScroll(AbsListView, int, int, int)} to
-	 * determine whether the adapter should fetch the next page of data.
-	 *
-	 * <p>
-	 * A typical implementation in your Activity might look like this:
-	 *
-	 * <pre>
-	 * public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-	 *         int totalItemCount) {
-	 *
-	 *     if (adapter.shouldRequestNextPage(firstVisibleItem, visibleItemCount, totalItemCount)) {
-	 *         // fetch next page, e.g. make a Web service call
-	 *         // ...
-	 *         adapter.setIsLoadingData(true);
-	 *     }
-	 * }
-	 * </pre>
-	 *
-	 * </p>
-	 *
-	 * @param firstVisibleItem
-	 *            passed down from {@link android.widget.AbsListView.OnScrollListener#onScroll(AbsListView, int, int, int)}
-	 * @param visibleItemCount
-	 *            passed down from {@link android.widget.AbsListView.OnScrollListener#onScroll(AbsListView, int, int, int)}
-	 * @param totalItemCount
-	 *            passed down from {@link android.widget.AbsListView.OnScrollListener#onScroll(AbsListView, int, int, int)}
-	 * @return true if the bottom of the list was reached, and hence the next page of data should be
-	 *         loaded
-	 */
 	public boolean shouldRequestNextPage(int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		// subtract the progress element, or otherwise this will screw up the counts...but do it
 		// ONLY if data is currently loading, or this will screw up the counts as well! :)

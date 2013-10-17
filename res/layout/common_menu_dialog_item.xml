@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:layout_width="match_parent" android:layout_height="60dp"
-          android:gravity="center" android:background="@drawable/line_dot_top_selector"
-          android:text="删除书籍" android:textSize="18sp" android:textColor="#454545" />
+          android:layout_width="match_parent" android:layout_height="50dp" android:gravity="center"
+          android:background="@drawable/common_menu_dialog_middle_item_bg_selector"
+          android:textSize="16sp" android:textColor="#4d4d4d" />

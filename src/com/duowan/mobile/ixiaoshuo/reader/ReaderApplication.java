@@ -4,7 +4,6 @@ import android.app.Application;
 import android.widget.Toast;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.event.MainHandler;
-import com.duowan.mobile.ixiaoshuo.event.TaskExecutor;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 
 public class ReaderApplication extends Application {
@@ -15,12 +14,15 @@ public class ReaderApplication extends Application {
 		AppDAO.init(this);
 		NetService.init(this);
 		mMainHandler = new MainHandler();
-		mTaskExecutor = new TaskExecutor(5);
+		//CrashHandler.getInstance().init(this);
 	}
 
-	TaskExecutor mTaskExecutor;
-	public TaskExecutor getTaskExecutor() {
-		return mTaskExecutor;
+	MainActivity mMainActivity;
+	public void setMainActivity(MainActivity mainActivity) {
+		mMainActivity = mainActivity;
+	}
+	public MainActivity getMainActivity() {
+		return mMainActivity;
 	}
 
 	private Toast mToast;

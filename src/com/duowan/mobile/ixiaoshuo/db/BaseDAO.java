@@ -3,6 +3,7 @@ package com.duowan.mobile.ixiaoshuo.db;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 import java.lang.reflect.Method;
@@ -218,6 +219,35 @@ public class BaseDAO {
 				return getEntity(cursor, clazz);
 			}
 		});
+	}
+
+	protected final <T> PaginationList<T> getPaginationList(String sql, final Class<T> clazz) {
+		PaginationList<T> list = new PaginationList<T>();
+		getFetcherList(sql, list, new DBFetcher<T>() {
+			public T fetch(Cursor cursor) {
+				return getEntity(cursor, clazz);
+			}
+		});
+		return list;
+	}
+
+	protected final <T> PaginationList<T> getPaginationList(String sql, int pageNo, int pageItemCount, final Class<T> clazz) {
+		StringBuilder sqlBuilder = new StringBuilder();
+		sqlBuilder.append(" select count(*) from (").append(sql).append(" ) A ");
+		int totalItemCount = getIntValue(sqlBuilder.toString());
+		sqlBuilder.delete(0, sqlBuilder.length());
+
+		if (totalItemCount <= 0) {
+			return new PaginationList<T>(new ArrayList<T>(0), pageNo, pageItemCount, totalItemCount);
+		} else {
+			sqlBuilder.append(sql);
+			int startIndex = (pageNo - 1) * pageItemCount;
+			sqlBuilder.append(" limit ").append(startIndex).append(',').append(pageItemCount);
+
+			PaginationList<T> records = getPaginationList(sqlBuilder.toString(), clazz);
+			records.setPagination(pageNo, pageItemCount, totalItemCount);
+			return records;
+		}
 	}
 
 	protected final <T> boolean executeTranUpdate(T[] array, DBOperator<T> operator) {

@@ -4,5 +4,73 @@
     <string name="api">http://mobile.941yy.com</string>
     <string name="network_disconnect_msg">嗯，网络出了点问题，你懂的！</string>
     <string name="loading_tip_msg">正在努力地加载中……</string>
+    <string name="loading_all_chapters_msg">正在加载全部章节列表……</string>
     <string name="without_data">抱歉，暂无更新数据！</string>
+    <string name="chapter_downloader_limit_msg">下载任务已达上限</string>
+    <string name="light_mode">日间模式</string>
+    <string name="dark_mode">夜间模式</string>
+    <string name="download_all">下载全部</string>
+    <string name="download_pause">暂停</string>
+    <string name="download_goon">继续</string>
+    <string name="download_check">检查更新</string>
+    <string name="book_author">作者：</string>
+    <string name="book_category">分类：</string>
+    <string name="book_capacity">字数：</string>
+    <string name="chapter_no_update">没有更新章节！</string>
+    <string name="chapter_has_update">有更新，正在下载…</string>
+    <string name="download_notify_start">正在下载：0%</string>
+    <string name="download_notify">正在下载：%1$.1f%%</string>
+    <string name="no_summary">[暂无简介]</string>
+    <string name="added_to_bookshelf">%1$s 已加入书架</string>
+    <string name="book_direcotry">目录</string>
+    <string name="read_book">阅读</string>
+    <string name="network_download_prompt">当前使用的是移动网络(2G/3G)，是否继续下载？</string>
+    <string name="goon">继续</string>
+    <string name="cancel">取消</string>
+
+    <string name="book_status_tip_newly">新</string>
+    <string name="book_status_tip_finished">完</string>
+    <string name="book_status_tip_both_type">双</string>
+
+    <!-- 搜索 -->
+    <string name="title_search_txt">小说搜索</string>
+    <string name="type_all">全部</string>
+    <string name="type_txt">文字小说</string>
+    <string name="type_voice">有声读物</string>
+
+    <!-- 发现 -->
+    <string name="finder_tab_type_txt">文字小说</string>
+    <string name="finder_tab_type_voice">有声读物</string>
+
+    <!-- 雷达 -->
+    <string name="user_count_txt">"附近在看 周围检索到%1$s部"</string>
+    <string name="user_count_radar">人正在使用雷达"</string>
+    <string name="shuyou">书友"</string>
+
+    <!--  有声页面-->
+    <string name="voice_listen">收听"</string>
+    <string name="voice_size">大小"</string>
+    <string name="no_next_page">"无更多章节"</string>
+    <string name="download_faild">" 下载失败"</string>
+    <string name="add_to_shelf">添加本书到书架"</string>
+    <string name="add_success">添加成功"</string>
+    <string name="add_faild">添加失败"</string>
+    <string name="play_faild">无法播放"</string>
+
+    <string name="without_book_tips">您的书架上还没有任何小说</string>
+    <string name="without_book_finder_tip1">去发现一本好书</string>
+    <string name="without_book_finder_tip2">最热门网络小说任您品读…</string>
+    <string name="without_book_finder_tip3">最好听的有声读物任您收听…</string>
+    <string name="without_book_radar_tip1">开启小说雷达检索</string>
+    <string name="without_book_radar_tip2">雷达精准探测，扫描有惊喜…</string>
+
+    <!--  本地-->
+    <string name="local_scan">"扫描"</string>
+    <string name="local_add">"添加"</string>
+    <string name="loading_title">"正在扫描"</string>
+    <string name="loading_txt">"请稍后"</string>
+
+    <!-- 阅读 -->
+    <string name="reading_txt_current_progress">当前阅读进度 %1$d%%</string>
+    <string name="reading_btn_revert_progress">恢复跳转</string>
 </resources>

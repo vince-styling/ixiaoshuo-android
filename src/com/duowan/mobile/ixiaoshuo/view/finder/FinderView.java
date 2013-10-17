@@ -1,6 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.view.finder;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -13,25 +14,26 @@ import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class FinderView extends ViewBuilder {
 	private ScrollLayout mLotMainContent;
+	private FinderMenuGridView mFinderMenuView;
 	private Button mBtnTextsBook, mBtnVoicesBook;
 
 	public FinderView(MainActivity activity, OnShowListener onShowListener) {
 		mShowListener = onShowListener;
 		mViewId = R.id.lotBookFinder;
-		mActivity = activity;
+		setActivity(activity);
 	}
 
 	@Override
 	protected void build() {
-		mView = mActivity.getLayoutInflater().inflate(R.layout.finder, null);
+		mView = getActivity().getLayoutInflater().inflate(R.layout.finder, null);
 	}
 
 	@Override
 	public void init() {
 		mLotMainContent = (ScrollLayout) findViewById(R.id.lotBookFinderContent);
 
-		final FinderMenuGridView finderMenuView = (FinderMenuGridView) findViewById(R.id.finderMenuView);
-		finderMenuView.setFinderView(this);
+		mFinderMenuView = (FinderMenuGridView) findViewById(R.id.finderMenuView);
+		mFinderMenuView.setFinderView(this);
 
 		mBtnTextsBook = (Button) findViewById(R.id.btnTextsBook);
 		mBtnVoicesBook = (Button) findViewById(R.id.btnVoicesBook);
@@ -39,34 +41,36 @@ public class FinderView extends ViewBuilder {
 		mBtnTextsBook.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mLotMainContent.removeAllViews();
-				finderMenuView.setBookType(Book.TYPE_TEXT);
-				showView(finderMenuView.buildViewBuilder(finderMenuView.getSelectedItemId()));
-				highlightBtn(mBtnTextsBook);
+				onBtnClick(mBtnTextsBook);
 			}
 		});
 
 		mBtnVoicesBook.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mLotMainContent.removeAllViews();
-				finderMenuView.setBookType(Book.TYPE_VOICE);
-				showView(finderMenuView.buildViewBuilder(finderMenuView.getSelectedItemId()));
-				highlightBtn(mBtnVoicesBook);
+				onBtnClick(mBtnVoicesBook);
 			}
 		});
 
-		mBtnTextsBook.performClick();
+		onBtnClick(mBtnTextsBook);
+	}
+
+	private void onBtnClick(Button btnView) {
+		highlightBtn(btnView);
+		mLotMainContent.removeAllViews();
+		showView(mFinderMenuView.buildViewBuilder(mFinderMenuView.getSelectedItemId()));
 	}
 
 	private void highlightBtn(Button btnView) {
 		if (btnView == mBtnTextsBook) {
+			mFinderMenuView.setBookType(Book.TYPE_TEXT);
 			turnOnButton(mBtnTextsBook);
 		} else {
 			turnOffButton(mBtnTextsBook);
 		}
 
 		if (btnView == mBtnVoicesBook) {
+			mFinderMenuView.setBookType(Book.TYPE_VOICE);
 			turnOnButton(mBtnVoicesBook);
 		} else {
 			turnOffButton(mBtnVoicesBook);
@@ -89,6 +93,7 @@ public class FinderView extends ViewBuilder {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		Log.i("YYReader_FinderView", "onKeyDown");
 		return mLotMainContent.onKeyDown(keyCode, event);
 	}
 

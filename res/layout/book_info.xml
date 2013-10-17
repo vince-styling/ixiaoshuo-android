@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/lsvBookInfoChapterList"
-          android:layout_width="match_parent" android:layout_height="0dp" android:background="#ffffff" android:layout_weight="1"
-          android:divider="@color/book_info_chapter_list_divier" android:dividerHeight="1dp" android:headerDividersEnabled="false"
-          android:fastScrollEnabled="true" android:listSelector="@drawable/finder_booklist_bg_selector" />
+    android:id="@+id/lsvBookInfoChapterList"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:divider="@color/book_info_chapter_list_divier"
+    android:dividerHeight="1dp"
+    android:headerDividersEnabled="false"
+    android:fastScrollEnabled="true"
+    android:cacheColorHint="@android:color/transparent" />

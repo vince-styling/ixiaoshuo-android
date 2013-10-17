@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * but origin version has some problem, so I did change it
  * @author Vince
  */
-public class EllipseEndTextView extends View {
+public class EllipseEndTextView extends View implements View.OnClickListener {
 	private int mCollapseBackground;
 	private int mLineSpacing;
 
@@ -32,6 +32,7 @@ public class EllipseEndTextView extends View {
 		mPaint.setColor(typeArray.getColor(R.styleable.EllipseEndTextView_textColor, Color.BLACK));
 		mPaint.setTextSize(typeArray.getDimensionPixelSize(R.styleable.EllipseEndTextView_textSize, 0));
 		mCollapseBackground = typeArray.getResourceId(R.styleable.EllipseEndTextView_collapseBackground, 0);
+		typeArray.recycle();
 	}
 
 	private int mAscent;
@@ -56,16 +57,9 @@ public class EllipseEndTextView extends View {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
-		if (mExpanded) {
-			setBackgroundColor(Color.TRANSPARENT);
-			setOnClickListener(null);
-		} else {
+		if (!mExpanded) {
 			setBackgroundResource(mCollapseBackground);
-			setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					expand();
-				}
-			});
+			setOnClickListener(this);
 		}
 	}
 
@@ -215,7 +209,12 @@ public class EllipseEndTextView extends View {
 		}
 	}
 
-	public boolean getIsExpanded() {
+	@Override
+	public void onClick(View v) {
+		if (mExpanded) collapse(); else expand();
+	}
+
+	public boolean isExpanded() {
 		return mExpanded;
 	}
 

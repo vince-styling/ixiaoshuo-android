@@ -1,80 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.duowan.mobile.ixiaoshuo.ui.WithoutBookLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      android:id="@+id/lotWithoutBooks" android:layout_width="match_parent" android:layout_height="wrap_content"
-      android:orientation="vertical" android:gravity="center" android:visibility="gone"
-      android:layout_centerInParent="true" android:paddingBottom="10dp"
-      android:layout_marginLeft="20dp" android:layout_marginRight="20dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lotWithoutBooks"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_centerInParent="true"
+    android:visibility="gone">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-              android:text="您的书架上还没有任何书籍" android:textSize="19sp" android:textColor="#685641"
-              android:drawableRight="@drawable/book_shelf_without_book_arrow" android:drawablePadding="2dp"
-              android:paddingTop="16dp" android:paddingBottom="16dp" />
+    <view
+        class="com.duowan.mobile.ixiaoshuo.ui.WithoutBookLayout"
+        android:layout_width="312dp"
+        android:layout_height="224dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingBottom="7dp">
 
-    <FrameLayout android:layout_width="match_parent" android:layout_height="200dp" android:paddingRight="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/without_book_tips"
+            android:textSize="19sp"
+            android:textColor="#685641" />
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginLeft="10dp"
-                      android:background="@drawable/book_shelf_without_book_frame" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="152dp"
+            android:paddingRight="8dp">
 
-        <FrameLayout android:layout_width="match_parent" android:layout_height="180dp"
-                     android:layout_marginTop="10dp" android:layout_marginBottom="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:background="@drawable/book_shelf_without_book_frame" />
 
-            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"
-                          android:paddingLeft="30dp" android:paddingTop="6dp" android:paddingBottom="6dp" android:paddingRight="10dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="138dp"
+                android:layout_gravity="center_vertical">
 
-                <LinearLayout android:id="@+id/lotGoFinder"
-                              android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                              android:paddingLeft="10dp" android:paddingRight="10dp" android:gravity="center"
-                              android:background="@drawable/book_shelf_without_book_btn_top_selector">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingLeft="22dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:paddingRight="8dp">
 
-                    <ImageView android:layout_width="42dp" android:layout_height="42dp" android:layout_marginRight="10dp"
-                               android:src="@drawable/book_shelf_without_book_finder" />
+                    <LinearLayout
+                        android:id="@+id/lotGoFinder"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="10dp"
+                        android:gravity="center"
+                        android:background="@drawable/book_shelf_without_book_btn_top_selector">
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                                  android:orientation="vertical" android:gravity="center_vertical">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="12dp"
+                            android:src="@drawable/book_shelf_without_book_finder" />
 
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                  android:text="去发现一本好书" android:textSize="17sp" android:textColor="#cd9c57" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical">
 
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                  android:text="最热门网络小说任您品读" android:textSize="13sp" android:textColor="#b09a7b" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/without_book_finder_tip1"
+                                android:textSize="19sp"
+                                android:textColor="#cd9c57" />
+
+                            <TextView
+                                android:id="@+id/txvFinderTip"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="13sp"
+                                android:textColor="#b09a7b" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/arrow_right" />
 
                     </LinearLayout>
 
-                    <ImageView android:layout_width="21dp" android:layout_height="34dp" android:src="@drawable/arrow_right" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#eeebe6" />
 
-                </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/lotGoDetector"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="10dp"
+                        android:gravity="center"
+                        android:background="@drawable/book_shelf_without_book_btn_bottom_selector">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="1dp" android:background="#eeebe6" />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="12dp"
+                            android:src="@drawable/book_shelf_without_book_detector" />
 
-                <LinearLayout android:id="@+id/lotGoDetector" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                              android:paddingLeft="10dp" android:paddingRight="10dp" android:gravity="center"
-                              android:background="@drawable/book_shelf_without_book_btn_bottom_selector">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical">
 
-                    <ImageView android:layout_width="42dp" android:layout_height="42dp" android:layout_marginRight="10dp"
-                               android:src="@drawable/book_shelf_without_book_detector" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/without_book_radar_tip1"
+                                android:textSize="19sp"
+                                android:textColor="#cd9c57" />
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-                                  android:orientation="vertical" android:gravity="center_vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/without_book_radar_tip2"
+                                android:textSize="13sp"
+                                android:textColor="#b09a7b" />
 
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                  android:text="开启小说雷达检索" android:textSize="17sp" android:textColor="#cd9c57" />
+                        </LinearLayout>
 
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                  android:text="精准探测，扫描有惊喜" android:textSize="13sp" android:textColor="#b09a7b" />
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/arrow_right" />
 
                     </LinearLayout>
 
-                    <ImageView android:layout_width="21dp" android:layout_height="34dp" android:src="@drawable/arrow_right" />
-
                 </LinearLayout>
 
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/book_shelf_without_book_wrap_line" />
 
-            <ImageView android:layout_width="wrap_content" android:layout_height="match_parent"
-                       android:src="@drawable/book_shelf_without_book_wrap_line" />
+            </FrameLayout>
 
         </FrameLayout>
 
-    </FrameLayout>
+    </view>
 
-</com.duowan.mobile.ixiaoshuo.ui.WithoutBookLayout>
+    <view
+        class="com.duowan.mobile.ixiaoshuo.ui.WithoutBookStatisticsView"
+        android:id="@+id/lotBookStatistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/book_shelf_without_book_bottom_tip" />
+
+</LinearLayout>

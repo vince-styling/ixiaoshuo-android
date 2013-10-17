@@ -21,18 +21,18 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 	public FinderCategoryListView(MainActivity activity, FinderCategoriesView categoriesView) {
 		mViewId = R.id.lsvFinderBookCategories;
 		mCategoriesView = categoriesView;
-		mActivity = activity;
+		setActivity(activity);
 	}
 
 	@Override
 	protected void build() {
-		mView = mActivity.getLayoutInflater().inflate(R.layout.finder_book_categories_listview, null);
+		mView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_categories_listview, null);
 	}
 
 	@Override
 	public void init() {
 		if (mLotNetworkUnavaliable != null) return;
-		mLotNetworkUnavaliable = mActivity.findViewById(R.id.lotNetworkUnavaliable);
+		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotNetworkUnavaliable);
 
 		mAdapter = new EndlessListAdapter<Category>() {
 			@Override
@@ -85,6 +85,7 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 	}
 
 	private void loadData() {
+		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		if (mAdapter.getItemCount() > 0) return;
 
 		if (!NetService.get().isNetworkAvailable()) {
@@ -93,7 +94,6 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 		}
 
 		mAdapter.setIsLoadingData(true);
-		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		NetService.execute(new NetService.NetExecutor<List<Category>>() {
 			public void preExecute() {}
 
@@ -120,11 +120,16 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Category category = mAdapter.getItem(position);
 		if (category == null) return;
-		mCategoriesView.showView(new FinderCategoryBookListView(category.getCatId(), mCategoriesView.getBookType(), mActivity));
+		mCategoriesView.showView(new FinderCategoryBookListView(category.getCatId(), mCategoriesView.getBookType(), getActivity()));
 	}
 
 	protected ListView getListView() {
 		return (ListView) mView;
+	}
+
+	@Override
+	public MainActivity getActivity() {
+		return (MainActivity) super.getActivity();
 	}
 
 }

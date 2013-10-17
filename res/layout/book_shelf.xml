@@ -1,39 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/lotBookshelf" xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lotBookshelf"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-    <view class="com.duowan.mobile.ixiaoshuo.ui.TitleBarLayout"
-          android:layout_width="match_parent" android:layout_height="56dp" android:gravity="center"
-          android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="6dp" android:paddingBottom="10dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/title_bg_layer">
 
-        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                      android:layout_marginLeft="10dp" android:layout_marginRight="10dp"
-                      android:background="@drawable/title_bg_content_area">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:padding="5dp"
+            android:background="@drawable/title_bg_content_area">
 
-            <Button android:id="@+id/btnTextBookshelf" android:layout_width="0dp" android:layout_height="wrap_content"
-                    android:layout_weight="1" android:background="@drawable/title_item_selected"
-                    android:text="文字" android:textSize="20sp" />
+            <Button
+                android:id="@+id/btnTextBookshelf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/title_item_selected"
+                android:text="@string/type_txt"
+                android:includeFontPadding="false"
+                android:textSize="18sp" />
 
-            <Button android:id="@+id/btnVoiceBookshelf"
-                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                    android:background="@null" android:text="有声" android:textSize="20sp" />
-
-            <Button android:id="@+id/btnLocalBookshelf"
-                    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                    android:background="@null" android:text="本地" android:textSize="20sp" />
+            <Button
+                android:id="@+id/btnVoiceBookshelf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/type_voice"
+                android:includeFontPadding="false"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
-    </view>
+    </LinearLayout>
 
-    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                 android:background="@drawable/book_shelf_bg_layer">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/book_shelf_bg_layer" >
 
-        <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotBookShelfContent"
-              android:layout_width="match_parent" android:layout_height="match_parent" />
+        <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout
+            android:id="@+id/lotBookShelfContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <include layout="@layout/book_shelf_without_book" />
-
     </RelativeLayout>
 
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Proxy;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
@@ -36,10 +37,9 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.LinkedList;
 
 public abstract class BaseNetService {
-	protected static final String TAG = "NetService";
+	protected static final String TAG = "YYReader_NetService";
 
 	private DefaultHttpClient httpClient;
 	private DefaultHttpClient httpClientProxy;
@@ -188,14 +188,17 @@ public abstract class BaseNetService {
 	public final synchronized boolean isUseCmwap() { return mIsUseCmwap; }
 	public final synchronized boolean isUseCtwap() { return mIsUseCtwap; }
 
-	private String makeAPI(String pageName) {
-		return API + pageName + "?versionCode=" + versionCode + "&versionName=" + versionName;
-	}
-
 	private String makeUrl(String pageName, String params) {
-		if (StringUtil.isEmpty(params)) return makeAPI(pageName);
-		if(params.charAt(0) == '&') return makeAPI(pageName) + params;
-		return makeAPI(pageName) + '&' + params;
+        String url = API + pageName;
+		if (TextUtils.isEmpty(params)) {
+            return url;
+        }
+
+		if(params.charAt(0) == '&') {
+            return url + "?" + params.substring(1, params.length());
+        }
+
+        return url + "?" + params;
 	}
 
 	protected final Respond handleHttpGet(String pageName, String params) throws IOException {
@@ -220,42 +223,38 @@ public abstract class BaseNetService {
 		return new HttpPost(url);
 	}
 
-//	protected HttpResponse executeHttpPost(String pageName, String params) throws IOException {
-//		String url = makeUrl(pageName, params);
-//		Log.d(TAG, "executeHttpPost : " + url);
-//		return executeHttp(new HttpPost(url));
-//	}
-
 	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
 		HttpEntity entity = null;
 		try {
+            String uri = request.getURI().toString();
+            String method = request.getMethod();
+            String logcat = "Request: \n" + method + " Uri: " + uri + "\n";
+
 			HttpResponse response = executeHttp(request);
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == HttpStatus.SC_OK) {
 				entity = response.getEntity();
 				String json = new String(EntityUtils.toByteArray(entity));
+
+                logcat += "StatusCode: " + statusCode + "\n";
+                logcat += "Response: \n";
+                logcat += json + "\n";
+                Log.i(TAG, logcat);
+
 				return GObjectMapper.get().readValue(json, Respond.class);
 			}
+
+            logcat += "StatusCode: " + statusCode + "\n";
+            Log.i(TAG, logcat);
+
 		} finally {
 			closeEntity(entity);
 		}
+
 		return null;
 	}
 
-	private LinkedList<HttpRequestBase> mHttpRequestList = new LinkedList<HttpRequestBase>();
-
-	public synchronized void abortAll() {
-		while (mHttpRequestList.size() > 0) abortLast();
-	}
-
-	public synchronized void abortLast() {
-		HttpRequestBase request = mHttpRequestList.pollLast();
-		if (request == null || request.isAborted()) return;
-		request.abort();
-	}
-
 	protected final HttpResponse executeHttp(HttpRequestBase request) throws IOException {
-		mHttpRequestList.addLast(request);
 		return mShouldUseProxy ? getHttpClientProxy().execute(request) : getHttpClientGeneral().execute(request);
 	}
 

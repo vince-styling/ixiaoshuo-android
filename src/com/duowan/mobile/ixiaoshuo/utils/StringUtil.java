@@ -1,11 +1,14 @@
 package com.duowan.mobile.ixiaoshuo.utils;
 
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import android.util.Log;
 
 /**
  * Various String utility functions.
@@ -214,6 +217,37 @@ public class StringUtil {
 		System.out.println(formatWordsCount(424000));
 		System.out.println(formatWordsCount(428000));
 		System.out.println(formatWordsCount(8090000000l));
+	}
+	
+	/**
+	 * 解析http请求参数为字符串
+	 * @param parameters
+	 * @return
+	 */
+	public static String encodeUrl(RequestParameters parameters) {
+		if (parameters == null) {
+			return "";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (int loc = 0; loc < parameters.size(); loc++) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append("&");
+			}
+			String _key = parameters.getKey(loc);
+			String _value = parameters.getValue(_key);
+			if (_value == null) {
+				Log.i("encodeUrl", "key:" + _key + " 's value is null");
+			} else {
+				sb.append(URLEncoder.encode(parameters.getKey(loc)) + "="
+						+ URLEncoder.encode(parameters.getValue(loc)));
+			}
+
+		}
+		return sb.toString();
 	}
 
 }

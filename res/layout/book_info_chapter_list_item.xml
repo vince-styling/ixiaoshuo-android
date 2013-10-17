@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-          android:layout_width="match_parent" android:layout_height="wrap_content"
-          android:paddingLeft="12dp" android:paddingRight="12dp" android:gravity="center_vertical">
+              android:id="@+id/linear_detail_list"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:paddingRight="12dp"
+              android:gravity="center_vertical">
 
-    <TextView android:id="@+id/txvChapterTitle"
-              android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-              android:paddingTop="14dp" android:paddingBottom="15dp"
-              android:textSize="16sp" android:textColor="#724e2b" />
+    <TextView
+        android:id="@+id/txvChapterTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingLeft="12dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@drawable/finder_booklist_bg_selector"
+        android:textSize="14sp"
+        android:textColor="#724e2b" />
 
-    <TextView android:layout_width="1dp" android:layout_height="match_parent"
-              android:background="@color/book_info_chapter_list_divier" />
+    <TextView
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/book_info_chapter_list_divier" />
 
-    <Button android:id="@+id/btnChapterGotoRead"
-            android:layout_width="30dp" android:layout_height="30dp" android:layout_marginLeft="10dp"
-            android:background="@drawable/book_info_chapter_btn_goto_read"
-            android:clickable="false" android:focusable="false" />
+    <Button
+        android:id="@+id/btnChapterOperation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/book_info_chapter_btn_download" />
 
 </LinearLayout>

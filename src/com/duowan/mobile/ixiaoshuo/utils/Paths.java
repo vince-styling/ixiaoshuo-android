@@ -1,9 +1,9 @@
 package com.duowan.mobile.ixiaoshuo.utils;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FilenameFilter;
-
-import android.os.Environment;
 
 public abstract class Paths {
 	private static String appStoragePath;

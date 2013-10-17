@@ -2,8 +2,7 @@ package com.duowan.mobile.ixiaoshuo.doc;
 
 import android.graphics.Rect;
 import android.util.Log;
-import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
+import com.duowan.mobile.ixiaoshuo.event.YYReader;
 import com.duowan.mobile.ixiaoshuo.ui.RenderPaint;
 import com.duowan.mobile.ixiaoshuo.utils.CharsetUtil;
 import com.duowan.mobile.ixiaoshuo.utils.Encoding;
@@ -14,7 +13,6 @@ import java.io.RandomAccessFile;
 import java.util.LinkedList;
 
 /**
- * @author neevek
  * This class implements the logics to read a plain text file by block,
  * and provides funcionalities to turn next & previous page.
  * this class will ensure that memory usage be always kept to a certain limit
@@ -30,7 +28,6 @@ public abstract class Document {
 	private int mMaxCharCountPerLine;
 	private int mCurContentHeight;
 
-	protected Book mBook;
 	protected Encoding mEncoding;
 	
 	protected RandomAccessFile mRandBookFile;
@@ -54,14 +51,11 @@ public abstract class Document {
 	protected LinkedList<ByteMeta> mByteMetaList = new LinkedList<ByteMeta>();
 	// for turning preivous page, for storing temporary offsets
 	LinkedList<Integer> mCharOffsetList = new LinkedList<Integer>();
-	// for fast turning previous page
-	LinkedList<Integer> mCharOffsetCache = new LinkedList<Integer>();
 
-	public Document(Book book, RenderPaint paint) {
+	public Document(RenderPaint paint) {
 		mByteBuffer = new byte[8192];
 		mPaint = paint;
 		resetTextHeight();
-		mBook = book;
 	}
 
 	private void resetTextHeight() {
@@ -157,10 +151,7 @@ public abstract class Document {
 	
 	public boolean turnNextPage () {
 		if(mPageCharOffsetInBuffer + mCharCountOfPage < mContentBuf.length()) {
-			mCharOffsetCache.add(mPageCharOffsetInBuffer);
-			if(mCharOffsetCache.size() > 20)
-				mCharOffsetCache.removeFirst();
-			// for scrolldown(turning next page), we simply add up mCharOffsetOfPage to the current char offset 
+			// for scrolldown(turning next page), we simply add up mCharOffsetOfPage to the current char offset
 			mPageCharOffsetInBuffer += mCharCountOfPage;
 			return true;
 		}
@@ -168,10 +159,6 @@ public abstract class Document {
 	}
 	
 	public boolean turnPreviousPage () {
-		if(mCharOffsetCache.size() > 0) {
-			mPageCharOffsetInBuffer = mCharOffsetCache.removeLast();
-			return true;
-		}
 		// check if we need to read some bytes and prepend them to the beginning of the buffer(if we are near the beginning of the buffer)
 		if(mReadByteBeginOffset > 0 && mPageCharOffsetInBuffer - mMaxCharCountPerPage < 0) {
 			scrollUpBuffer();
@@ -332,14 +319,12 @@ public abstract class Document {
 		return flags;
 	}
 
-	protected void invalidatePrevPagesCache () {
-		mCharOffsetCache.clear();
-	}
-
 	public void calculatePagePosition() {
 		try {
 			mPageBeginPosition = mReadByteBeginOffset + mContentBuf.substring(0, mPageCharOffsetInBuffer).getBytes(mEncoding.getName()).length;
-			mBook.getReadingChapter().setBeginPosition((int) mPageBeginPosition);
+			YYReader.ChapterInfo chapterInfo = YYReader.getCurrentChapterInfo();
+			chapterInfo.mPosition = (int) mPageBeginPosition;
+			YYReader.onReadingChapter(chapterInfo);
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
 		}
@@ -402,18 +387,26 @@ public abstract class Document {
 	}
 
 	public String getReadingInfo() {
-		return '《' + mBook.getName() + '》';
+		return YYReader.getBookName();
 	}
 
-	public boolean hasNextChapter() { return mBook.getNextChapter() != null; }
-	public boolean hasPreviousChapter() { return mBook.getPreviousChapter() != null; }
-
-//	public abstract boolean adjustReadingProgress(float percentage);
-	public abstract boolean adjustReadingProgress(Chapter chapter);
+	public abstract boolean adjustReadingProgress(YYReader.ChapterInfo chapterInfo);
 	public abstract float calculateReadingProgress();
 
-	public abstract void turnOffLoadding();
-	
+	private boolean mIsDownloading;
+
+	public boolean isDownloading() {
+		return mIsDownloading;
+	}
+
+	public void onDownloadComplete(boolean result, boolean willAdjust) {
+		mIsDownloading = false;
+	}
+
+	public void onDownloadStart() {
+		mIsDownloading = true;
+	}
+
 	class ByteMeta {
 		long byteOffset;
 		int byteCount;
@@ -425,10 +418,6 @@ public abstract class Document {
 		}
 	}
 
-	public Book getBook() {
-		return mBook;
-	}
-
 	@Override
 	protected void finalize() throws Throwable {
 		try {
@@ -437,7 +426,6 @@ public abstract class Document {
 			Log.e(TAG, e.getMessage(), e);
 		}
 		super.finalize();
-		System.gc();
 	}
 	
 }

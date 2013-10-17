@@ -18,7 +18,12 @@ public class ScrollLayout extends LinearLayout {
 
 	public void showView(ViewBuilder builder) {
 		for (int i = 0; i < getChildCount(); i++) {
-			((ViewBuilder) getChildAt(i).getTag()).pushBack();
+			ViewBuilder childBuilder = ((ViewBuilder) getChildAt(i).getTag());
+			if (childBuilder.isInFront() && childBuilder.compare(builder)) {
+				childBuilder.resume();
+				return;
+			}
+			childBuilder.pushBack();
 		}
 
 		View view = findViewById(builder.getViewId());
@@ -39,6 +44,14 @@ public class ScrollLayout extends LinearLayout {
 			ViewBuilder builder = (ViewBuilder) getChildAt(index).getTag();
 			if (builder.isInFront()) builder.resume();
 		}
+	}
+
+	public void pushBack() {
+		for (int index = 0; index < getChildCount(); index++) {
+			ViewBuilder builder = (ViewBuilder) getChildAt(index).getTag();
+			if (builder.isInFront()) builder.pushBack();
+		}
+		setVisibility(View.GONE);
 	}
 
 	@Override

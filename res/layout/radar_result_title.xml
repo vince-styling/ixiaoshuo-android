@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/title_bg_layer"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/radar_title_left_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/radar_title_left"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/radar_location"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:textColor="#F5FFFA"
+            android:textSize="@dimen/search_title_txt_size" />
+
+        <ImageView
+            android:id="@+id/radar_title_right_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/radar_title_right"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/radar_location22"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/radar_title_nearby"
+        android:gravity="center"
+        android:textSize="@dimen/search_title_txt_size" />
+
+</RelativeLayout>

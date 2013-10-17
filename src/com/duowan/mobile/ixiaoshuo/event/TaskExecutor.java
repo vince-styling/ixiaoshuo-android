@@ -1,37 +1,23 @@
 package com.duowan.mobile.ixiaoshuo.event;
 
-import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TaskExecutor {
-	LinkedList<TaskRunnable> mTaskRunnableList = new LinkedList<TaskRunnable>();
 	private ExecutorService service;
-	private boolean isSuspend;
 
-	public TaskExecutor(int numThreads) {
+	private static TaskExecutor mInstance;
+	public static TaskExecutor get() {
+		if (mInstance == null) mInstance = new TaskExecutor(6);
+		return mInstance;
+	}
+
+	private TaskExecutor(int numThreads) {
 		service = Executors.newFixedThreadPool(numThreads);
 	}
 
-	public void submitTask(TaskRunnable runnable) {
-		if (isSuspend) {
-			mTaskRunnableList.add(runnable);
-		} else {
-			service.execute(runnable);
-		}
-	}
-
-	public synchronized void suspend() {
-		isSuspend = true;
-	}
-
-	public synchronized void startExecute() {
-		isSuspend = false;
-		while (mTaskRunnableList.size() > 0) {
-			if (isSuspend) break;
-			TaskRunnable runnable = mTaskRunnableList.pollLast();
-			if (runnable != null && runnable.validate()) submitTask(runnable);
-		}
+	public void execute(TaskRunnable runnable) {
+		service.execute(runnable);
 	}
 
 	public void shutdown() {

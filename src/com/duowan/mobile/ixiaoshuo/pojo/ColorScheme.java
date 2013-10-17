@@ -1,19 +1,18 @@
 package com.duowan.mobile.ixiaoshuo.pojo;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.view.Display;
-import android.view.WindowManager;
 import com.duowan.mobile.ixiaoshuo.utils.BitmapUtil;
 
 public class ColorScheme {
 	private int resourceId, textColor;
+	private boolean isPureColor;
 
-	public ColorScheme(int resourceId, int textColor) {
+	public ColorScheme(int resourceId, int textColor, boolean isPureColor) {
+		this.isPureColor = isPureColor;
 		this.resourceId = resourceId;
 		this.textColor = textColor;
 	}
@@ -22,16 +21,17 @@ public class ColorScheme {
 		return BitmapUtil.loadBitmapInRes(res, resourceId, reqWidth, reqHeight);
 	}
 
-	private Drawable mReadingDrawable;
+	private Drawable readingDrawable;
 
-	public Drawable getReadingDrawable() {
-		return mReadingDrawable;
-	}
-
-	public void initReadingDrawable(Context ctx) {
-		Display display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		mReadingDrawable = new BitmapDrawable(BitmapUtil.loadBitmapInRes(ctx.getResources(), resourceId, display.getWidth(), display.getHeight()));
-		mReadingDrawable.setBounds(new Rect(0, 0, display.getWidth(), display.getHeight()));
+	public Drawable getReadingDrawable(Resources res, int reqWidth, int reqHeight) {
+		if (readingDrawable == null) {
+			if (isPureColor) {
+				readingDrawable = new ColorDrawable(resourceId);
+			} else {
+				readingDrawable = new BitmapDrawable(BitmapUtil.loadBitmapInRes(res, resourceId, reqWidth, reqHeight));
+			}
+		}
+		return readingDrawable;
 	}
 
 	public int getTextColor() {
@@ -41,4 +41,5 @@ public class ColorScheme {
 	public void setTextColor(int textColor) {
 		this.textColor = textColor;
 	}
+
 }

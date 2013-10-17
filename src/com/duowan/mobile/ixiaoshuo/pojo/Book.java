@@ -3,8 +3,6 @@ package com.duowan.mobile.ixiaoshuo.pojo;
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
-import java.util.List;
-
 public class Book {
 	private int bid;				// 本地的自增长ID，主键
 	private int bookId;				// 服务端的书籍ID，有可能会改变
@@ -17,8 +15,7 @@ public class Book {
 	private String summary;
 	private boolean isOriginSummary = true;
 
-	// TODO : 所有返回列表的接口，记得同时返回type！！！！！
-	private String type = TYPE_TEXT;
+	private String type;
 	private boolean isBothType;
 
 	private long capacity;		// 容量：字数 or 字节数
@@ -28,64 +25,18 @@ public class Book {
 
 	private String lastUpdateTime;
 	private int readerCount;
+	private String mLocaPath;
 
 	private int updateStatus;
 	public static final int STATUS_CONTINUE = 1; // 连载
+    public static final int STATUS_PAUSE    = 2; // 暂停
 	public static final int STATUS_FINISHED = 3; // 完结
 
 	public static final String TYPE_TEXT	= "text";		// 文字书籍
 	public static final String TYPE_VOICE	= "voice";		// 有声书籍
 	public static final String TYPE_LOCAL	= "local";		// 本地书籍
 
-	private List<Chapter> chapterList;
-
-	public boolean hasChapters() {
-		return chapterList != null && chapterList.size() > 0;
-	}
-
-	public Chapter getReadingChapter() {
-		for (Chapter chapter : chapterList) {
-			if (chapter.isReading()) return chapter;
-		}
-		return chapterList.get(0);
-	}
-
-	public Chapter getNextChapter() {
-		int index = getReadChapterIndex();
-		return ++index < chapterList.size() ? chapterList.get(index) : null;
-	}
-
-	public Chapter getPreviousChapter() {
-		int index = getReadChapterIndex();
-		return index > 0 ? chapterList.get(--index) : null;
-	}
-
-	public int getReadChapterIndex() {
-		return chapterList.indexOf(getReadingChapter());
-	}
-
-	public int getChapterCount() {
-		return chapterList.size();
-	}
-
-	public List<Chapter> getChapterList() {
-		return chapterList;
-	}
-
-	public void setChapterList(List<Chapter> chapterList) {
-		this.chapterList = chapterList;
-	}
-
-	public void makeChapterReading(Chapter chapter) {
-		if (chapter.isReading()) return;
-		for (Chapter chapt : chapterList) {
-			if (chapt.isReading()) {
-				chapt.setReadStatus(Chapter.READSTATUS_READ);
-				chapt.setBeginPosition(0);
-			}
-		}
-		chapter.setReadStatus(Chapter.READSTATUS_READING);
-	}
+	private int updateChapterCount;
 
 	public String getLocalCoverPath() {
 		return Book.getLocalCoverPath(bookId);
@@ -153,11 +104,6 @@ public class Book {
 
 	public void setUpdateStatus(int updateStatus) {
 		this.updateStatus = updateStatus;
-	}
-
-	// TODO : 临时方法，要记得找接口开发人把命名改回来！！！！
-	public void setUpdate_status(int update_status) {
-		this.updateStatus = update_status;
 	}
 
 	public String getCoverUrl() {
@@ -236,8 +182,16 @@ public class Book {
 		return isBothType;
 	}
 
+	public int getIntBothType() {
+		return isBothType ? 1 : 0;
+	}
+
 	public void setIsBothType(boolean isBothType) {
 		this.isBothType = isBothType;
+	}
+
+	public void setWasBothType(int wasBothType) {
+		this.isBothType = wasBothType == 1;
 	}
 
 	public long getCapacity() {
@@ -267,6 +221,22 @@ public class Book {
 
 	public void setCatName(String catName) {
 		this.catName = catName;
+	}
+
+	public int getUpdateChapterCount() {
+		return updateChapterCount;
+	}
+
+	public void setUpdateChapterCount(int updateChapterCount) {
+		this.updateChapterCount = updateChapterCount;
+	}
+
+	public String getLocaPath() {
+		return mLocaPath;
+	}
+
+	public void setLocaPath(String mLocaPath) {
+		this.mLocaPath = mLocaPath;
 	}
 
 }

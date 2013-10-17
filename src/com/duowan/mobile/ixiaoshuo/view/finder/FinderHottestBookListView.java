@@ -15,7 +15,7 @@ public class FinderHottestBookListView extends FinderBaseListView {
 
 	@Override
 	protected void build() {
-		mView = mActivity.getLayoutInflater().inflate(R.layout.finder_book_listview, null);
+		mView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
 		mView.setId(mViewId);
 	}
 

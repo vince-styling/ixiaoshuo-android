@@ -1,9 +1,8 @@
 package com.duowan.mobile.ixiaoshuo.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.duowan.mobile.ixiaoshuo.pojo.Book;
+
+import java.io.*;
 
 /**
  * Most of the functions herein are re-implementations of the ones in apache io
@@ -39,7 +38,7 @@ public class IOUtil {
 	 */
 	public static int copy(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[IO_COPY_BUFFER_SIZE];
-		int readSize = -1;
+		int readSize;
 		int result = 0;
 		while ((readSize = in.read(buffer)) >= 0) {
 			out.write(buffer, 0, readSize);
@@ -47,6 +46,27 @@ public class IOUtil {
 		}
 		out.flush();
 		return result;
+	}
+
+	public static boolean deleteDirectory(File dir) {
+		// why should I rename before delete : http://stackoverflow.com/a/11776458/1294681
+		File newDir = new File(dir.getAbsolutePath() + System.currentTimeMillis());
+		dir.renameTo(newDir);
+
+		File[] bookFiles = newDir.listFiles();
+		for (File bookFile : bookFiles) {
+			if (bookFile.isDirectory()) deleteDirectory(bookFile);
+			bookFile.delete();
+		}
+		return newDir.delete();
+	}
+
+	public static void deleteBookCache(Book book) {
+		try {
+			deleteDirectory(Paths.getCacheDirectorySubFolder(book.getBookId()));
+			File coverFile = new File(book.getLocalCoverPath());
+			coverFile.delete();
+		} catch (Exception ex) {}
 	}
 
 }

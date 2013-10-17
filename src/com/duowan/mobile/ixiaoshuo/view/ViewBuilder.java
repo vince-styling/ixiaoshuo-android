@@ -3,27 +3,34 @@ package com.duowan.mobile.ixiaoshuo.view;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
-import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
+import com.duowan.mobile.ixiaoshuo.reader.BaseActivity;
 
-public abstract class ViewBuilder {
+public abstract class ViewBuilder implements Animation.AnimationListener {
 	protected int mViewId;
 	protected View mView;
 	protected boolean mIsInFront;
-	protected MainActivity mActivity;
+	private BaseActivity mActivity;
 	protected OnShowListener mShowListener;
+	private Animation mInAnim, mOutAnim;
 
 	public View getView() {
 		if (mView == null) {
 			build();
-			if (mView instanceof LinearLayout) {
-				mView.setLayoutParams(
-						new LinearLayout.LayoutParams(
-								LinearLayout.LayoutParams.MATCH_PARENT,
-								LinearLayout.LayoutParams.MATCH_PARENT));
-			}
+			setLayout();
 		}
 		return mView;
+	}
+
+	protected void setLayout() {
+		if (mView instanceof LinearLayout) {
+			mView.setLayoutParams(
+					new LinearLayout.LayoutParams(
+							LinearLayout.LayoutParams.MATCH_PARENT,
+							LinearLayout.LayoutParams.MATCH_PARENT));
+		}
 	}
 
 	// build the view
@@ -40,14 +47,19 @@ public abstract class ViewBuilder {
 
 	protected void bringToFront() {
 		if (mIsInFront) return;
-		if (mShowListener != null) mShowListener.onShow();
 		mView.setVisibility(View.VISIBLE);
+		if (mInAnim != null) mView.startAnimation(mInAnim);
+		if (mShowListener != null) mShowListener.onShow();
 		mIsInFront = true;
 	}
 
 	public void pushBack() {
 		mIsInFront = false;
-		mView.setVisibility(View.GONE);
+		if (mOutAnim != null) {
+			mView.startAnimation(mOutAnim);
+		} else {
+			mView.setVisibility(View.GONE);
+		}
 		// if view cannot use again, we should be remove it
 		if (!isReusable()) ((ViewGroup) mView.getParent()).removeView(mView);
 	}
@@ -77,8 +89,38 @@ public abstract class ViewBuilder {
 		return true;
 	}
 
-	public final MainActivity getActivity() {
+	public boolean compare(ViewBuilder builder) {
+		return mViewId == builder.getViewId();
+	}
+
+	public BaseActivity getActivity() {
 		return mActivity;
+	}
+
+	public void setActivity(BaseActivity activity) {
+		mActivity = activity;
+	}
+
+	public void setInAnimation(int animId) {
+		mInAnim = AnimationUtils.loadAnimation(mActivity, animId);
+	}
+
+	public void setOutAnimation(int animId) {
+		mOutAnim = AnimationUtils.loadAnimation(mActivity, animId);
+		mOutAnim.setAnimationListener(this);
+	}
+
+	@Override
+	public void onAnimationStart(Animation animation) {
+	}
+
+	@Override
+	public void onAnimationEnd(Animation animation) {
+		mView.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation animation) {
 	}
 
 	public static interface OnShowListener {

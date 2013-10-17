@@ -17,6 +17,18 @@ public class PaginationList<T> extends ArrayList<T> {
 		super(0);
 	}
 
+	public PaginationList(List<T> ts, int pageNo, int pageItemCount, int totalItemCount) {
+		setPagination(pageNo, pageItemCount, totalItemCount);
+		addAll(ts);
+	}
+
+	public void setPagination(int pageNo, int pageItemCount, int totalItemCount) {
+		this.curPageNo = pageNo;
+		this.pageItemCount = pageItemCount;
+		this.totalItemCount = totalItemCount;
+		this.totalPageCount = (totalItemCount - 1) / pageItemCount + 1;
+	}
+
 	public int getTotalPageCount() {
 		return totalPageCount;
 	}

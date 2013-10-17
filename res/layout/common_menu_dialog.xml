@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:orientation="vertical" android:background="@drawable/common_dialog_bg">
+              android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 
-    <TextView android:id="@+id/txtDialogTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:paddingTop="10dp" android:paddingBottom="16dp"
-              android:text="温馨提示" android:textSize="20sp" android:textColor="#524f4a"
-              android:background="@drawable/common_dialog_head_bg" android:gravity="center" />
+    <TextView android:id="@+id/txvDialogTitle"
+              android:layout_width="match_parent" android:layout_height="50dp" android:gravity="center"
+              android:textSize="20sp" android:textColor="#2b2b2b" android:textStyle="bold"
+              android:singleLine="true" android:ellipsize="middle"
+              android:background="@drawable/common_menu_dialog_head_bg" />
 
 </LinearLayout>

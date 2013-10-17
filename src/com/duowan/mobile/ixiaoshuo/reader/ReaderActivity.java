@@ -1,34 +1,35 @@
 package com.duowan.mobile.ixiaoshuo.reader;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.*;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.duowan.mobile.ixiaoshuo.R;
-import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 import com.duowan.mobile.ixiaoshuo.event.Notifier;
-import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
+import com.duowan.mobile.ixiaoshuo.event.YYReader;
 import com.duowan.mobile.ixiaoshuo.pojo.ColorScheme;
+import com.duowan.mobile.ixiaoshuo.ui.BatteryView;
 import com.duowan.mobile.ixiaoshuo.ui.ReadingBoard;
+import com.duowan.mobile.ixiaoshuo.utils.ReadingPreferences;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
+import com.duowan.mobile.ixiaoshuo.utils.SysUtil;
 import com.duowan.mobile.ixiaoshuo.utils.ViewUtil;
+import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
+import com.duowan.mobile.ixiaoshuo.view.reader.ChapterListView;
+import com.duowan.mobile.ixiaoshuo.view.reader.ReadingMenuView;
 
 import java.util.Date;
 
 public class ReaderActivity extends BaseActivity {
 	private static final String TAG = "ReaderActivity";
 	private ReadingBoard mReadingBoard;
-	private ListView mLsvChapterList;
-	private TextView mTxvCurTime, mTxvReadingInfo, mTxvReadingProgress;
+	private ReadingMenuView mReadingMenuView;
+	private TextView mTxvCurTime, mTxvReadingInfo, mTxvRemainChapterInfo;
+	private BatteryView mBatteryView;
+	private ChapterListView mLsvChapterList;
+	private ReadingPreferences mPreferences;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,131 +37,158 @@ public class ReaderActivity extends BaseActivity {
 		ViewUtil.setFullScreen(this);
 		setContentView(R.layout.reading_board);
 
-		int bid = Integer.parseInt(getIntent().getAction());
-		final Book book = AppDAO.get().getBookForReader(bid);
-
-		if (book == null) {
-			showErrorConfirmDialog("书籍不存在！");
-			return;
-		}
-		if (!book.hasChapters()) {
-			showErrorConfirmDialog("书籍无可读章节！");
-			return;
-		}
-
 		try {
-			mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
-			mReadingBoard.setFocusable(true);
-			mReadingBoard.init(book);
-
+			mReadingMenuView = new ReadingMenuView(this);
 			initStatusBar();
 
-			setColorScheme(new ColorScheme(R.drawable.reading_bg_1, 0xff543927));
+			mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
+			mReadingBoard.init();
 
-			mLsvChapterList = (ListView) findViewById(R.id.lsvChapterList);
-			mLsvChapterList.setAdapter(new ArrayAdapter<Chapter>(this, 0, book.getChapterList()) {
+			mPreferences = new ReadingPreferences(this);
+			setColorScheme(mPreferences.getColorScheme());
+
+			mLsvChapterList = new ChapterListView(this, new ViewBuilder.OnShowListener() {
 				@Override
-				public View getView(int position, View convertView, ViewGroup parent) {
-					if (convertView == null) {
-						convertView = getLayoutInflater().inflate(R.layout.reader_chapter_list_item, null);
-					}
-					Chapter chapter = getItem(position);
-					((TextView) convertView).setText(chapter.getTitle());
-					return convertView;
+				public void onShow() {
+					mReadingMenuView.hideMenu();
 				}
 			});
-			mLsvChapterList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					mLsvChapterList.setVisibility(View.GONE);
-					mReadingBoard.adjustReadingProgress((Chapter) parent.getItemAtPosition(position));
-					mLsvChapterList.setSelection(position);
-				}
-			});
+
 		} catch (Exception e) {
-			showErrorConfirmDialog("初始化失败！");
 			Log.e(TAG, e.getMessage(), e);
-			return;
+			showToastMsg("初始化失败！");
 		}
 	}
 
 	private void initStatusBar() {
 		mTxvCurTime = (TextView) findViewById(R.id.txvCurTime);
+		invalidateTime();
+
+		mBatteryView = (BatteryView) findViewById(R.id.batteryView);
 		mTxvReadingInfo = (TextView) findViewById(R.id.txvReadingInfo);
-		mTxvReadingProgress = (TextView) findViewById(R.id.txvReadingProgress);
+		mTxvRemainChapterInfo = (TextView) findViewById(R.id.txvRemainChapterInfo);
 	}
 
-	public void refreshStatusBar(String readingInfo, float readingProgress) {
-		mTxvReadingInfo.setText(readingInfo);
+	private void invalidateTime() {
 		mTxvCurTime.setText(StringUtil.dfTime.format(new Date()));
-		mTxvReadingProgress.setText(StringUtil.TWO_DECIMAL_POINT_DF.format(readingProgress) + '%');
+	}
+
+	public void refreshStatusBar(String readingInfo) {
+		mTxvReadingInfo.setText(readingInfo);
+		mTxvRemainChapterInfo.setText("剩余" + YYReader.getUnReadChapterCount() + "章");
+	}
+
+	public void showChapterListView() {
+		mLsvChapterList.resume();
 	}
 
 	public void setColorScheme(ColorScheme colorScheme) {
-		colorScheme.initReadingDrawable(getApplicationContext());
 		mReadingBoard.setColorScheme(colorScheme);
 
+		mBatteryView.setColor(colorScheme.getTextColor());
 		mTxvCurTime.setTextColor(colorScheme.getTextColor());
 		mTxvReadingInfo.setTextColor(colorScheme.getTextColor());
-		mTxvReadingProgress.setTextColor(colorScheme.getTextColor());
+		mTxvRemainChapterInfo.setTextColor(colorScheme.getTextColor());
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK:
-				if (mLsvChapterList.getVisibility() == View.VISIBLE) {
-					mLsvChapterList.setVisibility(View.GONE);
-				} else {
-					finish();
+				if (mLsvChapterList.isInFront()) {
+					mLsvChapterList.pushBack();
+					return true;
 				}
-				break;
+				return mReadingMenuView.hideMenu() || onFinish();
 			case KeyEvent.KEYCODE_MENU:
-				if (mLsvChapterList.getVisibility() == View.GONE) {
-					mLsvChapterList.setVisibility(View.VISIBLE);
-				} else {
-					mLsvChapterList.setVisibility(View.GONE);
-				}
+				mReadingMenuView.switchMenu();
 				break;
 		}
 		return true;
 	}
 
-	ProgressDialog mExitDialog;
+	public boolean onFinish() {
+		if (!YYReader.isBookOnShelf()) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("是否添加到书架？");
+			builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					YYReader.addToBookShelf();
+					dialog.cancel();
+					finish();
+				}
+			});
+			builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					YYReader.removeInBookShelf();
+					dialog.cancel();
+					finish();
+				}
+			});
+			builder.show();
+			return true;
+		}
 
-	@Override
-	public void finish() {
-		mExitDialog = ProgressDialog.show(this, null, "正在退出阅读...", false, false);
-		super.finish();
+		if (isTaskRoot()) {
+			Intent in = new Intent();
+			in.setClass(this, MainActivity.class);
+			in.setAction(String.valueOf(System.currentTimeMillis()));
+			startActivity(in);
+		}
+
+		finish();
+		return true;
 	}
 
+	@Override
+	protected void onResume() {
+		registerReceiver(mStatusBarReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		registerReceiver(mStatusBarReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+
+		int savedBrightness = mPreferences.getBrightness();
+		if (savedBrightness != -1) {
+			SysUtil.setBrightness(getWindow(), savedBrightness);
+		}
+
+		super.onResume();
+	}
+
+	@Override
 	protected void onPause() {
 		super.onPause();
-
-		if (mReadingBoard == null) return;
-		AppDAO.get().persistReadingStatistics(mReadingBoard.getBook());
-
+		unregisterReceiver(mStatusBarReceiver);
 		if (isFinishing()) {
 			getReaderApplication().getMainHandler().sendMessage(Notifier.NOTIFIER_BOOKSHELF_REFRESH);
 		}
 	}
 
-	protected void onStop() {
-		if(mExitDialog != null) mExitDialog.cancel();
-		super.onStop();
+	private StatusBarBroadcastReceiver mStatusBarReceiver = new StatusBarBroadcastReceiver();
+	class StatusBarBroadcastReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
+				invalidateTime();
+			}
+			else if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+				int level = intent.getIntExtra("level", 0);
+				int scale = intent.getIntExtra("scale", 100);
+				mBatteryView.setBatteryPercentage((float) level / scale);
+			}
+		}
 	}
 
-	private void showErrorConfirmDialog(String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(message);
-		builder.setPositiveButton("退出阅读", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-				finish();
-			}
-		});
-		builder.show();
+	public ReadingBoard getReadingBoard() {
+		return mReadingBoard;
+	}
+
+	public ReadingMenuView getReadingMenu() {
+		return mReadingMenuView;
+	}
+
+	public ReadingPreferences getPreferences() {
+		return mPreferences;
 	}
 
 }

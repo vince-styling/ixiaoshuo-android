@@ -1,8 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.doc;
 
 import android.util.Log;
-import com.duowan.mobile.ixiaoshuo.pojo.Book;
-import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
+import com.duowan.mobile.ixiaoshuo.event.YYReader;
 import com.duowan.mobile.ixiaoshuo.ui.RenderPaint;
 import com.duowan.mobile.ixiaoshuo.utils.Encoding;
 import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
@@ -16,34 +15,31 @@ import java.util.zip.ZipInputStream;
 
 public class OnlineDocument extends Document {
 	private File contentTempFile;
-	private String bookDirectoryPath;
-	private ProcessCallback mProcessCallback;
-	
-	public OnlineDocument(Book book, RenderPaint paint, ProcessCallback callback) throws Exception {
-		super(book, paint);
+	private YYReader.OnDownloadChapterListener mOnDownloadChapterListener;
+	private OnTurnChapterListener mOnTurnChapterListener;
+	private boolean mIsTurnPrevious;
 
+	public OnlineDocument(RenderPaint paint,
+						  YYReader.OnDownloadChapterListener onDownloadChapterListener,
+						  OnTurnChapterListener onTurnChapterListener) throws Exception {
+		super(paint);
+
+		mOnDownloadChapterListener = onDownloadChapterListener;
+		mOnTurnChapterListener = onTurnChapterListener;
 		mEncoding = Encoding.GBK;
-		mProcessCallback = callback;
 
-		bookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getBookId());
-		contentTempFile = new File(bookDirectoryPath + ".tmp");
+		contentTempFile = new File(Paths.getCacheDirectoryPath() + ".tmp");
 		if (!contentTempFile.canRead()) contentTempFile.createNewFile();
 		mRandBookFile = new RandomAccessFile(contentTempFile, "r");
-
-		adjustReadingProgress(mBook.getReadingChapter());
 	}
 
-	private boolean renewRandomAccessFile(Chapter chapter) {
-		if (chapter == null) return false;
+	private boolean renewRandomAccessFile(YYReader.ChapterInfo chapterInfo) {
+		if (chapterInfo == null) return false;
 		try {
-			// TODO : 有可能即将要读的这个章节跟当前在读的章节是同一章
-			String fileName = String.valueOf(chapter.getId());
-			File chapterFile = new File(bookDirectoryPath + fileName);
-
-			// check cache file exists
-			if (chapterFile.length() > 100) {
-				FileInputStream fins = new FileInputStream(chapterFile);
+			if (chapterInfo.mDownloadStatus == YYReader.CHAPTERSTATUS_READY) {
+				FileInputStream fins = new FileInputStream(new File(chapterInfo.mLocation));
 				ZipInputStream zins = new ZipInputStream(fins);
+
 				if (zins.getNextEntry() == null) {
 					zins.close();
 					fins.close();
@@ -58,86 +54,93 @@ public class OnlineDocument extends Document {
 				fos.close();
 
 				fins.close();
-				System.gc();
-			} else {
-				if (!chapterIsLoading) {
-					chapterIsLoading = true;
-					mProcessCallback.fetchChapter(chapter);
-				}
-				return false;
+
+				mByteMetaList.clear();
+				mContentBuf.setLength(0);
+				mPageCharOffsetInBuffer = 0;
+
+				YYReader.onReadingChapter(chapterInfo);
+				mOnTurnChapterListener.onTurnChapter();
+				return true;
 			}
 
-			mByteMetaList.clear();
-			mContentBuf.setLength(0);
-			mPageCharOffsetInBuffer = 0;
-			mBook.makeChapterReading(chapter);
+			if (chapterInfo.mDownloadStatus == YYReader.CHAPTERSTATUS_NOT_DOWNLOAD && !isDownloading()) {
+				YYReader.downloadOneChapter(chapterInfo, mOnDownloadChapterListener);
+			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
-			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
 	public float calculateReadingProgress() {
-		int readChapterIndex = mBook.getReadChapterIndex();
-		if (readChapterIndex + 1 == mBook.getChapterCount() && mReadByteEndOffset == mFileSize) {
+		int chapterCount = YYReader.getTotalChapterCount();
+		int readChapterNum = YYReader.onGetCurrentChapterIndex() + 1;
+		if (readChapterNum == chapterCount && mReadByteEndOffset == mFileSize) {
 			if (mPageCharOffsetInBuffer + mMaxCharCountPerPage >= mContentBuf.length()) return 100;
 		}
-		return (readChapterIndex + 1) * 1.0f / mBook.getChapterCount() * 100;
+		return readChapterNum * 1.0f / chapterCount * 100;
 	}
 
 	@Override
-	public boolean adjustReadingProgress(Chapter chapter) {
-		if (renewRandomAccessFile(chapter)) {
-			mReadByteBeginOffset = chapter.getBeginPosition();
+	public boolean adjustReadingProgress(YYReader.ChapterInfo chapterInfo) {
+		if (renewRandomAccessFile(chapterInfo)) {
+			mReadByteBeginOffset = mIsTurnPrevious ? getBackmostPosition() : chapterInfo.mPosition;
 			mReadByteEndOffset = mReadByteBeginOffset;
-			invalidatePrevPagesCache();
+			mIsTurnPrevious = false;
 			scrollDownBuffer();
 			return true;
 		}
+		mIsTurnPrevious = false;
 		return false;
 	}
 
 	@Override
 	public boolean turnNextPage() {
 		if (super.turnNextPage()) return true;
-		Chapter chapter = mBook.getNextChapter();
-		if (renewRandomAccessFile(chapter)) {
+
+		YYReader.ChapterInfo chapterInfo = YYReader.getNextChapterInfo();
+		if (renewRandomAccessFile(chapterInfo)) {
 			mReadByteBeginOffset = 0;
 			mReadByteEndOffset = 0;
 			scrollDownBuffer();
 			return true;
 		}
+
 		return false;
 	}
 
 	@Override
 	public boolean turnPreviousPage() {
 		if (super.turnPreviousPage()) return true;
-		Chapter chapter = mBook.getPreviousChapter();
-		if (renewRandomAccessFile(chapter)) {
+
+		YYReader.ChapterInfo chapterInfo = YYReader.getPrevChapter();
+		if (renewRandomAccessFile(chapterInfo)) {
 			mReadByteBeginOffset = getBackmostPosition();
 			mReadByteEndOffset = mReadByteBeginOffset;
 			scrollDownBuffer();
 			return true;
 		}
+
+		mIsTurnPrevious = isDownloading();
 		return false;
 	}
 
-	private boolean chapterIsLoading;
 	@Override
-	public void turnOffLoadding() {
-		chapterIsLoading = false;
+	public void onDownloadComplete(boolean result, boolean willAdjust) {
+		super.onDownloadComplete(result, willAdjust);
+		if (result && willAdjust) return;
+		mIsTurnPrevious = false;
 	}
 
 	@Override
 	public String getReadingInfo() {
-		return mBook.getReadingChapter().getTitle();
+		return YYReader.getCurrentChapterInfo().mName;
 	}
 
-	public static interface ProcessCallback {
-		public void fetchChapter(Chapter chapter);
+	public static interface OnTurnChapterListener {
+		void onTurnChapter();
 	}
-	
+
 }

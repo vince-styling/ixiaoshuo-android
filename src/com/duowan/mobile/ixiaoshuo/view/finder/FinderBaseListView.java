@@ -1,19 +1,22 @@
 package com.duowan.mobile.ixiaoshuo.view.finder;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
+import com.duowan.mobile.ixiaoshuo.pojo.Constants;
+import com.duowan.mobile.ixiaoshuo.reader.BookInfoActivity;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
-import com.duowan.mobile.ixiaoshuo.view.BookInfoView;
 import com.duowan.mobile.ixiaoshuo.view.EndlessListAdapter;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
+import com.duowan.mobile.ixiaoshuo.view.VoiceBookInfoView;
 
 public abstract class FinderBaseListView extends ViewBuilder implements AbsListView.OnScrollListener, OnItemClickListener {
 	protected EndlessListAdapter<Book> mAdapter;
@@ -27,7 +30,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	public FinderBaseListView(String bookType, MainActivity activity, int viewId, OnShowListener onShowListener) {
 		mBookType = bookType;
 		mShowListener = onShowListener;
-		mActivity = activity;
+		setActivity(activity);
 		mViewId = viewId;
 	}
 
@@ -35,14 +38,14 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	public void init() {
 		if (getListView().getAdapter() != null) return;
 
-		mLotNetworkUnavaliable = mActivity.findViewById(R.id.lotNetworkUnavaliable);
+		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotNetworkUnavaliable);
 
 		mAdapter = new EndlessListAdapter<Book>() {
 			@Override
 			protected View getView(int position, View convertView) {
 				Holder holder;
 				if (convertView == null) {
-					convertView = mActivity.getLayoutInflater().inflate(R.layout.finder_book_list_item, null);
+					convertView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_list_item, null);
 
 					holder = new Holder();
 					holder.lotDivider = convertView.findViewById(R.id.lotDivider);
@@ -89,8 +92,8 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 			@Override
 			protected View initProgressView() {
-				View progressView = mActivity.getLayoutInflater().inflate(R.layout.contents_loading, null);
-				Display display = mActivity.getWindowManager().getDefaultDisplay();
+				View progressView = getActivity().getLayoutInflater().inflate(R.layout.contents_loading, null);
+				Display display = getActivity().getWindowManager().getDefaultDisplay();
 				progressView.setLayoutParams(new AbsListView.LayoutParams(display.getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
 				return progressView;
 			}
@@ -126,7 +129,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 		if (!NetService.get().isNetworkAvailable()) {
 			if (mAdapter.getItemCount() > 0) {
-				mActivity.showToastMsg(R.string.network_disconnect_msg);
+				getActivity().showToastMsg(R.string.network_disconnect_msg);
 			} else {
 				mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
 			}
@@ -147,7 +150,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 				if (bookList == null || bookList.size() == 0) {
 					if (isInFront()) {
 						if (mAdapter.getItemCount() > 0) {
-							mActivity.showToastMsg(R.string.without_data);
+							getActivity().showToastMsg(R.string.without_data);
 						} else {
 							mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
 						}
@@ -166,43 +169,17 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
-		if (book == null) return;
+		if (book != null) {
+			if(book.getType().equals(Book.TYPE_TEXT)){
+                Intent intent = new Intent(getActivity(), BookInfoActivity.class);
+                intent.putExtra(Constants.BOOK_ID, book.getBookId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(intent);
 
-		if (!NetService.get().isNetworkAvailable()) {
-			mActivity.showToastMsg(R.string.network_disconnect_msg);
-			return;
+			} else if (book.getType().equals(Book.TYPE_VOICE)) {
+				getActivity().showView(new VoiceBookInfoView(getActivity(), book.getBookId()));
+			}
 		}
-
-		final int bookId = book.getBookId();
-		NetService.execute(new NetService.NetExecutor<Book>() {
-			ProgressDialog mPrgreDialog;
-
-			public void preExecute() {
-				mPrgreDialog = ProgressDialog.show(mActivity, null, mActivity.getString(R.string.loading_tip_msg), false, true);
-				mPrgreDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						NetService.get().abortLast();
-					}
-				});
-			}
-
-			public Book execute() {
-				return NetService.get().getBookDetail(bookId);
-			}
-
-			public void callback(Book bookDetail) {
-				boolean isShowing = mPrgreDialog.isShowing();
-				if (isShowing) mPrgreDialog.cancel(); else return;
-
-				if (bookDetail == null) {
-					mActivity.showToastMsg(R.string.without_data);
-					return;
-				}
-
-				mActivity.showView(new BookInfoView(mActivity, bookDetail));
-			}
-		});
 	}
 
 	@Override
@@ -228,6 +205,16 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 	protected ListView getListView() {
 		return (ListView) mView;
+	}
+
+	@Override
+	public MainActivity getActivity() {
+		return (MainActivity) super.getActivity();
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		Log.i("YYReader_FinderBaseVeiw", "onKeyDown");
+		return mView.onKeyDown(keyCode, event);
 	}
 
 }

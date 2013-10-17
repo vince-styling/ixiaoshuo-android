@@ -56,7 +56,7 @@ public class BookCoverLoader extends TaskRunnable {
 			imvBookCover.setImageBitmap(coverBitmap);
 		} else {
 			if (StringUtil.isValidUrl(book.getCoverUrl())) {
-				activity.submitTask(new BookCoverLoader(book, imvBookCover, activity.getReaderApplication().getMainHandler()));
+				TaskExecutor.get().execute(new BookCoverLoader(book, imvBookCover, activity.getReaderApplication().getMainHandler()));
 			}
 			coverBitmap = BitmapUtil.loadBitmapInRes(R.drawable.cover_less, imvBookCover);
 			imvBookCover.setImageBitmap(coverBitmap);

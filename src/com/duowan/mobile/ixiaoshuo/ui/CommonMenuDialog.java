@@ -16,15 +16,17 @@ public class CommonMenuDialog extends AbsDialog {
 
 		mContentView = (ViewGroup) getLayoutInflater().inflate(R.layout.common_menu_dialog, null);
 		if(title == null) {
-			mContentView.findViewById(R.id.txtDialogTitle).setVisibility(View.GONE);
+			mContentView.findViewById(R.id.txvDialogTitle).setVisibility(View.GONE);
 		} else {
-			((TextView) mContentView.findViewById(R.id.txtDialogTitle)).setText(title);
+			((TextView) mContentView.findViewById(R.id.txvDialogTitle)).setText(title);
 		}
 	}
 
 	public void initContentView(MenuItem[] menus) {
-		for (MenuItem menu : menus) {
+		for (int i = 0; i < menus.length; i++) {
+			MenuItem menu = menus[i];
 			TextView menuView = (TextView) getLayoutInflater().inflate(R.layout.common_menu_dialog_item, mContentView, false);
+			if (i + 1 == menus.length) menuView.setBackgroundResource(R.drawable.common_menu_dialog_bottom_item_bg_selector);
 			menuView.setOnClickListener(menu.clickEvent);
 			menuView.setText(menu.title);
 			mContentView.addView(menuView);
