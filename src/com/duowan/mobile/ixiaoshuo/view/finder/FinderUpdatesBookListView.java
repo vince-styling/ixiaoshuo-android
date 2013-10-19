@@ -9,7 +9,7 @@ import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 
 public class FinderUpdatesBookListView extends FinderBaseListView {
 
-	public FinderUpdatesBookListView(String bookType, MainActivity activity, OnShowListener onShowListener) {
+	public FinderUpdatesBookListView(int bookType, MainActivity activity, OnShowListener onShowListener) {
 		super(bookType, activity, R.id.lsvFinderUpdatesBooks, onShowListener);
 	}
 

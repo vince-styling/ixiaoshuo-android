@@ -18,6 +18,7 @@ import com.duowan.mobile.ixiaoshuo.doc.Document;
 import com.duowan.mobile.ixiaoshuo.doc.LayoutUtil;
 import com.duowan.mobile.ixiaoshuo.doc.OnlineDocument;
 import com.duowan.mobile.ixiaoshuo.event.YYReader;
+import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.pojo.ColorScheme;
 import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
 
@@ -382,20 +383,20 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 	ProgressDialog mLoadingPrgreDialog;
 
 	@Override
-	public void onDownloadStart(YYReader.ChapterInfo chapterInfo) {
+	public void onDownloadStart(Chapter chapter) {
 		mLoadingPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, true);
 		mDoc.onDownloadStart();
 	}
 
 	@Override
-	public void onDownloadComplete(YYReader.ChapterInfo chapterInfo) {
+	public void onDownloadComplete(Chapter chapter) {
 		boolean willAdjust = mLoadingPrgreDialog.isShowing();
 		if (willAdjust) mLoadingPrgreDialog.cancel();
 		mLoadingPrgreDialog = null;
 
-		if (chapterInfo.mDownloadStatus == YYReader.CHAPTERSTATUS_READY) {
+		if (chapter.isNativeChapter()) {
 			mDoc.onDownloadComplete(true, willAdjust);
-			if (willAdjust) adjustReadingProgress(chapterInfo);
+			if (willAdjust) adjustReadingProgress(chapter);
 		} else {
 			mDoc.onDownloadComplete(false, willAdjust);
 			if (willAdjust) getActivity().showToastMsg(R.string.without_data);
@@ -407,8 +408,8 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 		return getActivity().onKeyUp(keyCode, event);
 	}
 
-	public void adjustReadingProgress(YYReader.ChapterInfo chapterInfo) {
-		if (mDoc.adjustReadingProgress(chapterInfo)) forceRedraw(true);
+	public void adjustReadingProgress(Chapter chapter) {
+		if (mDoc.adjustReadingProgress(chapter)) forceRedraw(true);
 	}
 
 	public float calculateReadingProgress() {

@@ -6,24 +6,18 @@ import com.duowan.mobile.ixiaoshuo.event.YYReader;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
 import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
-import com.duowan.mobile.ixiaoshuo.utils.Paths;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderService implements YYReader.OnYYReaderListener {
 	private Book mBook;
-	private YYReader.ChapterInfo mReadingChapter;
-	private String mBookDirectoryPath;
+	private Chapter mReadingChapter;
 
-	public void startReader(Context ctx, int bid) {
-		mBook = AppDAO.get().getBookOnReading(bid);
-		mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getBookId());
-
-		Chapter chapter = AppDAO.get().getReadingChapter(mBook.getBid());
-		mReadingChapter = convertChapterInfo(chapter);
-
+	public void startReader(Context ctx, int bookId) {
+		mBook = AppDAO.get().getBookOnReading(bookId);
+		mReadingChapter = AppDAO.get().getReadingChapter(mBook.getBookId());
+		mReadingChapter.ready(mBook.getSourceBookId());
 		YYReader.startReader(ctx, this);
 	}
 
@@ -34,7 +28,8 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 
 	@Override
 	public int onGetTotalChapterCount() {
-		return AppDAO.get().getBookChapterCount(mBook.getBid());
+		// TODO : onGetTotalChapterCount 应该不用每次都查数据库
+		return AppDAO.get().getBookChapterCount(mBook.getBookId());
 	}
 
 	@Override
@@ -44,55 +39,53 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 
 	@Override
 	public int onGetCurrentChapterIndex() {
-		return AppDAO.get().getBookChapterIndex(mBook.getBid(), mReadingChapter.mId);
+		// TODO : onGetCurrentChapterIndex 应该不用每次都查数据库
+		return AppDAO.get().getBookChapterIndex(mBook.getBookId(), mReadingChapter.getChapterId());
 	}
 
 	@Override
-	public YYReader.ChapterInfo onGetCurrentChapterInfo() {
+	public Chapter onGetCurrentChapter() {
 		return mReadingChapter;
 	}
 
 	@Override
-	public YYReader.ChapterInfo onGetPrevChapterInfo() {
-		Chapter chapter = AppDAO.get().getPreviousChapter(mBook.getBid(), mReadingChapter.mId);
-		return convertChapterInfo(chapter);
+	public Chapter onGetPrevChapter() {
+		Chapter chapter = AppDAO.get().getPreviousChapter(mBook.getBookId(), mReadingChapter.getChapterId());
+		if (chapter != null) chapter.ready(mBook.getSourceBookId());
+		return chapter;
 	}
 
 	@Override
-	public YYReader.ChapterInfo onGetNextChapterInfo() {
-		Chapter chapter = AppDAO.get().getNextChapter(mBook.getBid(), mReadingChapter.mId);
-		return convertChapterInfo(chapter);
+	public Chapter onGetNextChapter() {
+		Chapter chapter = AppDAO.get().getNextChapter(mBook.getBookId(), mReadingChapter.getChapterId());
+		if (chapter != null) chapter.ready(mBook.getSourceBookId());
+		return chapter;
 	}
 
 	@Override
-	public YYReader.ChapterInfo onGetChapterInfoById(int chapterId) {
-		return null;
-	}
-
-	@Override
-	public List<YYReader.ChapterInfo> onGetChapterList() {
-		List<Chapter> list = AppDAO.get().getBookChapters(mBook.getBid());
-		List<YYReader.ChapterInfo> chapInfoList = new ArrayList<YYReader.ChapterInfo>(list.size());
+	public List<Chapter> onGetChapterList() {
+		List<Chapter> list = AppDAO.get().getBookChapters(mBook.getBookId());
+		List<Chapter> chapInfoList = new ArrayList<Chapter>(list.size());
 		for (Chapter chapter : list) {
-			chapInfoList.add(convertChapterInfo(chapter));
+			chapInfoList.add(chapter);
 		}
 		return chapInfoList;
 	}
 
 	@Override
-	public void onReadingChapter(YYReader.ChapterInfo chapterInfo) {
-		AppDAO.get().makeReadingChapter(mBook.getBid(), chapterInfo);
-		mReadingChapter = chapterInfo;
+	public void onReadingChapter(Chapter chapter) {
+		AppDAO.get().makeReadingChapter(mBook.getBookId(), chapter);
+		mReadingChapter = chapter;
 	}
 
 	@Override
 	public boolean isBookOnShelf() {
-		return AppDAO.get().isBookOnShelf(mBook.getBid());
+		return AppDAO.get().isBookOnShelf(mBook.getBookId());
 	}
 
 	@Override
 	public boolean onAddToBookShelf() {
-		return AppDAO.get().addToBookShelf(mBook.getBid());
+		return AppDAO.get().addToBookShelf(mBook.getBookId());
 	}
 
 	@Override
@@ -101,8 +94,8 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 	}
 
 	@Override
-	public boolean onDownloadOneChapter(final YYReader.ChapterInfo chapterInfo, final YYReader.OnDownloadChapterListener listener) {
-		if (chapterInfo == null || chapterInfo.mDownloadStatus == YYReader.CHAPTERSTATUS_READY || listener == null) {
+	public boolean onDownloadOneChapter(final Chapter chapter, final YYReader.OnDownloadChapterListener listener) {
+		if (chapter == null || chapter.isNativeChapter() || listener == null) {
 			return false;
 		}
 
@@ -112,42 +105,20 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 
 		NetService.execute(new NetService.NetExecutor<Boolean>() {
 			public void preExecute() {
-				listener.onDownloadStart(chapterInfo);
+				listener.onDownloadStart(chapter);
 			}
 
 			public Boolean execute() {
-				return NetService.get().downloadChapterContent(mBook.getBookId(), chapterInfo.mId);
+				return NetService.get().downloadChapterContent(mBook.getSourceBookId(), chapter.getChapterId());
 			}
 
 			public void callback(Boolean result) {
-				if (result) chapterInfo.mDownloadStatus = YYReader.CHAPTERSTATUS_READY;
-				listener.onDownloadComplete(chapterInfo);
+				if (result) chapter.ready(mBook.getSourceBookId());
+				listener.onDownloadComplete(chapter);
 			}
 		});
 
 		return true;
-	}
-
-	private YYReader.ChapterInfo convertChapterInfo(Chapter chapter) {
-		if (chapter != null) {
-			YYReader.ChapterInfo chapInfo = new YYReader.ChapterInfo();
-			chapInfo.mId = chapter.getId();
-			chapInfo.mName = chapter.getTitle();
-			chapInfo.mReadStatus = chapter.getReadStatus();
-
-			chapInfo.mLocation = mBookDirectoryPath + chapInfo.mId;
-			File chapterFile = new File(chapInfo.mLocation);
-			if (chapterFile.exists()) {
-				chapInfo.mDownloadStatus = YYReader.CHAPTERSTATUS_READY;
-			} else {
-				chapInfo.mDownloadStatus = YYReader.CHAPTERSTATUS_NOT_DOWNLOAD;
-			}
-
-			chapInfo.mFileInfo = YYReader.FILE_GZIP;
-			chapInfo.mPosition = chapter.getBeginPosition();
-			return chapInfo;
-		}
-		return null;
 	}
 
 }

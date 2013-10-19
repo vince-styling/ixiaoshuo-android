@@ -132,7 +132,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 		BookCoverLoader.loadCover(getActivity(), book, holder.imvBookCover);
 
 		holder.txvBookName.setText(book.getName());
-		holder.txvBookLabel.setVisibility(book.getUpdateChapterCount() == 0 ? View.GONE : View.VISIBLE);
+		holder.txvBookLabel.setVisibility(book.hasNewChapter() ? View.GONE : View.VISIBLE);
 
 		holder.txvBookStatus1.setVisibility(book.isFinished() ? View.VISIBLE : View.GONE);
 		holder.txvBookStatus2.setVisibility(book.isBothType() ? View.VISIBLE : View.GONE);
@@ -146,7 +146,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 	}
 
 	protected void setBookDesc1(Book book, TextView txvBookDesc) {
-		int unreadCount = AppDAO.get().getBookUnreadChapterCount(book.getBid());
+		int unreadCount = AppDAO.get().getBookUnreadChapterCount(book.getBookId());
 		if (unreadCount > 0) {
 			txvBookDesc.setText(unreadCount + "章未读");
 		} else {
@@ -155,7 +155,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 	}
 
 	protected void setBookDesc2(Book book, TextView txvBookDesc) {
-		Chapter chapter = AppDAO.get().getBookLastChapter(book.getBid());
+		Chapter chapter = AppDAO.get().getBookLastChapter(book.getBookId());
 		if (chapter != null) {
 			txvBookDesc.setText("更新至：" + chapter.getTitle());
 		} else {
@@ -209,39 +209,39 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 		if (mIsSyncUpdate) return;
 		mIsSyncUpdate = true;
 
-		if (NetService.get().isNetworkAvailable()) {
-			NetService.execute(new BaseNetService.NetExecutor<List<BookUpdateInfo>>() {
-				@Override
-				public void preExecute() {}
-
-				@Override
-				public List<BookUpdateInfo> execute() {
-					List<BookOnUpdate> bookOnUpdateList = new ArrayList<BookOnUpdate>(mBookList.size());
-					for (Book book : mBookList) {
-						Chapter chapter = AppDAO.get().getBookLastChapter(book.getBid());
-						if (chapter != null) {
-							bookOnUpdateList.add(new BookOnUpdate(book.getBookId(), chapter.getId()));
-						}
-					}
-					return NetService.get().getBookUpdateInfo(bookOnUpdateList);
-				}
-
-				@Override
-				public void callback(List<BookUpdateInfo> bookUpdateInfoList) {
-					if (bookUpdateInfoList != null && bookUpdateInfoList.size() > 0) {
-						for (BookUpdateInfo updateInfo : bookUpdateInfoList) {
-							for (Book book : mBookList) {
-								if (updateInfo.getBookId() == book.getBookId()) {
-									book.setUpdateChapterCount(updateInfo.getUpdateChapterCount());
-									break;
-								}
-							}
-						}
-						mAdapter.notifyDataSetChanged();
-					}
-				}
-			});
-		}
+//		if (NetService.get().isNetworkAvailable()) {
+//			NetService.execute(new BaseNetService.NetExecutor<List<BookUpdateInfo>>() {
+//				@Override
+//				public void preExecute() {}
+//
+//				@Override
+//				public List<BookUpdateInfo> execute() {
+//					List<BookOnUpdate> bookOnUpdateList = new ArrayList<BookOnUpdate>(mBookList.size());
+//					for (Book book : mBookList) {
+//						Chapter chapter = AppDAO.get().getBookLastChapter(book.getBookId());
+//						if (chapter != null) {
+//							bookOnUpdateList.add(new BookOnUpdate(book.getSourceBookId(), chapter.getChapterId()));
+//						}
+//					}
+//					return NetService.get().getBookUpdateInfo(bookOnUpdateList);
+//				}
+//
+//				@Override
+//				public void callback(List<BookUpdateInfo> bookUpdateInfoList) {
+//					if (bookUpdateInfoList != null && bookUpdateInfoList.size() > 0) {
+//						for (BookUpdateInfo updateInfo : bookUpdateInfoList) {
+//							for (Book book : mBookList) {
+//								if (updateInfo.getBookId() == book.getSourceBookId()) {
+//									book.setUpdateChapterCount(updateInfo.getUpdateChapterCount());
+//									break;
+//								}
+//							}
+//						}
+//						mAdapter.notifyDataSetChanged();
+//					}
+//				}
+//			});
+//		}
 	}
 
 	@Override
@@ -299,7 +299,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 						// TODO : 待重构！！！！！！！！！！！！
 						Intent thisIntent = new Intent();
 						thisIntent.setClass(getActivity(), ReaderActivity.class);
-						thisIntent.setAction(String.valueOf(book.getBid()));
+						thisIntent.setAction(String.valueOf(book.getBookId()));
 						Intent addShortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
 						addShortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, book.getName());
 						addShortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, thisIntent);
@@ -328,7 +328,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
-			new ReaderService().startReader(getActivity(), book.getBid());
+			new ReaderService().startReader(getActivity(), book.getBookId());
 		}
 	}
 

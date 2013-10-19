@@ -4,10 +4,8 @@ import com.duowan.mobile.ixiaoshuo.utils.Paths;
 import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 public class Book {
-	private int bid;				// 本地的自增长ID，主键
-	private int bookId;				// 服务端的书籍ID，有可能会改变
-	private int websiteId;
-	private String websiteName;
+	private int bookId;				// 服务端书籍唯一ID，不变
+	private int sourceBookId;		// 服务端书籍源ID，在换源时会更改
 	private String name;
 	private String author;
 	private String coverUrl;
@@ -15,55 +13,56 @@ public class Book {
 	private String summary;
 	private boolean isOriginSummary = true;
 
-	private String type;
-	private boolean isBothType;
-
 	private long capacity;		// 容量：字数 or 字节数
+	private boolean isBothType;
 
 	private String catId;
 	private String catName;
 
-	private String lastUpdateTime;
 	private int readerCount;
-	private String mLocaPath;
 
 	private int updateStatus;
+
 	public static final int STATUS_CONTINUE = 1; // 连载
-    public static final int STATUS_PAUSE    = 2; // 暂停
+	public static final int STATUS_PAUSE    = 2; // 暂停
 	public static final int STATUS_FINISHED = 3; // 完结
 
-	public static final String TYPE_TEXT	= "text";		// 文字书籍
-	public static final String TYPE_VOICE	= "voice";		// 有声书籍
-	public static final String TYPE_LOCAL	= "local";		// 本地书籍
+	private int bookType;
+	public static final int TYPE_TEXT	= 1; // 文字书籍
+	public static final int TYPE_VOICE	= 2; // 有声书籍
+	public static final int TYPE_LOCAL	= 3; // 本地书籍
 
-	private int updateChapterCount;
+	private boolean hasNewChapter;
+	private int remoteLastChapterId;
+	private String lastUpdateTime;
 
 	public String getLocalCoverPath() {
-		return Book.getLocalCoverPath(bookId);
+		return Book.getLocalCoverPath(sourceBookId);
 	}
 
 	public static String getLocalCoverPath(int bookId) {
 		return Paths.getCoversDirectoryPath() + "book_" + bookId + ".jpg";
 	}
 
-	public int getBid() {
-		return bid;
-	}
-
-	public void setBid(int bid) {
-		this.bid = bid;
-	}
-
 	public int getBookId() {
 		return bookId;
 	}
 
+	public void setBookId(int bookId) {
+		this.bookId = bookId;
+	}
+
+	// TODO : 兼容服务端书籍详情接口的字段名，要让服务端改成bookId
 	public void setId(int id) {
 		this.bookId = id;
 	}
 
-	public void setBookId(int bookId) {
-		this.bookId = bookId;
+	public int getSourceBookId() {
+		return sourceBookId;
+	}
+
+	public void setSourceBookId(int sourceBookId) {
+		this.sourceBookId = sourceBookId;
 	}
 
 	public String getName() {
@@ -83,10 +82,6 @@ public class Book {
 	}
 
 	public String getUpdateStatusStr() {
-		return updateStatus == STATUS_CONTINUE ? "连载" : "完结";
-	}
-
-	public String getSimpleUpdateStatusStr() {
 		return updateStatus == STATUS_CONTINUE ? "连" : "完";
 	}
 
@@ -114,14 +109,6 @@ public class Book {
 		this.coverUrl = coverUrl;
 	}
 
-	public String getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-
-	public void setLastUpdateTime(String lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-
 	public String getSummary() {
 		return summary;
 	}
@@ -146,22 +133,6 @@ public class Book {
 		this.summary = summary;
 	}
 
-	public String getWebsiteName() {
-		return websiteName;
-	}
-
-	public void setWebsiteName(String websiteName) {
-		this.websiteName = websiteName;
-	}
-
-	public int getWebsiteId() {
-		return websiteId;
-	}
-
-	public void setWebsiteId(int websiteId) {
-		this.websiteId = websiteId;
-	}
-
 	public int getReaderCount() {
 		return readerCount;
 	}
@@ -170,12 +141,19 @@ public class Book {
 		this.readerCount = readerCount;
 	}
 
-	public String getType() {
-		return type;
+	public int getBookType() {
+		return bookType;
 	}
 
+	public void setBookType(int bookType) {
+		this.bookType = bookType;
+	}
+
+	// TODO : 服务端应该直接返回数字标识，而不是字符串
 	public void setType(String type) {
-		this.type = type;
+		if (StringUtil.isEmpty(type)) return;
+		if (type.equals("text")) bookType = TYPE_TEXT;
+		else if (type.equals("voice")) bookType = TYPE_VOICE;
 	}
 
 	public boolean isBothType() {
@@ -199,11 +177,11 @@ public class Book {
 	}
 
 	public String getCapacityStr() {
-		if (type.equals(TYPE_TEXT)) return StringUtil.formatWordsCount(capacity);
+		if (bookType == TYPE_TEXT) return StringUtil.formatWordsCount(capacity);
 		return StringUtil.formatSpaceSize(capacity);
 	}
 
-	public void setCapacity(int capacity) {
+	public void setCapacity(long capacity) {
 		this.capacity = capacity;
 	}
 
@@ -223,20 +201,32 @@ public class Book {
 		this.catName = catName;
 	}
 
-	public int getUpdateChapterCount() {
-		return updateChapterCount;
+	public int getRemoteLastChapterId() {
+		return remoteLastChapterId;
 	}
 
-	public void setUpdateChapterCount(int updateChapterCount) {
-		this.updateChapterCount = updateChapterCount;
+	public void setRemoteLastChapterId(int remoteLastChapterId) {
+		this.remoteLastChapterId = remoteLastChapterId;
 	}
 
-	public String getLocaPath() {
-		return mLocaPath;
+	public boolean hasNewChapter() {
+		return hasNewChapter;
 	}
 
-	public void setLocaPath(String mLocaPath) {
-		this.mLocaPath = mLocaPath;
+	public void setHasNewChapter(int hasNewChapter) {
+		this.hasNewChapter = hasNewChapter == 1;
+	}
+
+	public int getIntHasNewChapter() {
+		return hasNewChapter ? 1 : 0;
+	}
+
+	public String getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
+	public void setLastUpdateTime(String lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
 	}
 
 }

@@ -14,7 +14,7 @@ public class ChapterDownloadDBTask extends ChapterDownloadTask {
 
 	@Override
 	protected PaginationList<Chapter> loadNextPage() {
-		return AppDAO.get().getSimpleBookChapterList(mBook.getBid(), mPageNo, mPageItemCount);
+		return AppDAO.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo, mPageItemCount);
 	}
 
 }

@@ -9,7 +9,7 @@ import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 
 public class FinderHottestBookListView extends FinderBaseListView {
 
-	public FinderHottestBookListView(String bookType, MainActivity activity, OnShowListener onShowListener) {
+	public FinderHottestBookListView(int bookType, MainActivity activity, OnShowListener onShowListener) {
 		super(bookType, activity, R.id.lsvFinderHottestBooks, onShowListener);
 	}
 

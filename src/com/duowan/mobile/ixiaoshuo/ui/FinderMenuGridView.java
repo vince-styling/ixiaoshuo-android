@@ -9,7 +9,7 @@ import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 import com.duowan.mobile.ixiaoshuo.view.finder.*;
 
 public class FinderMenuGridView extends GridView {
-	private String mBookType;
+	private int mBookType;
 
 	public static final int MENU_NEWLY = 10;
 	public static final int MENU_HOTTEST = 20;
@@ -90,7 +90,7 @@ public class FinderMenuGridView extends GridView {
 		return (MainActivity) getContext();
 	}
 
-	public void setBookType(String bookType) {
+	public void setBookType(int bookType) {
 		mBookType = bookType;
 	}
 

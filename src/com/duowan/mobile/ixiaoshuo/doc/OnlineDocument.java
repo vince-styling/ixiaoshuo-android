@@ -2,6 +2,7 @@ package com.duowan.mobile.ixiaoshuo.doc;
 
 import android.util.Log;
 import com.duowan.mobile.ixiaoshuo.event.YYReader;
+import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.ui.RenderPaint;
 import com.duowan.mobile.ixiaoshuo.utils.Encoding;
 import com.duowan.mobile.ixiaoshuo.utils.IOUtil;
@@ -33,11 +34,11 @@ public class OnlineDocument extends Document {
 		mRandBookFile = new RandomAccessFile(contentTempFile, "r");
 	}
 
-	private boolean renewRandomAccessFile(YYReader.ChapterInfo chapterInfo) {
-		if (chapterInfo == null) return false;
+	private boolean renewRandomAccessFile(Chapter chapter) {
+		if (chapter == null) return false;
 		try {
-			if (chapterInfo.mDownloadStatus == YYReader.CHAPTERSTATUS_READY) {
-				FileInputStream fins = new FileInputStream(new File(chapterInfo.mLocation));
+			if (chapter.isNativeChapter()) {
+				FileInputStream fins = new FileInputStream(new File(chapter.getFilePath()));
 				ZipInputStream zins = new ZipInputStream(fins);
 
 				if (zins.getNextEntry() == null) {
@@ -59,13 +60,13 @@ public class OnlineDocument extends Document {
 				mContentBuf.setLength(0);
 				mPageCharOffsetInBuffer = 0;
 
-				YYReader.onReadingChapter(chapterInfo);
+				YYReader.onReadingChapter(chapter);
 				mOnTurnChapterListener.onTurnChapter();
 				return true;
 			}
 
-			if (chapterInfo.mDownloadStatus == YYReader.CHAPTERSTATUS_NOT_DOWNLOAD && !isDownloading()) {
-				YYReader.downloadOneChapter(chapterInfo, mOnDownloadChapterListener);
+			if (chapter.isRemoteChapter() && !isDownloading()) {
+				YYReader.downloadOneChapter(chapter, mOnDownloadChapterListener);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
@@ -84,9 +85,9 @@ public class OnlineDocument extends Document {
 	}
 
 	@Override
-	public boolean adjustReadingProgress(YYReader.ChapterInfo chapterInfo) {
-		if (renewRandomAccessFile(chapterInfo)) {
-			mReadByteBeginOffset = mIsTurnPrevious ? getBackmostPosition() : chapterInfo.mPosition;
+	public boolean adjustReadingProgress(Chapter chapter) {
+		if (renewRandomAccessFile(chapter)) {
+			mReadByteBeginOffset = mIsTurnPrevious ? getBackmostPosition() : chapter.getReadPosition();
 			mReadByteEndOffset = mReadByteBeginOffset;
 			mIsTurnPrevious = false;
 			scrollDownBuffer();
@@ -100,8 +101,8 @@ public class OnlineDocument extends Document {
 	public boolean turnNextPage() {
 		if (super.turnNextPage()) return true;
 
-		YYReader.ChapterInfo chapterInfo = YYReader.getNextChapterInfo();
-		if (renewRandomAccessFile(chapterInfo)) {
+		Chapter chapter = YYReader.getNextChapterInfo();
+		if (renewRandomAccessFile(chapter)) {
 			mReadByteBeginOffset = 0;
 			mReadByteEndOffset = 0;
 			scrollDownBuffer();
@@ -115,8 +116,8 @@ public class OnlineDocument extends Document {
 	public boolean turnPreviousPage() {
 		if (super.turnPreviousPage()) return true;
 
-		YYReader.ChapterInfo chapterInfo = YYReader.getPrevChapter();
-		if (renewRandomAccessFile(chapterInfo)) {
+		Chapter chapter = YYReader.getPrevChapter();
+		if (renewRandomAccessFile(chapter)) {
 			mReadByteBeginOffset = getBackmostPosition();
 			mReadByteEndOffset = mReadByteBeginOffset;
 			scrollDownBuffer();
@@ -136,7 +137,7 @@ public class OnlineDocument extends Document {
 
 	@Override
 	public String getReadingInfo() {
-		return YYReader.getCurrentChapterInfo().mName;
+		return YYReader.getCurrentChapterInfo().getTitle();
 	}
 
 	public static interface OnTurnChapterListener {

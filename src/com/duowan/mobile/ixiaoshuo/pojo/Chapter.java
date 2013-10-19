@@ -1,40 +1,44 @@
 package com.duowan.mobile.ixiaoshuo.pojo;
 
 
+import com.duowan.mobile.ixiaoshuo.utils.Paths;
+
+import java.io.File;
+
 public class Chapter {
-	private int id;				// 章节ID，来自服务器
+	private int chapterId;				// 章节ID，来自服务器
 	private String title;
 	private int capacity;
 
 	private int readStatus;
-	public static final int READSTATUS_UNREAD       = 0; // 未读
-	public static final int READSTATUS_READING      = 1; // 在读
-	public static final int READSTATUS_READED 		= 2; // 已读
-	private int beginPosition;
-	
-	private String voiceUrl; //有声小说中章节对应的 流媒体地址，文字小说为null
-	
-	private int mDownloadId = -1; //有声小说中章节对应的 流媒体文件下载时产生的 下载任务id,任务取消，再次下载的时候，会重新赋予任id
-								  //只有在进行中的任务才不为 -1
-	
+	public static final int READSTATUS_UNREAD  = 0;  // 未读
+	public static final int READSTATUS_READING = 1;  // 在读
+	public static final int READSTATUS_READED  = 2;  // 已读
+
+	private int readPosition;
+
+	private int downloadStatus;
+	public static final int DOWNLOADSTATUS_REMOTE = 1;  // 本章为远程章节，未下载
+	public static final int DOWNLOADSTATUS_NATIVE = 2;  // 本章为本地章节，已下载
+
+	private String filePath;
 
 	public Chapter() {}
-
-	public Chapter(int id, String title) {
-		this.id = id;
+	public Chapter(int chapterId, String title) {
+		this.chapterId = chapterId;
 		this.title = title;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
+	public int getChapterId() {
+		return chapterId;
 	}
 
 	public void setChapterId(int chapterId) {
-		this.id = chapterId;
+		this.chapterId = chapterId;
+	}
+
+	public void setId(int chapterId) {
+		this.chapterId = chapterId;
 	}
 
 	public String getTitle() {
@@ -57,7 +61,7 @@ public class Chapter {
 		return readStatus == READSTATUS_UNREAD;
 	}
 
-	public boolean isRead() {
+	public boolean isReaded() {
 		return readStatus == READSTATUS_READED;
 	}
 
@@ -65,12 +69,12 @@ public class Chapter {
 		this.readStatus = readStatus;
 	}
 
-	public int getBeginPosition() {
-		return beginPosition;
+	public int getReadPosition() {
+		return readPosition;
 	}
 
-	public void setBeginPosition(int beginPosition) {
-		this.beginPosition = beginPosition;
+	public void setReadPosition(int readPosition) {
+		this.readPosition = readPosition;
 	}
 
 	public int getCapacity() {
@@ -81,21 +85,21 @@ public class Chapter {
 		this.capacity = capacity;
 	}
 
-	public String getVoiceUrl() {
-		return voiceUrl;
+	public void ready(int sourceBookId) {
+		filePath = Paths.getCacheDirectorySubFolderPath(sourceBookId) + chapterId;
+		downloadStatus = new File(filePath).exists() ? DOWNLOADSTATUS_NATIVE : DOWNLOADSTATUS_REMOTE;
 	}
 
-	public void setVoiceUrl(String voiceUrl) {
-		this.voiceUrl = voiceUrl;
+	public boolean isNativeChapter() {
+		return downloadStatus == DOWNLOADSTATUS_NATIVE;
 	}
 
-	public int getDownloadId() {
-		return mDownloadId;
+	public boolean isRemoteChapter() {
+		return downloadStatus == DOWNLOADSTATUS_REMOTE;
 	}
 
-	public void setDownloadId(int mDownloadId) {
-		this.mDownloadId = mDownloadId;
+	public String getFilePath() {
+		return filePath;
 	}
-
 
 }

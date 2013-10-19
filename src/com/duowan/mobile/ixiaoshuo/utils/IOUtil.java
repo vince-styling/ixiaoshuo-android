@@ -63,7 +63,7 @@ public class IOUtil {
 
 	public static void deleteBookCache(Book book) {
 		try {
-			deleteDirectory(Paths.getCacheDirectorySubFolder(book.getBookId()));
+			deleteDirectory(Paths.getCacheDirectorySubFolder(book.getSourceBookId()));
 			File coverFile = new File(book.getLocalCoverPath());
 			coverFile.delete();
 		} catch (Exception ex) {}

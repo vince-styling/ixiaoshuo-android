@@ -62,7 +62,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
     private InnerHandler mHandler;
 
     private ListView mListMain;
-    private View mHeadView;
     private ImageView mImageBookCover;
     private TextView mTextBookName;
     private TextView mTextBookStatus;
@@ -166,7 +165,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void initHeaderView() {
-        mHeadView = getLayoutInflater().inflate(R.layout.book_info_head, null);
+        View mHeadView = getLayoutInflater().inflate(R.layout.book_info_head, null);
         Display display = getWindowManager().getDefaultDisplay();
         mHeadView.setLayoutParams(new AbsListView.LayoutParams(display.getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
         mListMain.addHeaderView(mHeadView);
@@ -252,7 +251,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
     private void updateUIWithBookInfo() {
         BookCoverLoader.loadCover(this, mBook, mImageBookCover);
         mTextBookName.setText(mBook.getName());
-        mTextBookStatus.setText(mBook.getSimpleUpdateStatusStr());
+        mTextBookStatus.setText(mBook.getUpdateStatusStr());
 
         String author = getString(R.string.book_author) + mBook.getAuthor();
         mTextBookAuthor.setText(author);
@@ -294,7 +293,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             }
 
             public PaginationList<Chapter> execute() {
-                return NetService.get().getBookChapterList(mBook.getBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
+                return NetService.get().getBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
             }
 
             public void callback(PaginationList<Chapter> chapterList) {
@@ -332,7 +331,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public List<Chapter> execute() {
-                return NetService.get().getBookNewlyChapters(mBookId, mAdapter.getLastItem().getId());
+                return NetService.get().getBookNewlyChapters(mBookId, mAdapter.getLastItem().getChapterId());
             }
 
             @Override
@@ -445,7 +444,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                     }
 
                     public PaginationList<Chapter> execute() {
-                        return NetService.get().getBookChapterList(mBook.getBookId(), mOrder, 1, 1);
+                        return NetService.get().getBookChapterList(mBook.getSourceBookId(), mOrder, 1, 1);
                     }
 
                     public void callback(PaginationList<Chapter> chapterList) {
@@ -480,10 +479,10 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        int bid = AppDAO.get().addBook(mBook, true);
-        if (bid > 0) {
-            AppDAO.get().saveBookChapters(bid, mAdapter.getData());
-			new ReaderService().startReader(this, bid);
+        int bookId = AppDAO.get().addBook(mBook, true);
+        if (bookId > 0) {
+            AppDAO.get().saveBookChapters(bookId, mAdapter.getData());
+			new ReaderService().startReader(this, bookId);
         } else {
             showToastMsg("抱歉，无法添加书籍！");
         }
@@ -515,7 +514,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             };
             holder.txvChapterTitle.setOnClickListener(clickListener);
 
-            File chapterFile = new File(mBookDirectoryPath + chapter.getId());
+            File chapterFile = new File(mBookDirectoryPath + chapter.getChapterId());
             if (chapterFile.exists()) {
                 holder.btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_goto_read_selector);
                 holder.btnChapterOperation.setOnClickListener(clickListener);
@@ -533,7 +532,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 
                             @Override
                             public Boolean execute() {
-                                return NetService.get().downloadChapterContent(mBookId, chapter.getId());
+                                return NetService.get().downloadChapterContent(mBook.getSourceBookId(), chapter.getChapterId());
                             }
 
                             @Override
@@ -561,7 +560,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
     public void onItemClick(Chapter chapter) {
         for (Chapter chapt : mAdapter.getData()) {
             chapt.setReadStatus(Chapter.READSTATUS_UNREAD);
-            chapt.setBeginPosition(0);
+            chapt.setReadPosition(0);
         }
         chapter.setReadStatus(Chapter.READSTATUS_READING);
         processReadBook();

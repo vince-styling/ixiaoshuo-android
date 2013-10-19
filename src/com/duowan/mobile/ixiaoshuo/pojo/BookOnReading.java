@@ -3,16 +3,19 @@ package com.duowan.mobile.ixiaoshuo.pojo;
 import com.duowan.mobile.ixiaoshuo.db.AppDAO;
 
 public class BookOnReading extends Book {
+	// TODO : 检查阅读时对chapterCount、chapterIndex的使用情况，这两个字段应该不用每次都查数据库
 	private int chapterCount;
-	private int chapterIndex;	// start from zero
+	private int chapterIndex;    // start from zero
 	private Chapter chapter;
-	private boolean temporaryFlag;	// 是否为暂存书籍，即：用户未执行添加到书架操作
+	// temporaryFlag 改为 is_on_bookshelf，并检查相关逻辑
+	private boolean temporaryFlag;    // 是否为暂存书籍，即：用户未执行添加到书架操作
 
-	public BookOnReading() {}
+	public BookOnReading() {
+	}
 
 	public void setChapter(Chapter chapter) {
 		this.chapter = chapter;
-		chapterIndex = AppDAO.get().getBookChapterIndex(getBid(), getChapterId());
+		chapterIndex = AppDAO.get().getBookChapterIndex(getBookId(), getChapterId());
 	}
 
 	public Chapter getChapter() {
@@ -20,7 +23,7 @@ public class BookOnReading extends Book {
 	}
 
 	public int getChapterId() {
-		return chapter != null ? chapter.getId() : 0;
+		return chapter != null ? chapter.getChapterId() : 0;
 	}
 
 	public String getChapterTitle() {

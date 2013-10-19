@@ -1,10 +1,11 @@
 package com.duowan.mobile.ixiaoshuo.pojo;
 
 public class BookOnUpdate {
-	int bookId, lastChapterId;
+	int bookId, lastChapterId, type;
 
 	public BookOnUpdate() {}
-	public BookOnUpdate(int bookId, int lastChapterId) {
+	public BookOnUpdate(int bookId, int lastChapterId, int type) {
+		this.type = type;
 		this.bookId = bookId;
 		this.lastChapterId = lastChapterId;
 	}
@@ -23,6 +24,14 @@ public class BookOnUpdate {
 
 	public void setLastChapterId(int lastChapterId) {
 		this.lastChapterId = lastChapterId;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 }

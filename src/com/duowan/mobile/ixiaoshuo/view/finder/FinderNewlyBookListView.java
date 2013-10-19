@@ -10,7 +10,7 @@ import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 public class FinderNewlyBookListView extends FinderBaseListView {
 
-	public FinderNewlyBookListView(String bookType, MainActivity activity, OnShowListener onShowListener) {
+	public FinderNewlyBookListView(int bookType, MainActivity activity, OnShowListener onShowListener) {
 		super(bookType, activity, R.id.lsvFinderNewlyBooks, onShowListener);
 	}
 

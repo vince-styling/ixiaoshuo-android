@@ -25,9 +25,9 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	protected int mPageNo = 1;
 	protected final static int PAGE_ITEM_COUNT = 20;
 	protected boolean mHasNextPage = true;
-	protected String mBookType;
+	protected int mBookType;
 
-	public FinderBaseListView(String bookType, MainActivity activity, int viewId, OnShowListener onShowListener) {
+	public FinderBaseListView(int bookType, MainActivity activity, int viewId, OnShowListener onShowListener) {
 		mBookType = bookType;
 		mShowListener = onShowListener;
 		setActivity(activity);
@@ -170,13 +170,13 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
-			if(book.getType().equals(Book.TYPE_TEXT)){
+			if(book.getBookType() == Book.TYPE_TEXT){
                 Intent intent = new Intent(getActivity(), BookInfoActivity.class);
                 intent.putExtra(Constants.BOOK_ID, book.getBookId());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(intent);
 
-			} else if (book.getType().equals(Book.TYPE_VOICE)) {
+			} else if (book.getBookType() == Book.TYPE_VOICE) {
 				getActivity().showView(new VoiceBookInfoView(getActivity(), book.getBookId()));
 			}
 		}

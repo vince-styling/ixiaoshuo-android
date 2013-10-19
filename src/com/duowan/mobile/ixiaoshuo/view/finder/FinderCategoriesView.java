@@ -8,9 +8,9 @@ import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 public class FinderCategoriesView extends ViewBuilder {
-	private String mBookType;
+	private int mBookType;
 
-	public FinderCategoriesView(String bookType, MainActivity activity, OnShowListener onShowListener) {
+	public FinderCategoriesView(int bookType, MainActivity activity, OnShowListener onShowListener) {
 		mViewId = R.id.lotFinderCategoriesContent;
 		mShowListener = onShowListener;
 		setActivity(activity);
@@ -38,7 +38,7 @@ public class FinderCategoriesView extends ViewBuilder {
 		return mView.onKeyDown(keyCode, event);
 	}
 
-	public String getBookType() {
+	public int getBookType() {
 		return mBookType;
 	}
 

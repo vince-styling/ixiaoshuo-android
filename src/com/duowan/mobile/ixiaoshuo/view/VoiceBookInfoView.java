@@ -10,7 +10,6 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -139,7 +138,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 		txvBookName.setText(mBook.getName());
 
 		TextView txvBookStatus = (TextView) findViewById(R.id.txvBookStatus);
-		txvBookStatus.setText(mBook.getSimpleUpdateStatusStr());
+		txvBookStatus.setText(mBook.getUpdateStatusStr());
 
 		TextView txvBookAuthor = (TextView) findViewById(R.id.txvBookAuthor);
 		txvBookAuthor.setText("作者：" + mBook.getAuthor());
@@ -210,7 +209,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 				};
 				holder.txvChapterTitle.setOnClickListener(clickListener);
 
-				//File chapterFile = new File(mBookDirectoryPath + chapter.getId());
+				//File chapterFile = new File(mBookDirectoryPath + chapter.getChapterId());
 				if (isMediaFileExist(chapter)) {
 //					if(mPlayService != null && mPlayService.getPlayDataSource() == getChapterLocalPath(chapter)){
 //						holder.btnChapterOperation.setBackgroundResource(R.drawable.voice_listenering);
@@ -218,25 +217,25 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 //						holder.btnChapterOperation.setBackgroundResource(R.drawable.voice_listener);
 //					}
 				} else {
-					if(chapter.getDownloadId() == -1){
-						holder.btnChapterOperation.setBackgroundResource(R.drawable.voice_chapter_download_selector);
-					}else{
-						holder.btnChapterOperation.setBackgroundResource(R.drawable.voice_pause);
-					}
-					holder.btnChapterOperation.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							if(chapter.getDownloadId() == -1){  // -1表示非进行中的任务
-								Log.i(TAG, "btnChapterOperation click : " + position);
-								dowloadChapter(chapter);
-								v.setBackgroundResource(R.drawable.voice_pause);
-							}else{
-//								getOnlineManageer().cancelTask(chapter.getDownloadId()); //取消
-								Log.i(TAG, "btnChapterOperation click : " + position + "cancelTask");
-								v.setBackgroundResource(R.drawable.voice_chapter_download_selector);
-							}
-						}
-					});
+//					if(chapter.getDownloadId() == -1){
+//						holder.btnChapterOperation.setBackgroundResource(R.drawable.voice_chapter_download_selector);
+//					}else{
+//						holder.btnChapterOperation.setBackgroundResource(R.drawable.voice_pause);
+//					}
+//					holder.btnChapterOperation.setOnClickListener(new View.OnClickListener() {
+//						@Override
+//						public void onClick(View v) {
+//							if(chapter.getDownloadId() == -1){  // -1表示非进行中的任务
+//								Log.i(TAG, "btnChapterOperation click : " + position);
+//								dowloadChapter(chapter);
+//								v.setBackgroundResource(R.drawable.voice_pause);
+//							}else{
+////								getOnlineManageer().cancelTask(chapter.getDownloadId()); //取消
+//								Log.i(TAG, "btnChapterOperation click : " + position + "cancelTask");
+//								v.setBackgroundResource(R.drawable.voice_chapter_download_selector);
+//							}
+//						}
+//					});
 				}
 
 				return convertView;
@@ -268,7 +267,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 			public void preExecute() {}
 
 			public PaginationList<Chapter> execute() {
-				return NetService.get().getVoiceBookChapterList(mBook.getBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
+				return NetService.get().getVoiceBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
 			}
 
 			public void callback(PaginationList<Chapter> chapterList) {
@@ -300,7 +299,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 			public void preExecute() {}
 
 			public PaginationList<Chapter> execute() {
-				return NetService.get().getVoiceBookChapterList(mBook.getBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
+				return NetService.get().getVoiceBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
 			}
 
 			public void callback(PaginationList<Chapter> chapterList) {
@@ -453,29 +452,29 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 	 }
 
 	 private void refreshView(int taskId,String localPath){
-		 for (Chapter chapt : mAdapter.getData()) {
-			 	if(chapt.getDownloadId() == taskId){
-			 		chapt.setDownloadId(-1);
-			 		mAdapter.notifyDataSetChanged();
-			 		return;
-			 	}
-			}
+//		 for (Chapter chapt : mAdapter.getData()) {
+//			 	if(chapt.getDownloadId() == taskId){
+//			 		chapt.setDownloadId(-1);
+//			 		mAdapter.notifyDataSetChanged();
+//			 		return;
+//			 	}
+//			}
 	 }
 	 
 	 private void resetState(int taskId){
-		 for (Chapter chapt : mAdapter.getData()) {
-			 	if(chapt.getDownloadId() == taskId){
-			 		chapt.setDownloadId(-1);
-			 		mAdapter.notifyDataSetChanged();
-			 		return;
-			 	}
-			}
+//		 for (Chapter chapt : mAdapter.getData()) {
+//			 	if(chapt.getDownloadId() == taskId){
+//			 		chapt.setDownloadId(-1);
+//			 		mAdapter.notifyDataSetChanged();
+//			 		return;
+//			 	}
+//			}
 	 }
 	 
 	 private String getChapterNameByTaskId(int taskId){
-		 for(Chapter ch: mAdapter.getData()){
-			 if(ch.getDownloadId() == taskId) return ch.getTitle();
-		 }
+//		 for(Chapter ch: mAdapter.getData()){
+//			 if(ch.getDownloadId() == taskId) return ch.getTitle();
+//		 }
 		 return "";
 	 }
 	 
@@ -513,7 +512,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 	
 	private void dowloadChapter(Chapter chapt){
 		if(!new File(VOICE_BOOK_DOWNLOAD_DIR).exists()) new File(VOICE_BOOK_DOWNLOAD_DIR).mkdir();
-		Log.i(TAG, "dowloadChapter getVoiceUrl: " + chapt.getVoiceUrl());
+//		Log.i(TAG, "dowloadChapter getVoiceUrl: " + chapt.getVoiceUrl());
 //		if (!isMediaFileExist(chapt)) {
 ////			File filePath = new File(VOICE_BOOK_DOWNLOAD_DIR + mBookId);
 ////			if(!filePath.exists()) filePath.mkdir();
@@ -528,16 +527,17 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 	}
 	
 	private boolean isMediaFileExist(Chapter chap){
-		if(chap.getVoiceUrl() == null || TextUtils.isEmpty(chap.getVoiceUrl())) return false;//防止有些章节uri为空
+//		if(chap.getVoiceUrl() == null || TextUtils.isEmpty(chap.getVoiceUrl())) return false;//防止有些章节uri为空
 		return new File(getChapterLocalPath(chap)).exists();
 	}
 	
 	private String getChapterLocalPath(Chapter chap){
-		String fileNameString = chap.getVoiceUrl();
-		if(fileNameString == null ||TextUtils.isEmpty(fileNameString)) return null;
-		String fileName =  fileNameString.substring(fileNameString.lastIndexOf("/")+1);  
-		String filePath = VOICE_BOOK_DOWNLOAD_DIR + mBookId  ;
-		return filePath  + "/" + fileName;
+//		String fileNameString = chap.getVoiceUrl();
+//		if(fileNameString == null ||TextUtils.isEmpty(fileNameString)) return null;
+//		String fileName =  fileNameString.substring(fileNameString.lastIndexOf("/")+1);
+//		String filePath = VOICE_BOOK_DOWNLOAD_DIR + mBookId  ;
+//		return filePath  + "/" + fileName;
+		return null;
 	}
 	
 	private void add2DownloadList(int taskId){

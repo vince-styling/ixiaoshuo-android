@@ -1,9 +1,5 @@
 package com.duowan.mobile.ixiaoshuo.view.search;
 
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -13,37 +9,35 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.net.NetService;
-import com.duowan.mobile.ixiaoshuo.pojo.Book;
 import com.duowan.mobile.ixiaoshuo.reader.MainActivity;
 import com.duowan.mobile.ixiaoshuo.ui.ScrollLayout;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 搜索界面
- * 
  * @author gaocong
- * 
  */
 public class SearchView extends ViewBuilder implements OnClickListener {
 
+
 	private static final String TAG = "YYReader_SearchView";
-	private static String[] Value = { "全部", "文字", "有声" };// 定义选中后得到的值
+	private static String[] Value = {"全部", "文字", "有声"};// 定义选中后得到的值
 	private ImageView mSearchBt;
 	private String[] keywords;
 	private KeywordsFlow keywordsFlow;
 	private SpinnerButton mSpinner;
 	private EditText mSearWord;
 	private ScrollLayout mSearchResultLayout;
-	SearchListView mSearchListView ;
+	SearchListView mSearchListView;
 	private static final int REFRESH_INTERVE = 5000;
 	private Handler mHandler;
 	private static final int TYPE_ALL = 0;
@@ -55,15 +49,15 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 		mViewId = R.id.search_hot_key_search_result;
 		setActivity(activity);
 		Log.i(TAG, "SearchView create");
-		mHandler = new Handler(){
+		mHandler = new Handler() {
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
-				case 1:
-					showHotWord();
-					break;
+					case 1:
+						showHotWord();
+						break;
 
-				default:
-					break;
+					default:
+						break;
 				}
 			}
 		};
@@ -71,7 +65,7 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 
 	@Override
 	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.search_layout,null);
+		mView = getActivity().getLayoutInflater().inflate(R.layout.search_layout, null);
 		Log.i(TAG, "SearchView create");
 	}
 
@@ -118,14 +112,14 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 					}
 
 				});
-		
+
 		mSearchListView = new SearchListView(getActivity(),
 				new OnShowListener() {
-			@Override
-			public void onShow() {
-			}
-		});
-		
+					@Override
+					public void onShow() {
+					}
+				});
+
 		NetService.execute(new NetService.NetExecutor<String[]>() {
 
 			@Override
@@ -148,40 +142,39 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 				showHotWord();
 			}
 		});
-		
-		
+
+
 		Timer timer = new Timer();
-		    timer.scheduleAtFixedRate(new TimerTask() {
-		        @Override
-		        public void run() {
-		        	if(keywordsFlow.getVisibility() == View.VISIBLE){
-		        		if(keywordsFlow.getVisibility() == View.VISIBLE){
-		        			Message msg = new Message();
-		        			msg.what = 1;
-		        			mHandler.sendMessage(msg);
-		        		}
-		        	}
-		        }
-		    }, 0, REFRESH_INTERVE);
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				if (keywordsFlow.getVisibility() == View.VISIBLE) {
+					if (keywordsFlow.getVisibility() == View.VISIBLE) {
+						Message msg = new Message();
+						msg.what = 1;
+						mHandler.sendMessage(msg);
+					}
+				}
+			}
+		}, 0, REFRESH_INTERVE);
 	}
 
-	
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if(mSearchResultLayout.getVisibility() == View.VISIBLE){
+		if (mSearchResultLayout.getVisibility() == View.VISIBLE) {
 			mSearchResultLayout.setVisibility(View.GONE);
 			keywordsFlow.setVisibility(View.VISIBLE);
 			showHotWord();
 			return true;
-		}else{
+		} else {
 			return mSearchResultLayout.onKeyDown(keyCode, event);
 		}
-			
+
 	}
 
 	private void showHotWord() {
-		
+
 		keywordsFlow.setDuration(800l);
 		keywordsFlow.setFocusable(true);
 		keywordsFlow.setClickable(true);
@@ -189,11 +182,11 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 		feedKeywordsFlow(keywordsFlow, keywords);
 		keywordsFlow.setOnItemClickListener(this);
 		keywordsFlow.go2Show(KeywordsFlow.ANIMATION_IN);
-		
+
 	}
 
 	private static void feedKeywordsFlow(KeywordsFlow keywordsFlow, String[] arr) {
-		if(arr == null ||arr.length == 0){
+		if (arr == null || arr.length == 0) {
 			return;
 		}
 		Random random = new Random();
@@ -206,7 +199,7 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		if(v.getId() == R.id.search_bt){
+		if (v.getId() == R.id.search_bt) {
 			closeSoftKeyboard();
 			doSearch(mSearWord.getText().toString());
 		} else if (v instanceof TextView) {
@@ -215,27 +208,27 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 		}
 	}
 
-	private void closeSoftKeyboard(){
+	private void closeSoftKeyboard() {
 		((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-		.hideSoftInputFromWindow(getActivity().getCurrentFocus()
-				.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+				.hideSoftInputFromWindow(getActivity().getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	}
-	
+
 	private void doSearch(String key) {
 		if (key == null
 				|| TextUtils.isEmpty(key)) {
-			Log.i(TAG,"doSearch txt null");
+			Log.i(TAG, "doSearch txt null");
 			return;
 		}
-		Log.i(TAG,"doSearch continue");
-		
+		Log.i(TAG, "doSearch continue");
+
 		keywordsFlow.setVisibility(View.GONE);
 		mSearchResultLayout.setVisibility(View.VISIBLE);
 		mSearchListView.isInFront();
 		mSearchResultLayout.showView(mSearchListView);
-		mSearchListView.setSearKey(mSearWord.getText().toString(), String.valueOf(getSearchType()));
+		mSearchListView.setSearKey(mSearWord.getText().toString(), getSearchType());
 		mSearchListView.doSearch(key);
-		
+
 //		if(mSearchResultLayout.getVisibility() == View.GONE){
 //			Log.i(TAG,"mSearchResultLayout.getVisibility() == View.GONE ");
 //			keywordsFlow.setVisibility(View.GONE);
@@ -248,15 +241,15 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 //			mSearchListView.setSearKey(key,getSearchType());
 //			mSearchListView.doSearch(key);
 //		}
-		
+
 	}
-	
-	private int getSearchType(){
-		if(mSpinner.getText().equals(Value[0])){
+
+	private int getSearchType() {
+		if (mSpinner.getText().equals(Value[0])) {
 			return TYPE_ALL;
-		}else if(mSpinner.getText().equals(Value[1])){
+		} else if (mSpinner.getText().equals(Value[1])) {
 			return TYPE_TXT;
-		}else if(mSpinner.getText().equals(Value[2])){
+		} else if (mSpinner.getText().equals(Value[2])) {
 			return TYPE_VOICE;
 		}
 		return TYPE_ALL;

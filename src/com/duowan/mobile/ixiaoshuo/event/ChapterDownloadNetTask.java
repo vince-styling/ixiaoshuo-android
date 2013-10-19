@@ -14,7 +14,7 @@ public class ChapterDownloadNetTask extends ChapterDownloadTask {
 
 	@Override
 	protected PaginationList<Chapter> loadNextPage() {
-		return NetService.get().getSimpleBookChapterList(mBook.getBookId(), mOrder, mPageNo, mPageItemCount);
+		return NetService.get().getSimpleBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, mPageItemCount);
 	}
 
 }

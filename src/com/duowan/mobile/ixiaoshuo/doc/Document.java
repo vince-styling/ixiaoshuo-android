@@ -3,6 +3,7 @@ package com.duowan.mobile.ixiaoshuo.doc;
 import android.graphics.Rect;
 import android.util.Log;
 import com.duowan.mobile.ixiaoshuo.event.YYReader;
+import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.ui.RenderPaint;
 import com.duowan.mobile.ixiaoshuo.utils.CharsetUtil;
 import com.duowan.mobile.ixiaoshuo.utils.Encoding;
@@ -322,9 +323,9 @@ public abstract class Document {
 	public void calculatePagePosition() {
 		try {
 			mPageBeginPosition = mReadByteBeginOffset + mContentBuf.substring(0, mPageCharOffsetInBuffer).getBytes(mEncoding.getName()).length;
-			YYReader.ChapterInfo chapterInfo = YYReader.getCurrentChapterInfo();
-			chapterInfo.mPosition = (int) mPageBeginPosition;
-			YYReader.onReadingChapter(chapterInfo);
+			Chapter chapter = YYReader.getCurrentChapterInfo();
+			chapter.setReadPosition((int) mPageBeginPosition);
+			YYReader.onReadingChapter(chapter);
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage(), e);
 		}
@@ -390,7 +391,7 @@ public abstract class Document {
 		return YYReader.getBookName();
 	}
 
-	public abstract boolean adjustReadingProgress(YYReader.ChapterInfo chapterInfo);
+	public abstract boolean adjustReadingProgress(Chapter chapter);
 	public abstract float calculateReadingProgress();
 
 	private boolean mIsDownloading;

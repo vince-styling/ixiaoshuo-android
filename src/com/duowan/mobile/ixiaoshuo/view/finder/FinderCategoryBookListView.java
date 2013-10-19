@@ -9,9 +9,9 @@ import com.duowan.mobile.ixiaoshuo.utils.ViewUtil;
 
 public class FinderCategoryBookListView extends FinderUpdatesBookListView {
 	private int mCatId;
-	private String mBookType;
+	private int mBookType;
 
-	public FinderCategoryBookListView(int catId, String bookType, MainActivity activity) {
+	public FinderCategoryBookListView(int catId, int bookType, MainActivity activity) {
 		super(bookType, activity, null);
 
 		// crash(NullPointerException) might be occur during ScrollLayout.showView().getTag() method

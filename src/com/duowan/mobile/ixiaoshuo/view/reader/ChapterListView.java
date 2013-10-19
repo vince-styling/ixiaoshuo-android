@@ -7,6 +7,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.duowan.mobile.ixiaoshuo.R;
 import com.duowan.mobile.ixiaoshuo.event.YYReader;
+import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.reader.ReaderActivity;
 import com.duowan.mobile.ixiaoshuo.view.EndlessListAdapter;
 import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
@@ -14,8 +15,8 @@ import com.duowan.mobile.ixiaoshuo.view.ViewBuilder;
 import java.util.List;
 
 public class ChapterListView extends ViewBuilder implements AdapterView.OnItemClickListener {
-	private EndlessListAdapter<YYReader.ChapterInfo> mAdapter;
-	private AsyncTask<Void, Void, List<YYReader.ChapterInfo>> mAsysTask;
+	private EndlessListAdapter<Chapter> mAdapter;
+	private AsyncTask<Void, Void, List<Chapter>> mAsysTask;
 
 	public ChapterListView(ReaderActivity activity, OnShowListener onShowListener) {
 		mShowListener = onShowListener;
@@ -48,20 +49,20 @@ public class ChapterListView extends ViewBuilder implements AdapterView.OnItemCl
 	public void resume() {
 		if (mIsInFront) return;
 
-		mAdapter = new EndlessListAdapter<YYReader.ChapterInfo>() {
+		mAdapter = new EndlessListAdapter<Chapter>() {
 			@Override
 			protected View getView(int position, View convertView) {
 				if (convertView == null) {
 					convertView = getActivity().getLayoutInflater().inflate(R.layout.reader_chapter_list_item, null);
 				}
 
-				YYReader.ChapterInfo chapter = getItem(position);
+				Chapter chapter = getItem(position);
 
 				TextView txvChapterTitle = (TextView) convertView.findViewById(R.id.txvChapterTitle);
-				txvChapterTitle.setText(chapter.mName);
+				txvChapterTitle.setText(chapter.getTitle());
 				txvChapterTitle.setTextColor(
 						getActivity().getResources().getColor(
-								chapter.mReadStatus == YYReader.READSTATUS_READING ? R.color.reading_board_chapter_list_item_reading : R.color.reading_board_chapter_list_item
+								chapter.isReading() ? R.color.reading_board_chapter_list_item_reading : R.color.reading_board_chapter_list_item
 						));
 				return convertView;
 			}
@@ -75,25 +76,25 @@ public class ChapterListView extends ViewBuilder implements AdapterView.OnItemCl
 
 		super.resume();
 
-		mAsysTask = new AsyncTask<Void, Void, List<YYReader.ChapterInfo>>() {
+		mAsysTask = new AsyncTask<Void, Void, List<Chapter>>() {
 			@Override
 			protected void onPreExecute() {
 				mAdapter.setIsLoadingData(true);
 			}
 
 			@Override
-			protected List<YYReader.ChapterInfo> doInBackground(Void... params) {
+			protected List<Chapter> doInBackground(Void... params) {
 				return YYReader.getChapterList();
 			}
 
 			@Override
-			protected void onPostExecute(List<YYReader.ChapterInfo> chapterList) {
+			protected void onPostExecute(List<Chapter> chapterList) {
 				if (mAdapter == null) return;
 
 				mAdapter.setIsLoadingData(false);
 				mAdapter.addAll(chapterList);
 				for (int i = 0; i < mAdapter.getItemCount(); i++) {
-					if (mAdapter.getItem(i).mReadStatus == YYReader.READSTATUS_READING) {
+					if (mAdapter.getItem(i).isReading()) {
 						getListView().setSelection(i > 1 ? i - 2 : i);
 						break;
 					}
@@ -118,7 +119,7 @@ public class ChapterListView extends ViewBuilder implements AdapterView.OnItemCl
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		getActivity().getReadingBoard().adjustReadingProgress((YYReader.ChapterInfo) parent.getItemAtPosition(position));
+		getActivity().getReadingBoard().adjustReadingProgress((Chapter) parent.getItemAtPosition(position));
 		pushBack();
 	}
 

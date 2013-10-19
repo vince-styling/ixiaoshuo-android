@@ -134,7 +134,8 @@ public abstract class SearchBaseListView extends ViewBuilder implements AbsListV
 		mAdapter.setIsLoadingData(true);
 		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		NetService.execute(new NetService.NetExecutor<PaginationList<Book>>() {
-			public void preExecute() {}
+			public void preExecute() {
+			}
 
 			public PaginationList<Book> execute() {
 				return loadData();
@@ -165,15 +166,16 @@ public abstract class SearchBaseListView extends ViewBuilder implements AbsListV
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
-            Intent intent = new Intent(getActivity(), BookInfoActivity.class);
-            intent.putExtra(Constants.BOOK_ID, book.getBookId());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getActivity().startActivity(intent);
+			Intent intent = new Intent(getActivity(), BookInfoActivity.class);
+			intent.putExtra(Constants.BOOK_ID, book.getBookId());
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			getActivity().startActivity(intent);
 		}
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {}
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -196,7 +198,7 @@ public abstract class SearchBaseListView extends ViewBuilder implements AbsListV
 	protected ListView getListView() {
 		return (ListView) mView;
 	}
-	
+
 	public MainActivity getActivity() {
 		return (MainActivity) super.getActivity();
 	}

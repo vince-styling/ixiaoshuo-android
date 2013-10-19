@@ -1,7 +1,7 @@
 package com.duowan.mobile.ixiaoshuo.pojo;
 
 public class BookUpdateInfo {
-	int bookId, updateChapterCount;
+	int bookId, updateChapterCount, lastChapterId, type;
 
 	public int getBookId() {
 		return bookId;
@@ -17,6 +17,22 @@ public class BookUpdateInfo {
 
 	public void setUpdateChapterCount(int updateChapterCount) {
 		this.updateChapterCount = updateChapterCount;
+	}
+
+	public int getLastChapterId() {
+		return lastChapterId;
+	}
+
+	public void setLastChapterId(int lastChapterId) {
+		this.lastChapterId = lastChapterId;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 }

@@ -13,7 +13,6 @@ import com.duowan.mobile.ixiaoshuo.pojo.Chapter;
 import com.duowan.mobile.ixiaoshuo.pojo.Constants;
 import com.duowan.mobile.ixiaoshuo.utils.PaginationList;
 import com.duowan.mobile.ixiaoshuo.utils.Paths;
-import com.duowan.mobile.ixiaoshuo.utils.StringUtil;
 
 import java.io.File;
 
@@ -37,8 +36,8 @@ public abstract class ChapterDownloadTask extends Thread {
 	public ChapterDownloadTask(Context ctx, Book book) {
 		mCtx = ctx;
 		mBook = book;
-		mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getBookId());
-		mNotiId = Constants.NOTIFICATION_DOWNLOAD_ALL_CHAPTER + mBook.getBookId();
+		mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getSourceBookId());
+		mNotiId = Constants.NOTIFICATION_DOWNLOAD_ALL_CHAPTER + mBook.getSourceBookId();
 
 		mBuilder = new NotificationCompat.Builder(mCtx);
         mBuilder.setAutoCancel(false);
@@ -49,7 +48,7 @@ public abstract class ChapterDownloadTask extends Thread {
 
 		Intent intent = new Intent(mCtx, ChapterDownloadNotificationBroadcastReceiver.class);
 		intent.setAction("detail");
-		intent.putExtra("BookId", book.getBookId());
+		intent.putExtra("BookId", book.getSourceBookId());
 		PendingIntent pIntent = PendingIntent.getBroadcast(mCtx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		mBuilder.setContentIntent(pIntent);
 
@@ -89,13 +88,13 @@ public abstract class ChapterDownloadTask extends Thread {
 			for (Chapter chapter : chapterList) {
 				mExecutedCount++;
 
-				chapterFile = new File(mBookDirectoryPath + chapter.getId());
-				result = chapterFile.exists() || NetService.get().downloadChapterContent(mBook.getBookId(), chapter.getId());
+				chapterFile = new File(mBookDirectoryPath + chapter.getChapterId());
+				result = chapterFile.exists() || NetService.get().downloadChapterContent(mBook.getSourceBookId(), chapter.getChapterId());
 				if (!result || mIsCancelled) {
                     return;
                 }
 
-				onProgressUpdate(mBook.getBookId(), chapter.getId());
+				onProgressUpdate(mBook.getSourceBookId(), chapter.getChapterId());
 			}
 		}
 	}
@@ -127,7 +126,7 @@ public abstract class ChapterDownloadTask extends Thread {
 
 	private void onFinished() {
 		mIsStarted = false;
-		onDone(mBook.getBookId());
+		onDone(mBook.getSourceBookId());
 		mBuilder.setContentText("下载完成");
         mBuilder.setOngoing(false);
         mBuilder.setAutoCancel(true);
@@ -136,7 +135,7 @@ public abstract class ChapterDownloadTask extends Thread {
 
 	public void onCancel() {
 		getNotificationManager().cancel(mNotiId);
-		onDone(mBook.getBookId());
+		onDone(mBook.getSourceBookId());
 		mIsCancelled = true;
 	}
 
@@ -161,7 +160,7 @@ public abstract class ChapterDownloadTask extends Thread {
 	}
 
 	public int getBookId() {
-		return mBook.getBookId();
+		return mBook.getSourceBookId();
 	}
 
 	private NotificationManager getNotificationManager() {

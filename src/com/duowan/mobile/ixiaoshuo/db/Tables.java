@@ -12,20 +12,21 @@ public class Tables {
 		}
 		public static String getCreateStatment() {
 			return CREATE_STATMENT + NAME + "(" +
-					"bid integer primary key autoincrement, " +
-					"book_id integer, " +
+					"book_id integer primary key, " +
+					"source_book_id integer, " +
 					"name varchar(200), " +
 					"author varchar(200), " +
 					"cover_url varchar(200), " +
 					"summary text, " +
 					"update_status int, " +
-					"type varchar(10), " +
+					"book_type tinyint(1), " +
 					"was_both_type tinyint(1), " +
-					"website_id int, " +
-					"website_name varchar(60), " +
 					"cat_id int, " +
 					"cat_name varchar(20), " +
+					"capacity integer, " +
 					"temporary_flag tinyint(1), " +
+					"has_new_chapter tinyint(1), " +
+					"remote_last_chapter_id int, " +
 					"last_read_time datetime, " +
 					"create_time datetime default (datetime('now','localtime'))" +
 					")";
@@ -39,14 +40,14 @@ public class Tables {
 		}
 		public static String getCreateStatment() {
 			return CREATE_STATMENT + NAME + "(" +
-					"bid integer, " +
+					"book_id integer, " +
 					"chapter_id integer, " +
 					"title varchar(200), " +
 					"read_status int, " +
 					"capacity int, " +
-					"begin_position int, " +
+					"read_position int, " +
 					"create_time datetime default (datetime('now','localtime')), " +
-					"primary key(bid, chapter_id)" +
+					"primary key(book_id, chapter_id)" +
 					")";
 		}
 	}

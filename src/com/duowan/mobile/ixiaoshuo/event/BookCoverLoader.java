@@ -19,7 +19,7 @@ public class BookCoverLoader extends TaskRunnable {
 	public BookCoverLoader(Book book, ImageView imageView, MainHandler mainHandler) {
 		mBook = book;
 		mImageView = imageView;
-		mImageView.setTag(mBook.getBookId());
+		mImageView.setTag(mBook.getSourceBookId());
 		mMainHandler = mainHandler;
 	}
 
@@ -44,7 +44,7 @@ public class BookCoverLoader extends TaskRunnable {
 		if (tagValue != null && tagValue instanceof Integer) {
 			int imvTagBookId = (Integer) mImageView.getTag();
 			// when fast scrolling, ImageView maybe refers to other Book quickly
-			return mBook.getBookId() == imvTagBookId;
+			return mBook.getSourceBookId() == imvTagBookId;
 		}
 		return false;
 	}
