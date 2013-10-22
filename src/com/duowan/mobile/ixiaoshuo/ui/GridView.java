@@ -93,14 +93,12 @@ public abstract class GridView extends View {
 		canvas.drawBitmap(itemBitmap, null, itemRect, null);
 	}
 
+	// we don't scale Bitmap, so an appropriate dimension image will need
 	private void getItemBounds(Rect itemRect, Bitmap itemBitmap) {
-		int itemDstHeight = itemRect.height() - mPaddingTop * 2;
-		int itemDstWidth = (int) (itemDstHeight * ((double) itemBitmap.getWidth() / itemBitmap.getHeight()));
-
-		itemRect.left += (itemRect.width() - itemDstWidth) / 2;
-		itemRect.right = itemRect.left + itemDstWidth;
-		itemRect.top += mPaddingTop;
-		itemRect.bottom = itemRect.top + itemDstHeight;
+		itemRect.left += (itemRect.width() - itemBitmap.getWidth()) / 2;
+		itemRect.right = itemRect.left + itemBitmap.getWidth();
+		itemRect.top += (itemRect.height() - itemBitmap.getHeight()) / 2;
+		itemRect.bottom = itemRect.top + itemBitmap.getHeight();
 	}
 
 	private void highlightItem(Canvas canvas) {

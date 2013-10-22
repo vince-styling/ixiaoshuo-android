@@ -82,7 +82,7 @@
         <com.duowan.mobile.ixiaoshuo.ui.ReadingMenu
                 android:id="@+id/readingMainMenu"
                 android:layout_width="match_parent"
-                android:layout_height="65dp"
+                android:layout_height="56dp"
                 android:background="@drawable/reading_board_menu_bg"
                 android:visibility="gone" />
 
