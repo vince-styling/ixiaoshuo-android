@@ -3,11 +3,11 @@
               android:layout_width="match_parent" android:layout_height="match_parent"
               android:orientation="vertical" android:background="#f4efe6">
 
-    <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotMainContent"
+    <com.vincestyling.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotMainContent"
                   android:layout_width="match_parent" android:layout_height="0dp"
                   android:orientation="horizontal" android:layout_weight="1" />
 
-    <com.duowan.mobile.ixiaoshuo.ui.MainMenuGridView android:id="@+id/mainMenuView"
+    <com.vincestyling.ixiaoshuo.ui.MainMenuGridView android:id="@+id/mainMenuView"
             android:layout_width="match_parent" android:layout_height="56dp"
             android:background="@drawable/menu_bg_layer" />
 

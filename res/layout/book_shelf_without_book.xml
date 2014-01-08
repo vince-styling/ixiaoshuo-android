@@ -10,7 +10,7 @@
     android:visibility="gone">
 
     <view
-        class="com.duowan.mobile.ixiaoshuo.ui.WithoutBookLayout"
+        class="com.vincestyling.ixiaoshuo.ui.WithoutBookLayout"
         android:layout_width="312dp"
         android:layout_height="224dp"
         android:orientation="vertical"
@@ -162,7 +162,7 @@
     </view>
 
     <view
-        class="com.duowan.mobile.ixiaoshuo.ui.WithoutBookStatisticsView"
+        class="com.vincestyling.ixiaoshuo.ui.WithoutBookStatisticsView"
         android:id="@+id/lotBookStatistics"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

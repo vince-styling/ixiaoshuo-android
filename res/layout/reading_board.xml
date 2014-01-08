@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <com.duowan.mobile.ixiaoshuo.ui.ReadingBoard
+    <com.vincestyling.ixiaoshuo.ui.ReadingBoard
             android:id="@+id/readingBoard"
             android:layout_width="match_parent" android:layout_height="match_parent" />
 
@@ -22,7 +22,7 @@
                 android:layout_alignParentLeft="true"
                 android:gravity="center_vertical">
 
-            <com.duowan.mobile.ixiaoshuo.ui.BatteryView
+            <com.vincestyling.ixiaoshuo.ui.BatteryView
                     android:id="@+id/batteryView"
                     android:layout_width="20dp"
                     android:layout_height="10dp" />
@@ -75,11 +75,11 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:orientation="vertical" android:layout_alignParentBottom="true">
 
-        <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotSecondaryMenu"
+        <com.vincestyling.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotSecondaryMenu"
               android:layout_width="match_parent" android:layout_height="wrap_content"
               android:background="@drawable/reading_board_menu_content_bg" android:visibility="gone" />
 
-        <com.duowan.mobile.ixiaoshuo.ui.ReadingMenu
+        <com.vincestyling.ixiaoshuo.ui.ReadingMenu
                 android:id="@+id/readingMainMenu"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"

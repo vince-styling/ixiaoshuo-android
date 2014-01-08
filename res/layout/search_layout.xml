@@ -49,7 +49,7 @@
                     android:gravity="center"
                     android:orientation="horizontal" >
 
-                    <com.duowan.mobile.ixiaoshuo.view.search.SpinnerButton
+                    <com.vincestyling.ixiaoshuo.view.search.SpinnerButton
                         android:id="@+id/search_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -107,14 +107,14 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <com.duowan.mobile.ixiaoshuo.view.search.KeywordsFlow
+        <com.vincestyling.ixiaoshuo.view.search.KeywordsFlow
             android:id="@+id/keywordsflow"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:focusableInTouchMode="true" 
             />
 
-    <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout
+    <com.vincestyling.ixiaoshuo.ui.ScrollLayout
         android:id="@+id/search_result_list"
         android:layout_width="match_parent"
         android:layout_height="fill_parent" />

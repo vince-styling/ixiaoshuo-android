@@ -40,14 +40,14 @@
 
     </LinearLayout>
 
-    <com.duowan.mobile.ixiaoshuo.ui.FinderMenuGridView android:id="@+id/finderMenuView"
+    <com.vincestyling.ixiaoshuo.ui.FinderMenuGridView android:id="@+id/finderMenuView"
             android:layout_width="match_parent" android:layout_height="50dp"
             android:background="@drawable/book_shelf_deep_bg_layer" />
 
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
                     android:background="@color/finder_booklist_bg">
 
-        <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotBookFinderContent"
+        <com.vincestyling.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotBookFinderContent"
                 android:layout_width="match_parent" android:layout_height="match_parent" />
 
         <RelativeLayout android:id="@+id/lotNetworkUnavaliable"

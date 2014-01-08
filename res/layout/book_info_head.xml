@@ -165,7 +165,7 @@
 
     </LinearLayout>
 
-    <com.duowan.mobile.ixiaoshuo.ui.EllipseEndTextView
+    <com.vincestyling.ixiaoshuo.ui.EllipseEndTextView
         android:id="@+id/txvBookSummary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

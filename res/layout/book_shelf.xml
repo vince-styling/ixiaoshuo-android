@@ -48,7 +48,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/book_shelf_bg_layer" >
 
-        <com.duowan.mobile.ixiaoshuo.ui.ScrollLayout
+        <com.vincestyling.ixiaoshuo.ui.ScrollLayout
             android:id="@+id/lotBookShelfContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
