@@ -1,16 +1,16 @@
 package com.vincestyling.ixiaoshuo.pojo;
 
 public class Category {
-	int catId;
+	int id;
 	String name;
 	int bookCount;
 
-	public int getCatId() {
-		return catId;
+	public int getId() {
+		return id;
 	}
 
-	public void setCatId(int catId) {
-		this.catId = catId;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {

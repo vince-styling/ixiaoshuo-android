@@ -7,9 +7,8 @@ import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.ViewUtil;
 
-public class FinderCategoryBookListView extends FinderUpdatesBookListView {
+public class FinderCategoryBookListView extends FinderHottestBookListView {
 	private int mCatId;
-	private int mBookType;
 
 	public FinderCategoryBookListView(int catId, int bookType, MainActivity activity) {
 		super(bookType, activity, null);
@@ -22,7 +21,7 @@ public class FinderCategoryBookListView extends FinderUpdatesBookListView {
 
 	@Override
 	protected PaginationList<Book> loadData() {
-		return NetService.get().getBookListByCategory(mBookType, mCatId, mPageNo, PAGE_ITEM_COUNT);
+		return NetService.get().getBookListByCategory(mCatId, mPageNo);
 	}
 
 	@Override

@@ -14,14 +14,8 @@ public class FinderHottestBookListView extends FinderBaseListView {
 	}
 
 	@Override
-	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
-		mView.setId(mViewId);
-	}
-
-	@Override
 	protected PaginationList<Book> loadData() {
-		return NetService.get().getHottestBookList(mBookType, mPageNo, PAGE_ITEM_COUNT);
+		return NetService.get().getHottestBookList(mPageNo);
 	}
 
 	@Override

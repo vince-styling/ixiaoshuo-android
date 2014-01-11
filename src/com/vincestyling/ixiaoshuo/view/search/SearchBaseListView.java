@@ -8,7 +8,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.NetService;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.pojo.Constants;
+import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
@@ -67,7 +67,7 @@ public abstract class SearchBaseListView extends ViewBuilder implements AbsListV
 				Book book = mAdapter.getItem(position);
 
 				holder.txvBookName.setText(book.getName());
-				holder.txvBookSummary.setText(book.getPlainSummary());
+				holder.txvBookSummary.setText(book.getSummary());
 				holder.txvBookCapacity.setText(book.getCapacityStr());
 
 				holder.txvBookStatus1.setVisibility(book.isFinished() ? View.VISIBLE : View.GONE);
@@ -167,7 +167,7 @@ public abstract class SearchBaseListView extends ViewBuilder implements AbsListV
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
 			Intent intent = new Intent(getActivity(), BookInfoActivity.class);
-			intent.putExtra(Constants.BOOK_ID, book.getBookId());
+			intent.putExtra(Const.BOOK_ID, book.getBookId());
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			getActivity().startActivity(intent);
 		}

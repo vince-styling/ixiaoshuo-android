@@ -5,6 +5,7 @@ import android.widget.Toast;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.MainHandler;
 import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 
 public class ReaderApplication extends Application {
 
@@ -12,6 +13,7 @@ public class ReaderApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		AppDAO.init(this);
+		Netroid.init(this);
 		NetService.init(this);
 		mMainHandler = new MainHandler();
 		//CrashHandler.getInstance().init(this);

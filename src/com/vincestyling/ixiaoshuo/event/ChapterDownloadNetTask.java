@@ -6,7 +6,7 @@ import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
-public class ChapterDownloadNetTask extends ChapterDownloadTask {
+public abstract class ChapterDownloadNetTask extends ChapterDownloadTask {
 
 	public ChapterDownloadNetTask(Context ctx, Book book) {
 		super(ctx, book);
@@ -14,7 +14,7 @@ public class ChapterDownloadNetTask extends ChapterDownloadTask {
 
 	@Override
 	protected PaginationList<Chapter> loadNextPage() {
-		return NetService.get().getSimpleBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, mPageItemCount);
+		return NetService.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo);
 	}
 
 }

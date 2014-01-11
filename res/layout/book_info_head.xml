@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:duowan="http://schemas.android.com/apk/res/com.duowan.mobile.ixiaoshuo"
+              xmlns:vince="http://schemas.android.com/apk/res/com.vincestyling.ixiaoshuo"
               android:id="@+id/linear_detail_header"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -170,11 +170,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        duowan:textSize="15sp"
-        duowan:textColor="#2b2b2b"
-        duowan:maxLines="4"
-        duowan:lineSpacing="10dp"
-        duowan:collapseBackground="@drawable/book_info_btn_expand_selector" />
+        vince:textSize="15sp"
+        vince:textColor="#2b2b2b"
+        vince:maxLines="4"
+        vince:lineSpacing="10dp"
+        vince:collapseBackground="@drawable/book_info_btn_expand_selector" />
 
     <LinearLayout
         android:layout_width="match_parent"

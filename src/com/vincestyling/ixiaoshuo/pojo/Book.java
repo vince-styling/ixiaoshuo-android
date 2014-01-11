@@ -4,14 +4,12 @@ import com.vincestyling.ixiaoshuo.utils.Paths;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
 public class Book {
-	private int bookId;				// 服务端书籍唯一ID，不变
-	private int sourceBookId;		// 服务端书籍源ID，在换源时会更改
+	private int bookId;
 	private String name;
 	private String author;
 	private String coverUrl;
 
 	private String summary;
-	private boolean isOriginSummary = true;
 
 	private long capacity;		// 容量：字数 or 字节数
 	private boolean isBothType;
@@ -24,8 +22,7 @@ public class Book {
 	private int updateStatus;
 
 	public static final int STATUS_CONTINUE = 1; // 连载
-	public static final int STATUS_PAUSE    = 2; // 暂停
-	public static final int STATUS_FINISHED = 3; // 完结
+	public static final int STATUS_FINISHED = 2; // 完结
 
 	private int bookType;
 	public static final int TYPE_TEXT	= 1; // 文字书籍
@@ -37,7 +34,7 @@ public class Book {
 	private String lastUpdateTime;
 
 	public String getLocalCoverPath() {
-		return Book.getLocalCoverPath(sourceBookId);
+		return Book.getLocalCoverPath(bookId);
 	}
 
 	public static String getLocalCoverPath(int bookId) {
@@ -52,17 +49,8 @@ public class Book {
 		this.bookId = bookId;
 	}
 
-	// TODO : 兼容服务端书籍详情接口的字段名，要让服务端改成bookId
 	public void setId(int id) {
 		this.bookId = id;
-	}
-
-	public int getSourceBookId() {
-		return sourceBookId;
-	}
-
-	public void setSourceBookId(int sourceBookId) {
-		this.sourceBookId = sourceBookId;
 	}
 
 	public String getName() {
@@ -110,22 +98,6 @@ public class Book {
 	}
 
 	public String getSummary() {
-		return summary;
-	}
-
-	public String getPlainSummary() {
-		if (isOriginSummary) {
-			summary = StringUtil.trimAsPlainText(summary);
-			isOriginSummary = false;
-		}
-		return summary;
-	}
-
-	public String getFormattedSummary() {
-		if (isOriginSummary) {
-			summary = StringUtil.trimAsFormattedText(summary);
-			isOriginSummary = false;
-		}
 		return summary;
 	}
 
@@ -177,8 +149,7 @@ public class Book {
 	}
 
 	public String getCapacityStr() {
-		if (bookType == TYPE_TEXT) return StringUtil.formatWordsCount(capacity);
-		return StringUtil.formatSpaceSize(capacity);
+		return StringUtil.formatWordsCount(capacity);
 	}
 
 	public void setCapacity(long capacity) {

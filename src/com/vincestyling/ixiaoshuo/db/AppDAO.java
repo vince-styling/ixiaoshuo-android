@@ -29,9 +29,8 @@ public class AppDAO extends BaseDAO {
 		int bookId = checkIfBookExists(book.getBookId());
 		if (bookId > 0) return bookId;
 
-		String sql = "insert or ignore into " + Tables.Book.NAME + "(book_id, source_book_id, name, author, cover_url, summary, update_status, book_type, was_both_type, cat_id, cat_name, capacity, temporary_flag) values(" +
+		String sql = "insert or ignore into " + Tables.Book.NAME + "(book_id, name, author, cover_url, summary, update_status, book_type, was_both_type, cat_id, cat_name, capacity, temporary_flag) values(" +
 				"'" + book.getBookId() + "', " +
-				"'" + book.getSourceBookId() + "', " +
 				"'" + escape(book.getName()) + "', " +
 				"'" + escape(book.getAuthor()) + "', " +
 				"'" + escape(book.getCoverUrl()) + "', " +

@@ -10,7 +10,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.NetService;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.pojo.Constants;
+import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
@@ -23,7 +23,6 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	private View mLotNetworkUnavaliable;
 
 	protected int mPageNo = 1;
-	protected final static int PAGE_ITEM_COUNT = 20;
 	protected boolean mHasNextPage = true;
 	protected int mBookType;
 
@@ -32,6 +31,12 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 		mShowListener = onShowListener;
 		setActivity(activity);
 		mViewId = viewId;
+	}
+
+	@Override
+	protected void build() {
+		mView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
+		mView.setId(mViewId);
 	}
 
 	@Override
@@ -72,7 +77,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 				Book book = mAdapter.getItem(position);
 
 				holder.txvBookName.setText(book.getName());
-				holder.txvBookSummary.setText(book.getPlainSummary());
+				holder.txvBookSummary.setText(book.getSummary());
 				holder.txvBookCapacity.setText(book.getCapacityStr());
 
 				holder.txvBookStatus1.setVisibility(book.isFinished() ? View.VISIBLE : View.GONE);
@@ -138,6 +143,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 		mAdapter.setIsLoadingData(true);
 		mLotNetworkUnavaliable.setVisibility(View.GONE);
+
 		NetService.execute(new NetService.NetExecutor<PaginationList<Book>>() {
 			public void preExecute() {}
 
@@ -172,7 +178,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 		if (book != null) {
 			if(book.getBookType() == Book.TYPE_TEXT){
                 Intent intent = new Intent(getActivity(), BookInfoActivity.class);
-                intent.putExtra(Constants.BOOK_ID, book.getBookId());
+                intent.putExtra(Const.BOOK_ID, book.getBookId());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(intent);
 

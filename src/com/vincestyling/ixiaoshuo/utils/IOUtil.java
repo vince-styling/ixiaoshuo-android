@@ -63,10 +63,26 @@ public class IOUtil {
 
 	public static void deleteBookCache(Book book) {
 		try {
-			deleteDirectory(Paths.getCacheDirectorySubFolder(book.getSourceBookId()));
+			deleteDirectory(Paths.getCacheDirectorySubFolder(book.getBookId()));
 			File coverFile = new File(book.getLocalCoverPath());
 			coverFile.delete();
 		} catch (Exception ex) {}
+	}
+
+	public static boolean saveBookChapter(int bookId, int chapterId, String content) {
+		if (StringUtil.isNotEmpty(content)) {
+			String fileName = String.valueOf(chapterId);
+			File chapterFile = new File(Paths.getCacheDirectorySubFolder(bookId), fileName);
+			try {
+				FileOutputStream contentOutput = new FileOutputStream(chapterFile);
+				contentOutput.write(content.getBytes(Encoding.GBK.getName()));
+				contentOutput.close();
+				return true;
+			} catch (IOException e) {
+				AppLog.e(e.getMessage(), e);
+			}
+		}
+		return false;
 	}
 
 }

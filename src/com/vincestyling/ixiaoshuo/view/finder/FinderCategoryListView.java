@@ -98,7 +98,7 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 			public void preExecute() {}
 
 			public List<Category> execute() {
-				return NetService.get().getCategories(mCategoriesView.getBookType());
+				return NetService.get().getCategories();
 			}
 
 			public void callback(List<Category> categoryList) {
@@ -120,7 +120,7 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Category category = mAdapter.getItem(position);
 		if (category == null) return;
-		mCategoriesView.showView(new FinderCategoryBookListView(category.getCatId(), mCategoriesView.getBookType(), getActivity()));
+		mCategoriesView.showView(new FinderCategoryBookListView(category.getId(), mCategoriesView.getBookType(), getActivity()));
 	}
 
 	protected ListView getListView() {

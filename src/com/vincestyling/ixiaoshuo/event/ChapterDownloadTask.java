@@ -6,17 +6,20 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import com.duowan.mobile.netroid.NetroidError;
+import com.duowan.mobile.netroid.Response;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.pojo.Constants;
+import com.vincestyling.ixiaoshuo.pojo.Const;
+import com.vincestyling.ixiaoshuo.utils.IOUtil;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 
 import java.io.File;
 
-public abstract class ChapterDownloadTask extends Thread {
+public abstract class ChapterDownloadTask {
 	private Context mCtx;
 	protected Book mBook;
 	private int mNotiId;
@@ -28,16 +31,16 @@ public abstract class ChapterDownloadTask extends Thread {
 	private boolean mIsCancelled;
 	private boolean mIsStarted;
 
+	protected int mIndex;
 	protected int mPageNo = 1;
-	protected String mOrder = "asc";
-	protected int mPageItemCount = 50;
 	protected boolean mHasNextPage = true;
+	private PaginationList<Chapter> mChapterList;
 
 	public ChapterDownloadTask(Context ctx, Book book) {
 		mCtx = ctx;
 		mBook = book;
-		mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getSourceBookId());
-		mNotiId = Constants.NOTIFICATION_DOWNLOAD_ALL_CHAPTER + mBook.getSourceBookId();
+		mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getBookId());
+		mNotiId = Const.NOTIFICATION_DOWNLOAD_ALL_CHAPTER + mBook.getBookId();
 
 		mBuilder = new NotificationCompat.Builder(mCtx);
         mBuilder.setAutoCancel(false);
@@ -48,55 +51,61 @@ public abstract class ChapterDownloadTask extends Thread {
 
 		Intent intent = new Intent(mCtx, ChapterDownloadNotificationBroadcastReceiver.class);
 		intent.setAction("detail");
-		intent.putExtra("BookId", book.getSourceBookId());
+		intent.putExtra("BookId", book.getBookId());
 		PendingIntent pIntent = PendingIntent.getBroadcast(mCtx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		mBuilder.setContentIntent(pIntent);
-
-		setPriority(Thread.MIN_PRIORITY);
 	}
 
-	@Override
-	public void run() {
-		onStart();
-		onRun();
-		if (!mIsCancelled) {
-            onFinished();
-        }
-	}
-
-	private void onRun() {
-		if (mIsCancelled) {
-            return;
-        }
-
-		mOrder = "asc";
-		mPageItemCount = 50;
-		boolean result;
-		File chapterFile;
-		PaginationList<Chapter> chapterList;
-
-		while (mHasNextPage) {
-			if (mIsCancelled) return;
-
-			chapterList = loadNextPage();
-			if (chapterList == null || chapterList.size() == 0) return;
-
-			mChapterCount = chapterList.getTotalItemCount();
-			mHasNextPage = chapterList.hasNextPage();
-			mPageNo++;
-
-			for (Chapter chapter : chapterList) {
-				mExecutedCount++;
-
-				chapterFile = new File(mBookDirectoryPath + chapter.getChapterId());
-				result = chapterFile.exists() || NetService.get().downloadChapterContent(mBook.getSourceBookId(), chapter.getChapterId());
-				if (!result || mIsCancelled) {
-                    return;
-                }
-
-				onProgressUpdate(mBook.getSourceBookId(), chapter.getChapterId());
-			}
+	public void schedule() {
+		if (!mHasNextPage) {
+			onFinished();
+			return;
 		}
+
+		mChapterList = loadNextPage();
+		if (mChapterList == null || mChapterList.size() == 0) {
+			onFinished();
+			return;
+		}
+
+		mChapterCount = mChapterList.getTotalItemCount();
+		mHasNextPage = mChapterList.hasNextPage();
+		mIndex = 0;
+		mPageNo++;
+
+		runNext();
+	}
+
+	private void runNext() {
+		if (mIsCancelled) return;
+
+		if (mIndex == mChapterList.size()) {
+			schedule();
+			return;
+		}
+
+		mExecutedCount++;
+		final Chapter chapter = mChapterList.get(mIndex++);
+		File chapterFile = new File(mBookDirectoryPath + chapter.getChapterId());
+		if (chapterFile.exists()) {
+			runNext();
+			return;
+		}
+
+		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<String>() {
+			@Override
+			public void onResponse(String content) {
+				boolean result = IOUtil.saveBookChapter(mBook.getBookId(), chapter.getChapterId(), content);
+				if (result) {
+					onProgressUpdate(mBook.getBookId(), chapter.getChapterId());
+					runNext();
+				}
+			}
+
+			@Override
+			public void onErrorResponse(NetroidError netroidError) {
+			}
+		});
 	}
 
 	protected abstract PaginationList<Chapter> loadNextPage();
@@ -106,7 +115,7 @@ public abstract class ChapterDownloadTask extends Thread {
 		return percentage > 100f ? 100f : percentage;
 	}
 
-	private void onStart() {
+	protected void onStart() {
 		mIsStarted = true;
 		mBuilder.setTicker(buildBookName());
         String info = mCtx.getResources().getString(R.string.download_notify_start);
@@ -126,7 +135,7 @@ public abstract class ChapterDownloadTask extends Thread {
 
 	private void onFinished() {
 		mIsStarted = false;
-		onDone(mBook.getSourceBookId());
+		onDone(mBook.getBookId());
 		mBuilder.setContentText("下载完成");
         mBuilder.setOngoing(false);
         mBuilder.setAutoCancel(true);
@@ -135,17 +144,13 @@ public abstract class ChapterDownloadTask extends Thread {
 
 	public void onCancel() {
 		getNotificationManager().cancel(mNotiId);
-		onDone(mBook.getSourceBookId());
+		onDone(mBook.getBookId());
 		mIsCancelled = true;
 	}
 
-    public void onChapterFinish(int bookId, int chapterId) {
+    public abstract void onChapterFinish(int bookId, int chapterId);
 
-    }
-
-	public void onDone(int bookId) {
-
-    }
+	public abstract void onDone(int bookId);
 
 	private String buildBookName() {
 		return '《' + mBook.getName() + '》';
@@ -159,12 +164,12 @@ public abstract class ChapterDownloadTask extends Thread {
 		return mIsStarted;
 	}
 
-	public int getBookId() {
-		return mBook.getSourceBookId();
-	}
-
 	private NotificationManager getNotificationManager() {
 		return (NotificationManager) mCtx.getSystemService(Service.NOTIFICATION_SERVICE);
+	}
+
+	public int getBookId() {
+		return mBook.getBookId();
 	}
 
 }

@@ -1,9 +1,7 @@
 package com.vincestyling.ixiaoshuo.event;
 
 import android.content.Context;
-import android.content.Intent;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.pojo.Constants;
 
 import java.util.LinkedList;
 
@@ -97,7 +95,8 @@ public class ChapterDownloader {
 		}
 
 		mBookTaskList.add(bookTask);
-		bookTask.start();
+		bookTask.onStart();
+		bookTask.schedule();
 		return true;
 	}
 

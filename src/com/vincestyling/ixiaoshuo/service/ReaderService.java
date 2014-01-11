@@ -1,11 +1,14 @@
 package com.vincestyling.ixiaoshuo.service;
 
 import android.content.Context;
+import com.duowan.mobile.netroid.NetroidError;
+import com.duowan.mobile.netroid.Response;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.YYReader;
-import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
+import com.vincestyling.ixiaoshuo.utils.IOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,7 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 	public void startReader(Context ctx, int bookId) {
 		mBook = AppDAO.get().getBookOnReading(bookId);
 		mReadingChapter = AppDAO.get().getReadingChapter(mBook.getBookId());
-		mReadingChapter.ready(mBook.getSourceBookId());
+		mReadingChapter.ready(mBook.getBookId());
 		YYReader.startReader(ctx, this);
 	}
 
@@ -51,14 +54,14 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 	@Override
 	public Chapter onGetPrevChapter() {
 		Chapter chapter = AppDAO.get().getPreviousChapter(mBook.getBookId(), mReadingChapter.getChapterId());
-		if (chapter != null) chapter.ready(mBook.getSourceBookId());
+		if (chapter != null) chapter.ready(mBook.getBookId());
 		return chapter;
 	}
 
 	@Override
 	public Chapter onGetNextChapter() {
 		Chapter chapter = AppDAO.get().getNextChapter(mBook.getBookId(), mReadingChapter.getChapterId());
-		if (chapter != null) chapter.ready(mBook.getSourceBookId());
+		if (chapter != null) chapter.ready(mBook.getBookId());
 		return chapter;
 	}
 
@@ -99,21 +102,17 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 			return false;
 		}
 
-		if (!NetService.get().isNetworkAvailable()) {
-			return false;
-		}
-
-		NetService.execute(new NetService.NetExecutor<Boolean>() {
-			public void preExecute() {
-				listener.onDownloadStart(chapter);
+		listener.onDownloadStart(chapter);
+		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<String>() {
+			@Override
+			public void onResponse(String content) {
+				boolean result = IOUtil.saveBookChapter(mBook.getBookId(), chapter.getChapterId(), content);
+				if (result) chapter.ready(mBook.getBookId());
+				listener.onDownloadComplete(chapter);
 			}
 
-			public Boolean execute() {
-				return NetService.get().downloadChapterContent(mBook.getSourceBookId(), chapter.getChapterId());
-			}
-
-			public void callback(Boolean result) {
-				if (result) chapter.ready(mBook.getSourceBookId());
+			@Override
+			public void onErrorResponse(NetroidError netroidError) {
 				listener.onDownloadComplete(chapter);
 			}
 		});

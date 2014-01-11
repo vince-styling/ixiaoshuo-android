@@ -150,7 +150,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 		txvBookCapacity.setText( mContext.getString(R.string.voice_size)+ mBook.getCapacityStr());
 
 		EllipseEndTextView txvBookSummary = (EllipseEndTextView) findViewById(R.id.txvBookSummary);
-		txvBookSummary.setText(mBook.getFormattedSummary());
+		txvBookSummary.setText(mBook.getSummary());
 
 		Button btnGotoRead = (Button) findViewById(R.id.btnGotoListen);
 		btnGotoRead.setOnClickListener(this);
@@ -267,7 +267,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 			public void preExecute() {}
 
 			public PaginationList<Chapter> execute() {
-				return NetService.get().getVoiceBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
+				return NetService.get().getVoiceBookChapterList(mBook.getBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
 			}
 
 			public void callback(PaginationList<Chapter> chapterList) {
@@ -299,7 +299,7 @@ public class VoiceBookInfoView extends ViewBuilder implements AbsListView.OnScro
 			public void preExecute() {}
 
 			public PaginationList<Chapter> execute() {
-				return NetService.get().getVoiceBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
+				return NetService.get().getVoiceBookChapterList(mBook.getBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
 			}
 
 			public void callback(PaginationList<Chapter> chapterList) {

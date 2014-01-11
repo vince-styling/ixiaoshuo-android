@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:duowan="http://schemas.android.com/apk/res/com.duowan.mobile.ixiaoshuo"
+    xmlns:vince="http://schemas.android.com/apk/res/com.vincestyling.ixiaoshuo"
     android:id="@+id/lotBookInfo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -156,11 +156,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        duowan:collapseBackground="@drawable/book_info_btn_expand_selector"
-        duowan:lineSpacing="10dp"
-        duowan:maxLines="4"
-        duowan:textColor="#2b2b2b"
-        duowan:textSize="15sp" />
+        vince:collapseBackground="@drawable/book_info_btn_expand_selector"
+        vince:lineSpacing="10dp"
+        vince:maxLines="4"
+        vince:textColor="#2b2b2b"
+        vince:textSize="15sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

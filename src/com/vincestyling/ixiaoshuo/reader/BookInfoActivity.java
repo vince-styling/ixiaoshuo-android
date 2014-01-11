@@ -12,6 +12,8 @@ import android.text.TextUtils;
 import android.view.Display;
 import android.view.View;
 import android.widget.*;
+import com.duowan.mobile.netroid.NetroidError;
+import com.duowan.mobile.netroid.Response;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.BookCoverLoader;
@@ -19,11 +21,13 @@ import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
 import com.vincestyling.ixiaoshuo.event.Notifier;
 import com.vincestyling.ixiaoshuo.net.BaseNetService;
 import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.pojo.Constants;
+import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.service.ReaderService;
 import com.vincestyling.ixiaoshuo.ui.EllipseEndTextView;
+import com.vincestyling.ixiaoshuo.utils.IOUtil;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 import com.vincestyling.ixiaoshuo.utils.SysUtil;
@@ -79,7 +83,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.book_info);
 
-        mBookId = getIntent().getIntExtra(Constants.BOOK_ID, -1);
+        mBookId = getIntent().getIntExtra(Const.BOOK_ID, -1);
         if (mBookId == -1) {
             finish();
             return;
@@ -262,7 +266,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         String capacity = getString(R.string.book_capacity) + mBook.getCapacityStr();
         mTextBookCapacity.setText(capacity);
 
-        String summary = mBook.getFormattedSummary();
+        String summary = mBook.getSummary();
         if (TextUtils.isEmpty(summary)) {
             summary = getString(R.string.no_summary);
         }
@@ -293,7 +297,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             }
 
             public PaginationList<Chapter> execute() {
-                return NetService.get().getBookChapterList(mBook.getSourceBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
+                return NetService.get().getBookChapterList(mBook.getBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
             }
 
             public void callback(PaginationList<Chapter> chapterList) {
@@ -444,7 +448,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                     }
 
                     public PaginationList<Chapter> execute() {
-                        return NetService.get().getBookChapterList(mBook.getSourceBookId(), mOrder, 1, 1);
+                        return NetService.get().getBookChapterList(mBook.getBookId(), mOrder, 1, 1);
                     }
 
                     public void callback(PaginationList<Chapter> chapterList) {
@@ -524,22 +528,18 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                 holder.btnChapterOperation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        NetService.execute(new BaseNetService.NetExecutor<Boolean>() {
-                            @Override
-                            public void preExecute() {
-                                showToastMsg("正在下载：" + chapter.getTitle());
-                            }
+						showToastMsg("正在下载：" + chapter.getTitle());
+						Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<String>() {
+							@Override
+							public void onResponse(String content) {
+								boolean result = IOUtil.saveBookChapter(mBook.getBookId(), chapter.getChapterId(), content);
+								if (result) mAdapter.notifyDataSetChanged();
+							}
 
-                            @Override
-                            public Boolean execute() {
-                                return NetService.get().downloadChapterContent(mBook.getSourceBookId(), chapter.getChapterId());
-                            }
-
-                            @Override
-                            public void callback(Boolean result) {
-                                if (result) mAdapter.notifyDataSetChanged();
-                            }
-                        });
+							@Override
+							public void onErrorResponse(NetroidError netroidError) {
+							}
+						});
                     }
                 });
 

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.pojo.ColorScheme;
-import com.vincestyling.ixiaoshuo.pojo.Constants;
+import com.vincestyling.ixiaoshuo.pojo.Const;
 
 public class ReadingPreferences {
 	private Context mCtx;
@@ -42,7 +42,7 @@ public class ReadingPreferences {
 	}
 
 	public SharedPreferences getPreferences() {
-		return mCtx.getSharedPreferences(Constants.SETTING, Context.MODE_PRIVATE);
+		return mCtx.getSharedPreferences(Const.SETTING, Context.MODE_PRIVATE);
 	}
 
 	public boolean isDarkMode() {

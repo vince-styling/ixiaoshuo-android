@@ -15,8 +15,6 @@ import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.BookCoverLoader;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
-import com.vincestyling.ixiaoshuo.net.BaseNetService;
-import com.vincestyling.ixiaoshuo.net.NetService;
 import com.vincestyling.ixiaoshuo.pojo.*;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
@@ -28,7 +26,6 @@ import com.vincestyling.ixiaoshuo.ui.WithoutBookStatisticsView;
 import com.vincestyling.ixiaoshuo.view.ViewBuilder;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -220,7 +217,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 //					for (Book book : mBookList) {
 //						Chapter chapter = AppDAO.get().getBookLastChapter(book.getBookId());
 //						if (chapter != null) {
-//							bookOnUpdateList.add(new BookOnUpdate(book.getSourceBookId(), chapter.getChapterId()));
+//							bookOnUpdateList.add(new BookOnUpdate(book.getBookId(), chapter.getChapterId()));
 //						}
 //					}
 //					return NetService.get().getBookUpdateInfo(bookOnUpdateList);
@@ -231,7 +228,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 //					if (bookUpdateInfoList != null && bookUpdateInfoList.size() > 0) {
 //						for (BookUpdateInfo updateInfo : bookUpdateInfoList) {
 //							for (Book book : mBookList) {
-//								if (updateInfo.getBookId() == book.getSourceBookId()) {
+//								if (updateInfo.getBookId() == book.getBookId()) {
 //									book.setUpdateChapterCount(updateInfo.getUpdateChapterCount());
 //									break;
 //								}
@@ -255,7 +252,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 					@Override
 					public void onClick(View v) {
                         Intent intentActivity = new Intent(getActivity(), BookInfoActivity.class);
-                        intentActivity.putExtra(Constants.BOOK_ID, book.getBookId());
+                        intentActivity.putExtra(Const.BOOK_ID, book.getBookId());
                         intentActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         getActivity().startActivity(intentActivity);
 						menuDialog.cancel();

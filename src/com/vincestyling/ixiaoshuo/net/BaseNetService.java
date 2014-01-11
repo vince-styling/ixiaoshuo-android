@@ -226,27 +226,13 @@ public abstract class BaseNetService {
 	protected final Respond handleHttpExecute(HttpRequestBase request) throws IOException {
 		HttpEntity entity = null;
 		try {
-            String uri = request.getURI().toString();
-            String method = request.getMethod();
-            String logcat = "Request: \n" + method + " Uri: " + uri + "\n";
-
 			HttpResponse response = executeHttp(request);
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == HttpStatus.SC_OK) {
 				entity = response.getEntity();
 				String json = new String(EntityUtils.toByteArray(entity));
-
-                logcat += "StatusCode: " + statusCode + "\n";
-                logcat += "Response: \n";
-                logcat += json + "\n";
-                Log.i(TAG, logcat);
-
 				return GObjectMapper.get().readValue(json, Respond.class);
 			}
-
-            logcat += "StatusCode: " + statusCode + "\n";
-            Log.i(TAG, logcat);
-
 		} finally {
 			closeEntity(entity);
 		}
