@@ -2,9 +2,6 @@ package com.vincestyling.ixiaoshuo.utils;
 
 import android.util.Log;
 
-/**
- * Created by 'vince' at 2014-01-11 14:19
- */
 public class AppLog {
 	private static final String TAG = "ixiaoshuo";
 
@@ -30,6 +27,10 @@ public class AppLog {
 
 	public static void e(String msg, Throwable tr) {
 		Log.e(TAG, msg, tr);
+	}
+
+	public static void e(Throwable tr) {
+		Log.e(TAG, tr.getMessage(), tr);
 	}
 
 	public static void w(String msg) {

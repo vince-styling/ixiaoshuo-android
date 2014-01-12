@@ -3,8 +3,6 @@ package com.vincestyling.ixiaoshuo.event;
 import android.content.Context;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public abstract class ChapterDownloadDBTask extends ChapterDownloadTask {
 
@@ -13,8 +11,9 @@ public abstract class ChapterDownloadDBTask extends ChapterDownloadTask {
 	}
 
 	@Override
-	protected PaginationList<Chapter> loadNextPage() {
-		return AppDAO.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo, 100);
+	protected void loadNextPage() {
+		mChapterList = AppDAO.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo, 100);
+		execute();
 	}
 
 }

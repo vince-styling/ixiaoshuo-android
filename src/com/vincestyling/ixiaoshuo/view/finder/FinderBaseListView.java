@@ -16,7 +16,6 @@ import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
 import com.vincestyling.ixiaoshuo.view.ViewBuilder;
-import com.vincestyling.ixiaoshuo.view.VoiceBookInfoView;
 
 public abstract class FinderBaseListView extends ViewBuilder implements AbsListView.OnScrollListener, OnItemClickListener {
 	protected EndlessListAdapter<Book> mAdapter;
@@ -176,15 +175,10 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
-			if(book.getBookType() == Book.TYPE_TEXT){
-                Intent intent = new Intent(getActivity(), BookInfoActivity.class);
-                intent.putExtra(Const.BOOK_ID, book.getBookId());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getActivity().startActivity(intent);
-
-			} else if (book.getBookType() == Book.TYPE_VOICE) {
-				getActivity().showView(new VoiceBookInfoView(getActivity(), book.getBookId()));
-			}
+			Intent intent = new Intent(getActivity(), BookInfoActivity.class);
+			intent.putExtra(Const.BOOK_ID, book.getBookId());
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			getActivity().startActivity(intent);
 		}
 	}
 

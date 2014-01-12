@@ -19,7 +19,6 @@ import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.BookCoverLoader;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
 import com.vincestyling.ixiaoshuo.event.Notifier;
-import com.vincestyling.ixiaoshuo.net.BaseNetService;
 import com.vincestyling.ixiaoshuo.net.NetService;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
@@ -27,25 +26,22 @@ import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.service.ReaderService;
 import com.vincestyling.ixiaoshuo.ui.EllipseEndTextView;
-import com.vincestyling.ixiaoshuo.utils.IOUtil;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 import com.vincestyling.ixiaoshuo.utils.SysUtil;
 import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
 
 import java.io.File;
-import java.util.List;
 
 public class BookInfoActivity extends BaseActivity implements View.OnClickListener,
         AbsListView.OnScrollListener, ChapterDownloader.OnDownLoadListener {
-    private final static int PAGE_ITEM_COUNT = 40;
+
     private static final String ORDER_ASC = "asc";
     private static final String ORDER_DESC = "desc";
 
     private static final int STATUS_DOWNLOAD_ALL = 0;
     private static final int STATUS_DOWNLOAD_PAUSE = 1;
     private static final int STATUS_DOWNLOAD_GOON = 2;
-    private static final int STATUS_DOWNLOAD_CHECK = 3;
 
     private static final int AM_NOTIFY_LIST_CHANGE = 0;
 
@@ -191,9 +187,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                     // 书籍下载到一半
                     mDownloadButtonStatus = STATUS_DOWNLOAD_GOON;
 
-                } else {
-                    // 书籍下载完成
-                    mDownloadButtonStatus = STATUS_DOWNLOAD_CHECK;
                 }
             } else {
                 // 书籍文件夹不存在
@@ -215,10 +208,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 
             case STATUS_DOWNLOAD_GOON:
                 mButtonDownload.setText(resources.getString(R.string.download_goon));
-                break;
-
-            case STATUS_DOWNLOAD_CHECK:
-                mButtonDownload.setText(resources.getString(R.string.download_check));
                 break;
 
             default:
@@ -292,16 +281,11 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         }
 
         mAdapter.setIsLoadingData(true);
-        NetService.execute(new NetService.NetExecutor<PaginationList<Chapter>>() {
-            public void preExecute() {
-            }
-
-            public PaginationList<Chapter> execute() {
-                return NetService.get().getBookChapterList(mBook.getBookId(), mOrder, mPageNo, PAGE_ITEM_COUNT);
-            }
-
-            public void callback(PaginationList<Chapter> chapterList) {
+		Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Response.Listener<PaginationList<Chapter>>() {
+			@Override
+			public void onResponse(PaginationList<Chapter> chapterList) {
 				mAdapter.setIsLoadingData(false);
+
 				if (chapterList == null || chapterList.size() == 0) {
 					showToastMsg(R.string.without_data);
 					return;
@@ -309,14 +293,18 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 
 				mTotalChapterCount = chapterList.getTotalItemCount();
 				mHasNextPage = chapterList.hasNextPage();
-                mAdapter.addAll(chapterList);
-                mPageNo++;
+				mAdapter.addAll(chapterList);
+				mPageNo++;
 
-                updateDownloadStatus();
-                updateDownloadButtonStatus();
-                mButtonDownload.setVisibility(View.VISIBLE);
-            }
-        });
+				updateDownloadStatus();
+				updateDownloadButtonStatus();
+				mButtonDownload.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onErrorResponse(NetroidError netroidError) {
+			}
+		});
     }
 
     private void processReadBook() {
@@ -325,32 +313,32 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        NetService.execute(new BaseNetService.NetExecutor<List<Chapter>>() {
-            ProgressDialog mProgressDialog;
-
-            @Override
-            public void preExecute() {
-                mProgressDialog = ProgressDialog.show(BookInfoActivity.this, null, getString(R.string.loading_all_chapters_msg), false, true);
-            }
-
-            @Override
-            public List<Chapter> execute() {
-                return NetService.get().getBookNewlyChapters(mBookId, mAdapter.getLastItem().getChapterId());
-            }
-
-            @Override
-            public void callback(List<Chapter> chapterList) {
-                boolean isShowing = mProgressDialog.isShowing();
-                mProgressDialog.cancel();
-
-                if (chapterList != null) {
-                    mAdapter.addAll(chapterList);
-                }
-                if (isShowing) {
-                    gotoReader();
-                }
-            }
-        });
+//        NetService.execute(new BaseNetService.NetExecutor<List<Chapter>>() {
+//            ProgressDialog mProgressDialog;
+//
+//            @Override
+//            public void preExecute() {
+//                mProgressDialog = ProgressDialog.show(BookInfoActivity.this, null, getString(R.string.loading_all_chapters_msg), false, true);
+//            }
+//
+//            @Override
+//            public List<Chapter> execute() {
+//                return NetService.get().getBookNewlyChapters(mBookId, mAdapter.getLastItem().getChapterId());
+//            }
+//
+//            @Override
+//            public void callback(List<Chapter> chapterList) {
+//                boolean isShowing = mProgressDialog.isShowing();
+//                mProgressDialog.cancel();
+//
+//                if (chapterList != null) {
+//                    mAdapter.addAll(chapterList);
+//                }
+//                if (isShowing) {
+//                    gotoReader();
+//                }
+//            }
+//        });
     }
 
     private void downloadAllChapter() {
@@ -442,36 +430,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                 }
                 break;
 
-            case STATUS_DOWNLOAD_CHECK:
-                NetService.execute(new NetService.NetExecutor<PaginationList<Chapter>>() {
-                    public void preExecute() {
-                    }
-
-                    public PaginationList<Chapter> execute() {
-                        return NetService.get().getBookChapterList(mBook.getBookId(), mOrder, 1, 1);
-                    }
-
-                    public void callback(PaginationList<Chapter> chapterList) {
-                        int count = chapterList.getTotalItemCount();
-                        if (count > mTotalChapterCount) {
-                            // 有更新
-                            if (ChapterDownloader.get().schedule(BookInfoActivity.this, mBook, true, BookInfoActivity.this)) {
-                                mDownloadButtonStatus = STATUS_DOWNLOAD_PAUSE;
-                                updateDownloadButtonStatus();
-
-                                showToastMsg(R.string.chapter_has_update);
-                            } else {
-                                showToastMsg(R.string.chapter_downloader_limit_msg);
-                            }
-
-                        } else {
-                            // 无更新
-                            showToastMsg(R.string.chapter_no_update);
-                        }
-                    }
-                });
-                break;
-
             default:
                 break;
         }
@@ -529,11 +487,10 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                     @Override
                     public void onClick(View v) {
 						showToastMsg("正在下载：" + chapter.getTitle());
-						Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<String>() {
+						Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<Void>() {
 							@Override
-							public void onResponse(String content) {
-								boolean result = IOUtil.saveBookChapter(mBook.getBookId(), chapter.getChapterId(), content);
-								if (result) mAdapter.notifyDataSetChanged();
+							public void onResponse(Void r) {
+								mAdapter.notifyDataSetChanged();
 							}
 
 							@Override

@@ -11,13 +11,15 @@ import com.duowan.mobile.netroid.Response;
 import com.duowan.mobile.netroid.cache.CacheWrapper;
 import com.duowan.mobile.netroid.cache.DiskBasedCache;
 import com.duowan.mobile.netroid.cache.MemoryBasedCache;
-import com.duowan.mobile.netroid.request.StringRequest;
 import com.duowan.mobile.netroid.stack.HttpClientStack;
 import com.duowan.mobile.netroid.stack.HttpStack;
 import com.duowan.mobile.netroid.stack.HurlStack;
 import com.duowan.mobile.netroid.toolbox.BasicNetwork;
 import com.vincestyling.ixiaoshuo.R;
+import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
+import com.vincestyling.ixiaoshuo.utils.AppLog;
+import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import org.apache.http.protocol.HTTP;
 
 import java.io.File;
@@ -107,23 +109,31 @@ public class Netroid {
 	private static String makeUrl(String pageName, String params) {
 		String url = API + pageName;
 		if (TextUtils.isEmpty(params)) {
+			AppLog.d("request : " + url);
 			return url;
 		}
 
 		if(params.charAt(0) == '&') {
-			return url + '?' + params.substring(1, params.length());
+			url = url + '?' + params.substring(1, params.length());
+			AppLog.d("request : " + url);
+			return url;
 		}
 
-		return url + '?' + params;
+		url = url + '?' + params;
+		AppLog.d("request : " + url);
+		return url;
 	}
 
 	private static String makeUrl(String pageName) {
 		return makeUrl(pageName, null);
 	}
 
-	public static void downloadChapterContent(int bookId, int chapterId, Response.Listener<String> listener) {
-		StringRequest request = new StringRequest(makeUrl("/" + bookId + "/" + chapterId), listener);
-		get().add(request);
+	public static void downloadChapterContent(int bookId, int chapterId, Response.Listener<Void> listener) {
+		get().add(new ChapterDownloadRequest(bookId, chapterId, makeUrl("/" + bookId + "/" + chapterId), listener));
+	}
+
+	public static void getBookChapterList(int bookId, int pageNo, Response.Listener<PaginationList<Chapter>> listener) {
+		get().add(new ChapterListRequest(makeUrl("/chapter/list/" + bookId + "/" + pageNo), listener));
 	}
 
 }

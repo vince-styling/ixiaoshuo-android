@@ -13,7 +13,6 @@ import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
-import com.vincestyling.ixiaoshuo.utils.IOUtil;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 
@@ -34,7 +33,7 @@ public abstract class ChapterDownloadTask {
 	protected int mIndex;
 	protected int mPageNo = 1;
 	protected boolean mHasNextPage = true;
-	private PaginationList<Chapter> mChapterList;
+	protected PaginationList<Chapter> mChapterList;
 
 	public ChapterDownloadTask(Context ctx, Book book) {
 		mCtx = ctx;
@@ -57,12 +56,14 @@ public abstract class ChapterDownloadTask {
 	}
 
 	public void schedule() {
-		if (!mHasNextPage) {
+		if (mHasNextPage) {
+			loadNextPage();
+		} else {
 			onFinished();
-			return;
 		}
+	}
 
-		mChapterList = loadNextPage();
+	protected final void execute() {
 		if (mChapterList == null || mChapterList.size() == 0) {
 			onFinished();
 			return;
@@ -92,14 +93,11 @@ public abstract class ChapterDownloadTask {
 			return;
 		}
 
-		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<String>() {
+		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<Void>() {
 			@Override
-			public void onResponse(String content) {
-				boolean result = IOUtil.saveBookChapter(mBook.getBookId(), chapter.getChapterId(), content);
-				if (result) {
-					onProgressUpdate(mBook.getBookId(), chapter.getChapterId());
-					runNext();
-				}
+			public void onResponse(Void r) {
+				onProgressUpdate(mBook.getBookId(), chapter.getChapterId());
+				runNext();
 			}
 
 			@Override
@@ -108,7 +106,7 @@ public abstract class ChapterDownloadTask {
 		});
 	}
 
-	protected abstract PaginationList<Chapter> loadNextPage();
+	protected abstract void loadNextPage();
 
 	private float calculateProgressPercent() {
 		float percentage = mExecutedCount * 1.0f / mChapterCount * 100f;

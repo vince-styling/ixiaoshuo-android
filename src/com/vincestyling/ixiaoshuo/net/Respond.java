@@ -60,5 +60,14 @@ public class Respond {
 	public <T> PaginationList<T> convertPaginationList(Class<T> clazz) {
 		return PaginationList.convert((Map<String, Object>) data, clazz);
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Respond{" +
+				"status=" + status +
+				", message='" + message + '\'' +
+				", data=" + data +
+				'}';
+	}
+
 }

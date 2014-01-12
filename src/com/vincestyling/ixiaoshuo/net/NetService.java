@@ -4,9 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Category;
-import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
-import com.vincestyling.ixiaoshuo.utils.RequestParameters;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,46 +31,6 @@ public final class NetService extends BaseNetService {
 		if (mInstance != null) return;
 		mInstance = new NetService();
 		mInstance.doInit(context);
-	}
-
-	public List<Chapter> getBookNewlyChapters(int sourceBookId, int lastChapterId) {
-		if (!mNetworkAvailable) return null;
-		try {
-			String params = "sourceBookId=" + sourceBookId + "&lastChapterId=" + lastChapterId;
-			Respond respond = handleHttpGet("/book/newly_chapter.do", params);
-			if (Respond.isCorrect(respond)) {
-				return respond.convert(new TypeReference<List<Chapter>>(){});
-			}
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	public PaginationList<Chapter> getBookChapterList(int bookId, String order, int pageNo, int pageItemCount) {
-		return getBookChapterList(bookId, order, pageNo, pageItemCount, "/book/chapterlist.do");
-	}
-	
-	public PaginationList<Chapter> getVoiceBookChapterList(int bookId, String order, int pageNo, int pageItemCount) {
-		return getBookChapterList(bookId, order, pageNo, pageItemCount, RequestParameters.GET_VOICE_CHAPLIST);
-	}
-
-	public PaginationList<Chapter> getSimpleBookChapterList(int bookId, int pageNo) {
-		return getBookChapterList(bookId, "asc", pageNo, 1, "/book/chapterlist_simple.do");
-	}
-
-	private PaginationList<Chapter> getBookChapterList(int bookId, String order, int pageNo, int pageItemCount, String pageName) {
-		if (!mNetworkAvailable) return null;
-		try {
-			String params = "bookId=" + bookId + "&pageNo=" + pageNo + "&order=" + order + "&pageItemCount=" + pageItemCount;
-			Respond respond = handleHttpGet(pageName, params);
-			if (Respond.isCorrect(respond)) {
-				return respond.convertPaginationList(Chapter.class);
-			}
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
-		return null;
 	}
 
 	public Book getBookDetail(int bookId) {
@@ -205,20 +163,20 @@ public final class NetService extends BaseNetService {
 
 	public PaginationList<Book> getBookListBySearch(int type, int pageNo, int pageItemCount, String keyWord) {
 		if (!mNetworkAvailable) return null;
-		try {
-			RequestParameters parameters = new RequestParameters();
-			parameters.add(RequestParameters.SEARCH_KEY_WORD, keyWord);
-			parameters.add(RequestParameters.TYPE, type);
-			parameters.add(RequestParameters.PAGENO, pageNo);
-			parameters.add(RequestParameters.PAGE_ITEM_COUNT, pageItemCount);
-			Respond respond = handleHttpGet(RequestParameters.BOOK_SEARCH, StringUtil.encodeUrl(parameters));
-			if (Respond.isCorrect(respond)) {
-				Log.i(TAG, "respons is: " + respond.getData().toString());
-				return respond.convertPaginationList(Book.class);
-			}
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
+//		try {
+//			RequestParameters parameters = new RequestParameters();
+//			parameters.add(RequestParameters.SEARCH_KEY_WORD, keyWord);
+//			parameters.add(RequestParameters.TYPE, type);
+//			parameters.add(RequestParameters.PAGENO, pageNo);
+//			parameters.add(RequestParameters.PAGE_ITEM_COUNT, pageItemCount);
+//			Respond respond = handleHttpGet(RequestParameters.BOOK_SEARCH, StringUtil.encodeUrl(parameters));
+//			if (Respond.isCorrect(respond)) {
+//				Log.i(TAG, "respons is: " + respond.getData().toString());
+//				return respond.convertPaginationList(Book.class);
+//			}
+//		} catch (IOException e) {
+//			Log.e(TAG, e.getMessage(), e);
+//		}
 		return null;
 	}
 	

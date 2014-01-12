@@ -103,11 +103,10 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 		}
 
 		listener.onDownloadStart(chapter);
-		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<String>() {
+		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<Void>() {
 			@Override
-			public void onResponse(String content) {
-				boolean result = IOUtil.saveBookChapter(mBook.getBookId(), chapter.getChapterId(), content);
-				if (result) chapter.ready(mBook.getBookId());
+			public void onResponse(Void r) {
+				chapter.ready(mBook.getBookId());
 				listener.onDownloadComplete(chapter);
 			}
 
