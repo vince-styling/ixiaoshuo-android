@@ -13,9 +13,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
-import com.vincestyling.ixiaoshuo.event.BookCoverLoader;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
-import com.vincestyling.ixiaoshuo.pojo.*;
+import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.pojo.Book;
+import com.vincestyling.ixiaoshuo.pojo.Chapter;
+import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
@@ -126,7 +128,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 		}
 
 		Book book = mBookList.get(position);
-		BookCoverLoader.loadCover(getActivity(), book, holder.imvBookCover);
+		Netroid.displayImage(book.getCoverUrl(), holder.imvBookCover, 0, 0);
 
 		holder.txvBookName.setText(book.getName());
 		holder.txvBookLabel.setVisibility(book.hasNewChapter() ? View.GONE : View.VISIBLE);

@@ -1,14 +1,12 @@
 package com.vincestyling.ixiaoshuo.service;
 
 import android.content.Context;
-import com.duowan.mobile.netroid.NetroidError;
-import com.duowan.mobile.netroid.Response;
+import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.YYReader;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.utils.IOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,17 +100,20 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 			return false;
 		}
 
-		listener.onDownloadStart(chapter);
-		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<Void>() {
+		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
 			@Override
-			public void onResponse(Void r) {
-				chapter.ready(mBook.getBookId());
+			public void onPreExecute() {
+				listener.onDownloadStart(chapter);
+			}
+
+			@Override
+			public void onFinish() {
 				listener.onDownloadComplete(chapter);
 			}
 
 			@Override
-			public void onErrorResponse(NetroidError netroidError) {
-				listener.onDownloadComplete(chapter);
+			public void onSuccess(Void r) {
+				chapter.ready(mBook.getBookId());
 			}
 		});
 

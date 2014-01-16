@@ -1,17 +1,17 @@
-package com.vincestyling.ixiaoshuo.net;
+package com.vincestyling.ixiaoshuo.net.request;
 
 import com.duowan.mobile.netroid.*;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.IOUtil;
 
 public class ChapterDownloadRequest extends Request<Void> {
-	private int chapterId;
 	private int bookId;
+	private int chapterId;
 
-	public ChapterDownloadRequest(int bookId, int chapterId, String url, Response.Listener<Void> listener) {
-		super(Method.GET, url, listener);
-		this.chapterId = chapterId;
+	public ChapterDownloadRequest(int bookId, int chapterId, String url, Listener<Void> listener) {
+		super(url, listener);
 		this.bookId = bookId;
+		this.chapterId = chapterId;
 	}
 
 	@Override
@@ -19,7 +19,7 @@ public class ChapterDownloadRequest extends Request<Void> {
 		try {
 			String content = new String(response.data, response.charset);
 			if (IOUtil.saveBookChapter(bookId, chapterId, content)) {
-				return Response.success(null, new Cache.Entry(response.data, response.charset));
+				return Response.success(null, response);
 			}
 
 			return Response.error(new NetroidError("ChapterDownloadRequest{" +

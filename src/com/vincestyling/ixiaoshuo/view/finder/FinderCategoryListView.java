@@ -4,8 +4,10 @@ import android.view.Display;
 import android.view.View;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
+import com.duowan.mobile.netroid.Listener;
+import com.duowan.mobile.netroid.NetroidError;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Category;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
@@ -88,26 +90,25 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		if (mAdapter.getItemCount() > 0) return;
 
-		if (!NetService.get().isNetworkAvailable()) {
-			mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
-			return;
-		}
-
-		mAdapter.setIsLoadingData(true);
-		NetService.execute(new NetService.NetExecutor<List<Category>>() {
-			public void preExecute() {}
-
-			public List<Category> execute() {
-				return NetService.get().getCategories();
+		Netroid.getCategories(new Listener<List<Category>>() {
+			@Override
+			public void onPreExecute() {
+				mAdapter.setIsLoadingData(true);
 			}
 
-			public void callback(List<Category> categoryList) {
+			@Override
+			public void onFinish() {
 				mAdapter.setIsLoadingData(false);
-				if (categoryList == null || categoryList.size() == 0) {
-					if (isInFront()) mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
-					return;
-				}
-				mAdapter.addAll(categoryList);
+			}
+
+			@Override
+			public void onSuccess(List<Category> categories) {
+				mAdapter.addAll(categories);
+			}
+
+			@Override
+			public void onError(NetroidError error) {
+				if (isInFront()) mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
 			}
 		});
 	}

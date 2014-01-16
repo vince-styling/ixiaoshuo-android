@@ -2,10 +2,9 @@ package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
 public class FinderNewlyBookListView extends FinderBaseListView {
@@ -15,8 +14,8 @@ public class FinderNewlyBookListView extends FinderBaseListView {
 	}
 
 	@Override
-	protected PaginationList<Book> loadData() {
-		return NetService.get().getNewlyBookList(mPageNo);
+	protected void loadData() {
+		Netroid.getNewlyBookList(mPageNo, getListener());
 	}
 
 	@Override

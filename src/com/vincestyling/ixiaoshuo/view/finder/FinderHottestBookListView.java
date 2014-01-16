@@ -2,10 +2,9 @@ package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class FinderHottestBookListView extends FinderBaseListView {
 
@@ -14,8 +13,8 @@ public class FinderHottestBookListView extends FinderBaseListView {
 	}
 
 	@Override
-	protected PaginationList<Book> loadData() {
-		return NetService.get().getHottestBookList(mPageNo);
+	protected void loadData() {
+		Netroid.getHottestBookList(mPageNo, getListener());
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">YY爱读小说阅读器</string>
-    <string name="api">http://ixiaoshuo.vincestyling.com/</string>
     <string name="network_disconnect_msg">嗯，网络出了点问题，你懂的！</string>
     <string name="loading_tip_msg">正在努力地加载中……</string>
     <string name="loading_all_chapters_msg">正在加载全部章节列表……</string>

@@ -7,8 +7,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
+import com.duowan.mobile.netroid.Listener;
+import com.duowan.mobile.netroid.NetroidError;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.net.NetService;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
@@ -130,46 +131,43 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 	private void loadNextPage() {
 		if (!mHasNextPage) return;
+		loadData();
+	}
 
-		if (!NetService.get().isNetworkAvailable()) {
-			if (mAdapter.getItemCount() > 0) {
-				getActivity().showToastMsg(R.string.network_disconnect_msg);
-			} else {
-				mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
-			}
-			return;
-		}
-
-		mAdapter.setIsLoadingData(true);
-		mLotNetworkUnavaliable.setVisibility(View.GONE);
-
-		NetService.execute(new NetService.NetExecutor<PaginationList<Book>>() {
-			public void preExecute() {}
-
-			public PaginationList<Book> execute() {
-				return loadData();
+	protected Listener<PaginationList<Book>> getListener() {
+		return new Listener<PaginationList<Book>>() {
+			@Override
+			public void onPreExecute() {
+				mLotNetworkUnavaliable.setVisibility(View.GONE);
+				mAdapter.setIsLoadingData(true);
 			}
 
-			public void callback(PaginationList<Book> bookList) {
+			@Override
+			public void onFinish() {
 				mAdapter.setIsLoadingData(false);
-				if (bookList == null || bookList.size() == 0) {
-					if (isInFront()) {
-						if (mAdapter.getItemCount() > 0) {
-							getActivity().showToastMsg(R.string.without_data);
-						} else {
-							mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
-						}
-					}
-					return;
-				}
+			}
+
+			@Override
+			public void onSuccess(PaginationList<Book> bookList) {
 				mHasNextPage = bookList.hasNextPage();
 				mAdapter.addAll(bookList);
 				mPageNo++;
 			}
-		});
+
+			@Override
+			public void onError(NetroidError error) {
+				if (isInFront()) {
+					if (mAdapter.getItemCount() > 0) {
+						getActivity().showToastMsg(R.string.without_data);
+					} else {
+						mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
+					}
+				}
+			}
+		};
 	}
 
-	protected abstract PaginationList<Book> loadData();
+	protected abstract void loadData();
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

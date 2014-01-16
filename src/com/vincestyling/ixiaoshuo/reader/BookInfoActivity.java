@@ -2,7 +2,6 @@ package com.vincestyling.ixiaoshuo.reader;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -12,18 +11,15 @@ import android.text.TextUtils;
 import android.view.Display;
 import android.view.View;
 import android.widget.*;
+import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
-import com.duowan.mobile.netroid.Response;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
-import com.vincestyling.ixiaoshuo.event.BookCoverLoader;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
 import com.vincestyling.ixiaoshuo.event.Notifier;
-import com.vincestyling.ixiaoshuo.net.NetService;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.service.ReaderService;
 import com.vincestyling.ixiaoshuo.ui.EllipseEndTextView;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
@@ -79,11 +75,12 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.book_info);
 
-        mBookId = getIntent().getIntExtra(Const.BOOK_ID, -1);
-        if (mBookId == -1) {
-            finish();
-            return;
-        }
+//        mBookId = getIntent().getIntExtra(Const.BOOK_ID, -1);
+//        if (mBookId == -1) {
+//            finish();
+//            return;
+//        }
+		mBookId = 2985;
 
         mHandler = new InnerHandler();
         mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBookId);
@@ -216,81 +213,80 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void requestBookInfo() {
-        NetService.execute(new NetService.NetExecutor<Book>() {
-            ProgressDialog mProgressDialog;
+		Netroid.getBookDetail(mBookId, new Listener<Book>() {
+			ProgressDialog mProgressDialog;
 
-            public void preExecute() {
-                Context context = BookInfoActivity.this;
-                String prompt = context.getString(R.string.loading_tip_msg);
-                mProgressDialog = ProgressDialog.show(context, null, prompt, false, true);
-            }
+			@Override
+			public void onPreExecute() {
+				mProgressDialog = ProgressDialog.show(BookInfoActivity.this, null, getString(R.string.loading_tip_msg), false, true);
+			}
 
-            public Book execute() {
-                return NetService.get().getBookDetail(mBookId);
-            }
+			@Override
+			public void onFinish() {
+				mProgressDialog.cancel();
+			}
 
-            public void callback(Book book) {
-                mProgressDialog.cancel();
-                if (book == null) {
-                    getReaderApplication().showToastMsg(R.string.without_data);
-                } else {
-                    mBook = book;
-                    updateUIWithBookInfo();
-                }
-            }
-        });
+			@Override
+			public void onSuccess(Book book) {
+				mBook = book;
+				updateUIWithBookInfo();
+			}
+
+			@Override
+			public void onError(NetroidError error) {
+				getReaderApplication().showToastMsg(R.string.without_data);
+			}
+		});
     }
 
-    private void updateUIWithBookInfo() {
-        BookCoverLoader.loadCover(this, mBook, mImageBookCover);
-        mTextBookName.setText(mBook.getName());
-        mTextBookStatus.setText(mBook.getUpdateStatusStr());
+	private void updateUIWithBookInfo() {
+		Netroid.displayImage(mBook.getCoverUrl(), mImageBookCover, 0, 0);
 
-        String author = getString(R.string.book_author) + mBook.getAuthor();
-        mTextBookAuthor.setText(author);
+		mTextBookName.setText(mBook.getName());
+		mTextBookStatus.setText(mBook.getUpdateStatusStr());
 
-        String category = getString(R.string.book_category) + mBook.getCatName();
-        mTextBookCategory.setText(category);
+		String author = getString(R.string.book_author) + mBook.getAuthor();
+		mTextBookAuthor.setText(author);
 
-        String capacity = getString(R.string.book_capacity) + mBook.getCapacityStr();
-        mTextBookCapacity.setText(capacity);
+		String category = getString(R.string.book_category) + mBook.getCatName();
+		mTextBookCategory.setText(category);
 
-        String summary = mBook.getSummary();
-        if (TextUtils.isEmpty(summary)) {
-            summary = getString(R.string.no_summary);
-        }
-        mBookSummary.setText(summary);
+		String capacity = getString(R.string.book_capacity) + mBook.getCapacityStr();
+		mTextBookCapacity.setText(capacity);
 
-        if (mBook.isBothType()) {
-            mButtonAnotherType.setVisibility(View.VISIBLE);
-        }
+		String summary = mBook.getSummary();
+		if (TextUtils.isEmpty(summary)) {
+			summary = getString(R.string.no_summary);
+		}
+		mBookSummary.setText(summary);
 
-        mListMain.setAdapter(mAdapter);
-        mListMain.setOnScrollListener(this);
-        loadNextPage();
-    }
+		if (mBook.isBothType()) {
+			mButtonAnotherType.setVisibility(View.VISIBLE);
+		}
+
+		mListMain.setAdapter(mAdapter);
+		mListMain.setOnScrollListener(this);
+		loadNextPage();
+	}
 
     private void loadNextPage() {
         if (!mHasNextPage) {
             return;
         }
 
-        if (!NetService.get().isNetworkAvailable()) {
-            showToastMsg(R.string.network_disconnect_msg);
-            return;
-        }
-
-        mAdapter.setIsLoadingData(true);
-		Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Response.Listener<PaginationList<Chapter>>() {
+		Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Listener<PaginationList<Chapter>>() {
 			@Override
-			public void onResponse(PaginationList<Chapter> chapterList) {
+			public void onPreExecute() {
+				mAdapter.setIsLoadingData(true);
+			}
+
+			@Override
+			public void onFinish() {
 				mAdapter.setIsLoadingData(false);
+			}
 
-				if (chapterList == null || chapterList.size() == 0) {
-					showToastMsg(R.string.without_data);
-					return;
-				}
-
+			@Override
+			public void onSuccess(PaginationList<Chapter> chapterList) {
 				mTotalChapterCount = chapterList.getTotalItemCount();
 				mHasNextPage = chapterList.hasNextPage();
 				mAdapter.addAll(chapterList);
@@ -302,7 +298,8 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 			}
 
 			@Override
-			public void onErrorResponse(NetroidError netroidError) {
+			public void onError(NetroidError error) {
+				showToastMsg(R.string.without_data);
 			}
 		});
     }
@@ -480,21 +477,20 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             if (chapterFile.exists()) {
                 holder.btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_goto_read_selector);
                 holder.btnChapterOperation.setOnClickListener(clickListener);
-
             } else {
                 holder.btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_download_selector);
                 holder.btnChapterOperation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-						showToastMsg("正在下载：" + chapter.getTitle());
-						Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<Void>() {
+						Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
 							@Override
-							public void onResponse(Void r) {
-								mAdapter.notifyDataSetChanged();
+							public void onPreExecute() {
+								showToastMsg("正在下载：" + chapter.getTitle());
 							}
 
 							@Override
-							public void onErrorResponse(NetroidError netroidError) {
+							public void onSuccess(Void r) {
+								mAdapter.notifyDataSetChanged();
 							}
 						});
                     }

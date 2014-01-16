@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,8 +11,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.net.NetService;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.ui.ScrollLayout;
 import com.vincestyling.ixiaoshuo.view.ViewBuilder;
@@ -22,17 +22,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * 搜索界面
- * @author gaocong
- */
 public class SearchView extends ViewBuilder implements OnClickListener {
-
-
-	private static final String TAG = "YYReader_SearchView";
-	private static String[] Value = {"全部", "文字", "有声"};// 定义选中后得到的值
-	private ImageView mSearchBt;
-	private String[] keywords;
+	private String[] mKeywords;
 	private KeywordsFlow keywordsFlow;
 	private SpinnerButton mSpinner;
 	private EditText mSearWord;
@@ -40,23 +31,16 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 	SearchListView mSearchListView;
 	private static final int REFRESH_INTERVE = 5000;
 	private Handler mHandler;
-	private static final int TYPE_ALL = 0;
-	private static final int TYPE_TXT = 1;
-	private static final int TYPE_VOICE = 2;
 
 	public SearchView(MainActivity activity, OnShowListener onShowListener) {
 		mShowListener = onShowListener;
 		mViewId = R.id.search_hot_key_search_result;
 		setActivity(activity);
-		Log.i(TAG, "SearchView create");
 		mHandler = new Handler() {
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
 					case 1:
 						showHotWord();
-						break;
-
-					default:
 						break;
 				}
 			}
@@ -66,83 +50,60 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 	@Override
 	protected void build() {
 		mView = getActivity().getLayoutInflater().inflate(R.layout.search_layout, null);
-		Log.i(TAG, "SearchView create");
 	}
 
 	@Override
 	public void init() {
-		Log.i(TAG, "SearchView init");
-		mSearchBt = (ImageView) findViewById(R.id.search_bt);
+		ImageView mSearchBt = (ImageView) findViewById(R.id.search_bt);
 		mSearWord = (EditText) findViewById(R.id.search_wrod_edit);
 		mSearchBt.setOnClickListener(this);
 		mSpinner = (SpinnerButton) findViewById(R.id.search_type);
 		mSearchResultLayout = (ScrollLayout) findViewById(R.id.search_result_list);
 		mSearchResultLayout.setVisibility(View.GONE);
 		keywordsFlow = (KeywordsFlow) findViewById(R.id.keywordsflow);
-		mSpinner.setResIdAndViewCreatedListener(
-				R.layout.spinner_dropdown_items,
-				new SpinnerButton.ViewCreatedListener() {
-					@Override
-					public void onViewCreated(View v) {
-						// TODO Auto-generated method stub
-						v.findViewById(R.id.textView1).setOnClickListener(
-								new OnClickListener() {
-									@Override
-									public void onClick(View v) {
-										mSpinner.setText(R.string.type_all);
-										mSpinner.dismiss();
-									}
-								});
-						v.findViewById(R.id.textView2).setOnClickListener(
-								new OnClickListener() {
-									@Override
-									public void onClick(View v) {
-										mSpinner.setText(R.string.type_txt);
-										mSpinner.dismiss();
-									}
-								});
-						v.findViewById(R.id.textView3).setOnClickListener(
-								new OnClickListener() {
-									@Override
-									public void onClick(View v) {
-										mSpinner.setText(R.string.type_voice);
-										mSpinner.dismiss();
-									}
-								});
-					}
-
-				});
-
-		mSearchListView = new SearchListView(getActivity(),
-				new OnShowListener() {
-					@Override
-					public void onShow() {
-					}
-				});
-
-		NetService.execute(new NetService.NetExecutor<String[]>() {
-
+		mSpinner.setResIdAndViewCreatedListener(R.layout.spinner_dropdown_items, new SpinnerButton.ViewCreatedListener() {
 			@Override
-			public void preExecute() {
-			}
-
-			@Override
-			public String[] execute() {
-				return NetService.get().getHotKeyWords();
-			}
-
-			@Override
-			public void callback(String[] array) {
-				if (array != null) {
-					keywords = array;
-					Log.i(TAG, "keywords length is:" + keywords.length);
-				} else {
-					Log.i(TAG, "callback null");
-				}
-				showHotWord();
+			public void onViewCreated(View v) {
+				v.findViewById(R.id.textView1).setOnClickListener(
+						new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								mSpinner.setText(R.string.type_all);
+								mSpinner.dismiss();
+							}
+						});
+				v.findViewById(R.id.textView2).setOnClickListener(
+						new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								mSpinner.setText(R.string.type_txt);
+								mSpinner.dismiss();
+							}
+						});
+				v.findViewById(R.id.textView3).setOnClickListener(
+						new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								mSpinner.setText(R.string.type_voice);
+								mSpinner.dismiss();
+							}
+						});
 			}
 		});
 
+		mSearchListView = new SearchListView(getActivity(), new OnShowListener() {
+			@Override
+			public void onShow() {
+			}
+		});
+
+		Netroid.getHotKeywords(new Listener<String[]>() {
+			@Override
+			public void onSuccess(String[] keywords) {
+				mKeywords = keywords;
+				showHotWord();
+			}
+		});
 
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
@@ -174,21 +135,18 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 	}
 
 	private void showHotWord() {
-
 		keywordsFlow.setDuration(800l);
 		keywordsFlow.setFocusable(true);
 		keywordsFlow.setClickable(true);
-		// 添加
-		feedKeywordsFlow(keywordsFlow, keywords);
+
+		feedKeywordsFlow(keywordsFlow, mKeywords);
 		keywordsFlow.setOnItemClickListener(this);
 		keywordsFlow.go2Show(KeywordsFlow.ANIMATION_IN);
 
 	}
 
 	private static void feedKeywordsFlow(KeywordsFlow keywordsFlow, String[] arr) {
-		if (arr == null || arr.length == 0) {
-			return;
-		}
+		if (arr == null || arr.length == 0) return;
 		Random random = new Random();
 		for (int i = 0; i < KeywordsFlow.MAX; i++) {
 			int ran = random.nextInt(arr.length);
@@ -203,7 +161,6 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 			closeSoftKeyboard();
 			doSearch(mSearWord.getText().toString());
 		} else if (v instanceof TextView) {
-			Log.i(TAG, "onClick :" + ((TextView) v).getText().toString());
 			doSearch(((TextView) v).getText().toString());
 		}
 	}
@@ -215,44 +172,14 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 	}
 
 	private void doSearch(String key) {
-		if (key == null
-				|| TextUtils.isEmpty(key)) {
-			Log.i(TAG, "doSearch txt null");
-			return;
-		}
-		Log.i(TAG, "doSearch continue");
+		if (key == null || TextUtils.isEmpty(key)) return;
 
 		keywordsFlow.setVisibility(View.GONE);
 		mSearchResultLayout.setVisibility(View.VISIBLE);
 		mSearchListView.isInFront();
 		mSearchResultLayout.showView(mSearchListView);
-		mSearchListView.setSearKey(mSearWord.getText().toString(), getSearchType());
+		mSearchListView.setSearKey(mSearWord.getText().toString());
 		mSearchListView.doSearch(key);
-
-//		if(mSearchResultLayout.getVisibility() == View.GONE){
-//			Log.i(TAG,"mSearchResultLayout.getVisibility() == View.GONE ");
-//			keywordsFlow.setVisibility(View.GONE);
-//			mSearchResultLayout.setVisibility(View.VISIBLE);
-//			mSearchListView.setSearKey(key,getSearchType());
-//			mSearchResultLayout.showView(mSearchListView);
-//		}else{
-//			Log.i(TAG,"doSearch");
-//			mSearchListView.isInFront();
-//			mSearchListView.setSearKey(key,getSearchType());
-//			mSearchListView.doSearch(key);
-//		}
-
-	}
-
-	private int getSearchType() {
-		if (mSpinner.getText().equals(Value[0])) {
-			return TYPE_ALL;
-		} else if (mSpinner.getText().equals(Value[1])) {
-			return TYPE_TXT;
-		} else if (mSpinner.getText().equals(Value[2])) {
-			return TYPE_VOICE;
-		}
-		return TYPE_ALL;
 	}
 
 	@Override

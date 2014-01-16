@@ -6,8 +6,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import com.duowan.mobile.netroid.NetroidError;
-import com.duowan.mobile.netroid.Response;
+import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
@@ -93,15 +92,11 @@ public abstract class ChapterDownloadTask {
 			return;
 		}
 
-		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Response.Listener<Void>() {
+		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
 			@Override
-			public void onResponse(Void r) {
+			public void onSuccess(Void r) {
 				onProgressUpdate(mBook.getBookId(), chapter.getChapterId());
 				runNext();
-			}
-
-			@Override
-			public void onErrorResponse(NetroidError netroidError) {
 			}
 		});
 	}

@@ -1,10 +1,8 @@
 package com.vincestyling.ixiaoshuo.view.finder;
 
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.net.NetService;
-import com.vincestyling.ixiaoshuo.pojo.Book;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.ViewUtil;
 
 public class FinderCategoryBookListView extends FinderHottestBookListView {
@@ -20,8 +18,8 @@ public class FinderCategoryBookListView extends FinderHottestBookListView {
 	}
 
 	@Override
-	protected PaginationList<Book> loadData() {
-		return NetService.get().getBookListByCategory(mCatId, mPageNo);
+	protected void loadData() {
+		Netroid.getBookListByCategory(mCatId, mPageNo, getListener());
 	}
 
 	@Override
