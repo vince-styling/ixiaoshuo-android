@@ -28,7 +28,7 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 		mMaxLineCount = typeArray.getInteger(R.styleable.EllipseEndTextView_maxLines, 5);
 		mLineSpacing = typeArray.getDimensionPixelSize(R.styleable.EllipseEndTextView_lineSpacing, 0);
 
-		mPaint = new TextPaint();
+		mPaint = new PlainTextPaint();
 		mPaint.setColor(typeArray.getColor(R.styleable.EllipseEndTextView_textColor, Color.BLACK));
 		mPaint.setTextSize(typeArray.getDimensionPixelSize(R.styleable.EllipseEndTextView_textSize, 0));
 		mCollapseBackground = typeArray.getResourceId(R.styleable.EllipseEndTextView_collapseBackground, 0);
@@ -40,7 +40,7 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 	private int mDrawLineCount;
 
 	private String mText;
-	private TextPaint mPaint;
+	private PlainTextPaint mPaint;
 
 	private boolean mExpanded = false;
 	private String mStrEllipsis;

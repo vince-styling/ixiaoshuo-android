@@ -1,67 +1,42 @@
 package com.vincestyling.ixiaoshuo.doc;
 
-import android.util.Log;
+import com.vincestyling.ixiaoshuo.event.OnChangeReadingInfoListener;
 import com.vincestyling.ixiaoshuo.event.YYReader;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.ui.RenderPaint;
+import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.Encoding;
-import com.vincestyling.ixiaoshuo.utils.IOUtil;
-import com.vincestyling.ixiaoshuo.utils.Paths;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
-import java.util.zip.ZipInputStream;
 
 public class OnlineDocument extends Document {
-	private File contentTempFile;
 	private YYReader.OnDownloadChapterListener mOnDownloadChapterListener;
-	private OnTurnChapterListener mOnTurnChapterListener;
+	private OnChangeReadingInfoListener mOnChangeReadingInfoListener;
 	private boolean mIsTurnPrevious;
 
-	public OnlineDocument(RenderPaint paint,
-						  YYReader.OnDownloadChapterListener onDownloadChapterListener,
-						  OnTurnChapterListener onTurnChapterListener) throws Exception {
-		super(paint);
-
+	public OnlineDocument(YYReader.OnDownloadChapterListener onDownloadChapterListener, OnChangeReadingInfoListener onChangeReadingInfoListener) throws Exception {
+		mOnChangeReadingInfoListener = onChangeReadingInfoListener;
 		mOnDownloadChapterListener = onDownloadChapterListener;
-		mOnTurnChapterListener = onTurnChapterListener;
 		mEncoding = Encoding.GBK;
-
-		contentTempFile = new File(Paths.getCacheDirectoryPath() + ".tmp");
-		if (!contentTempFile.canRead()) contentTempFile.createNewFile();
-		mRandBookFile = new RandomAccessFile(contentTempFile, "r");
 	}
 
 	private boolean renewRandomAccessFile(Chapter chapter) {
 		if (chapter == null) return false;
 		try {
 			if (chapter.isNativeChapter()) {
-				FileInputStream fins = new FileInputStream(new File(chapter.getFilePath()));
-				ZipInputStream zins = new ZipInputStream(fins);
-
-				if (zins.getNextEntry() == null) {
-					zins.close();
-					fins.close();
-					return false;
-				}
-
-				byte[] data = IOUtil.toByteArray(zins);
-				mFileSize = data.length;
-
-				FileOutputStream fos = new FileOutputStream(contentTempFile);
-				fos.write(data);
-				fos.close();
-
-				fins.close();
+				if (mRandBookFile != null) mRandBookFile.close();
+				mRandBookFile = new RandomAccessFile(chapter.getFilePath(), "r");
+				mFileSize = mRandBookFile.length();
 
 				mByteMetaList.clear();
 				mContentBuf.setLength(0);
 				mPageCharOffsetInBuffer = 0;
 
 				YYReader.onReadingChapter(chapter);
-				mOnTurnChapterListener.onTurnChapter();
+				mOnChangeReadingInfoListener.onChangeBottomInfo("剩余" + YYReader.getUnReadChapterCount() + "章");
+				mOnChangeReadingInfoListener.onChangeTopInfo(getReadingInfo());
+
+				YYReader.downloadChapters();
 				return true;
 			}
 
@@ -69,23 +44,13 @@ public class OnlineDocument extends Document {
 				YYReader.downloadOneChapter(chapter, mOnDownloadChapterListener);
 			}
 		} catch (Exception e) {
-			Log.e(TAG, e.getMessage(), e);
+			AppLog.e(e);
 		}
 		return false;
 	}
 
 	@Override
-	public float calculateReadingProgress() {
-		int chapterCount = YYReader.getTotalChapterCount();
-		int readChapterNum = YYReader.onGetCurrentChapterIndex() + 1;
-		if (readChapterNum == chapterCount && mReadByteEndOffset == mFileSize) {
-			if (mPageCharOffsetInBuffer + mMaxCharCountPerPage >= mContentBuf.length()) return 100;
-		}
-		return readChapterNum * 1.0f / chapterCount * 100;
-	}
-
-	@Override
-	public boolean adjustReadingProgress(Chapter chapter) {
+	public boolean turnToChapter(Chapter chapter) {
 		if (renewRandomAccessFile(chapter)) {
 			mReadByteBeginOffset = mIsTurnPrevious ? getBackmostPosition() : chapter.getReadPosition();
 			mReadByteEndOffset = mReadByteBeginOffset;
@@ -101,7 +66,7 @@ public class OnlineDocument extends Document {
 	public boolean turnNextPage() {
 		if (super.turnNextPage()) return true;
 
-		Chapter chapter = YYReader.getNextChapterInfo();
+		Chapter chapter = YYReader.getNextChapter();
 		if (renewRandomAccessFile(chapter)) {
 			mReadByteBeginOffset = 0;
 			mReadByteEndOffset = 0;
@@ -129,6 +94,24 @@ public class OnlineDocument extends Document {
 	}
 
 	@Override
+	public void calculatePagePosition() {
+		super.calculatePagePosition();
+		float percentage = calculateReadingProgress();
+		percentage = percentage > 100 ? 100 : percentage;
+		YYReader.onReadingPercent(percentage);
+	}
+
+	@Override
+	public float calculateReadingProgress() {
+		int chapterCount = YYReader.getTotalChapterCount();
+		int readChapterNum = YYReader.onGetCurrentChapterIndex() + 1;
+		if (readChapterNum == chapterCount && mReadByteEndOffset == mFileSize) {
+			if (mPageCharOffsetInBuffer + RenderPaint.get().getMaxCharCountPerPage() >= mContentBuf.length()) return 100;
+		}
+		return readChapterNum * 1.0f / chapterCount * 100;
+	}
+
+	@Override
 	public void onDownloadComplete(boolean result, boolean willAdjust) {
 		super.onDownloadComplete(result, willAdjust);
 		if (result && willAdjust) return;
@@ -137,11 +120,7 @@ public class OnlineDocument extends Document {
 
 	@Override
 	public String getReadingInfo() {
-		return YYReader.getCurrentChapterInfo().getTitle();
-	}
-
-	public static interface OnTurnChapterListener {
-		void onTurnChapter();
+		return YYReader.getCurrentChapter().getTitle();
 	}
 
 }

@@ -31,7 +31,9 @@ public class ProgressSetting extends ReaderViewBuilder implements SeekBar.OnSeek
 
 	@Override
 	public void resume() {
-		originProgress = getActivity().getReadingBoard().calculateReadingProgress();
+		// TODO : slove the progress calculate problem
+//		originProgress = getActivity().getReadingBoard().calculateReadingProgress();
+		originProgress = 10;
 		mSkbProgress.setProgress((int) originProgress);
 		super.resume();
 	}

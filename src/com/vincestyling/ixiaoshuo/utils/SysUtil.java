@@ -1,5 +1,6 @@
 package com.vincestyling.ixiaoshuo.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -9,6 +10,11 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class SysUtil {
+
+	public static void setFullScreen(Activity activity) {
+		activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	}
 
 	public static int getVersionCode(Context ctx) {
 		try {

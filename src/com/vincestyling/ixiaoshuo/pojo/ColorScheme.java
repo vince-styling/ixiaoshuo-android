@@ -2,44 +2,53 @@ package com.vincestyling.ixiaoshuo.pojo;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import com.vincestyling.ixiaoshuo.utils.BitmapUtil;
 
 public class ColorScheme {
+	private String name;
 	private int resourceId, textColor;
 	private boolean isPureColor;
 
-	public ColorScheme(int resourceId, int textColor, boolean isPureColor) {
+	public ColorScheme(String name, int resourceId, int textColor, boolean isPureColor) {
+		this.name = name;
 		this.isPureColor = isPureColor;
 		this.resourceId = resourceId;
 		this.textColor = textColor;
 	}
 
-	public Bitmap getMenuBitmap(Resources res, int reqWidth, int reqHeight) {
-		return BitmapUtil.loadBitmapInRes(res, resourceId, reqWidth, reqHeight);
+	public Drawable getSchemeDrawable(Resources res) {
+		if (isPureColor) {
+			return new ColorDrawable(resourceId);
+		} else {
+			return new BitmapDrawable(BitmapFactory.decodeResource(res, resourceId));
+		}
 	}
 
-	private Drawable readingDrawable;
-
-	public Drawable getReadingDrawable(Resources res, int reqWidth, int reqHeight) {
-		if (readingDrawable == null) {
-			if (isPureColor) {
-				readingDrawable = new ColorDrawable(resourceId);
-			} else {
-				readingDrawable = new BitmapDrawable(BitmapUtil.loadBitmapInRes(res, resourceId, reqWidth, reqHeight));
-			}
+	public Bitmap getResizeSchemeBitmap(Resources res, int width, int height) {
+		if (isPureColor) {
+			Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+			Canvas canvas = new Canvas(bitmap);
+			canvas.drawColor(resourceId);
+			return bitmap;
+		} else {
+			Bitmap bitmap = BitmapFactory.decodeResource(res, resourceId);
+			Matrix matrix = new Matrix();
+			matrix.postScale(((float) width) / bitmap.getWidth(), ((float) height) / bitmap.getHeight());
+			return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 		}
-		return readingDrawable;
 	}
 
 	public int getTextColor() {
 		return textColor;
 	}
 
-	public void setTextColor(int textColor) {
-		this.textColor = textColor;
+	public String getName() {
+		return name;
 	}
 
 }

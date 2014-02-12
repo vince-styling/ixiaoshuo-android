@@ -1,6 +1,5 @@
 package com.vincestyling.ixiaoshuo.service;
 
-import android.content.Context;
 import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.YYReader;
@@ -11,15 +10,23 @@ import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReaderService implements YYReader.OnYYReaderListener {
+public class ReaderSupport implements YYReader.OnYYReaderListener {
+
 	private Book mBook;
 	private Chapter mReadingChapter;
 
-	public void startReader(Context ctx, int bookId) {
+	public void init(int bookId) throws IllegalStateException {
 		mBook = AppDAO.get().getBookOnReading(bookId);
+		if (mBook == null) {
+			throw new IllegalStateException("bookId not exists " + bookId);
+		}
+
 		mReadingChapter = AppDAO.get().getReadingChapter(mBook.getBookId());
 		mReadingChapter.ready(mBook.getBookId());
-		YYReader.startReader(ctx, this);
+
+		YYReader.init(this);
+		// TODO : should update last read time
+//		BookTable.updateBookLastReadTime(mContext, mCurrentBookId, System.currentTimeMillis());
 	}
 
 	@Override
@@ -80,7 +87,7 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 	}
 
 	@Override
-	public boolean isBookOnShelf() {
+	public boolean onIsBookOnShelf() {
 		return AppDAO.get().isBookOnShelf(mBook.getBookId());
 	}
 
@@ -95,17 +102,33 @@ public class ReaderService implements YYReader.OnYYReaderListener {
 	}
 
 	@Override
+	public void onReadingPercent(float percent) {
+		// TODO : BookTable.updateBookReadingPercent(mContext, mCurrentBookId, percent);
+	}
+
+	@Override
+	public void onCancelRead() {
+		mBook = null;
+		mReadingChapter = null;
+	}
+
+	@Override
+	public boolean onDownloadChapters() {
+		// TODO : implement pre download few chapters
+		return false;
+	}
+
+	@Override
 	public boolean onDownloadOneChapter(final Chapter chapter, final YYReader.OnDownloadChapterListener listener) {
 		if (chapter == null || chapter.isNativeChapter() || listener == null) {
 			return false;
 		}
 
-		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
-			@Override
-			public void onPreExecute() {
-				listener.onDownloadStart(chapter);
-			}
+		// onDownloadStart() should perform with Netroid's Listener.onPreExecute(),
+		// but onPreExecute() always delay, doesn't make the UI know it.
+		listener.onDownloadStart(chapter);
 
+		Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
 			@Override
 			public void onFinish() {
 				listener.onDownloadComplete(chapter);

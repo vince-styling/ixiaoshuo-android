@@ -1,6 +1,5 @@
 package com.vincestyling.ixiaoshuo.doc;
 
-import android.graphics.Rect;
 import android.util.Log;
 import com.vincestyling.ixiaoshuo.event.YYReader;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
@@ -22,19 +21,14 @@ import java.util.LinkedList;
 public abstract class Document {
 	protected static final String TAG = "Document";
 
-	protected RenderPaint mPaint;
-
-	private int mMaxPageLineCount;
-	protected int mMaxCharCountPerPage;
-	private int mMaxCharCountPerLine;
 	private int mCurContentHeight;
 
 	protected Encoding mEncoding;
 	
 	protected RandomAccessFile mRandBookFile;
 	protected long mFileSize;				// in bytes
-	
-	protected byte[] mByteBuffer;
+
+	protected byte[] mByteBuffer = new byte[8192];
 	protected StringBuilder mContentBuf = new StringBuilder();
 	protected int mPageCharOffsetInBuffer;		// char offset in buffer (current char offset in mContentBuf)
 	
@@ -53,31 +47,6 @@ public abstract class Document {
 	// for turning preivous page, for storing temporary offsets
 	LinkedList<Integer> mCharOffsetList = new LinkedList<Integer>();
 
-	public Document(RenderPaint paint) {
-		mByteBuffer = new byte[8192];
-		mPaint = paint;
-		resetTextHeight();
-	}
-
-	private void resetTextHeight() {
-		float lineHeight = mPaint.getTextHeight() + mPaint.getLineSpacing();
-
-		mMaxPageLineCount = (int)(mPaint.getRenderHeight() / lineHeight);
-		if((mPaint.getRenderHeight() % lineHeight) >= mPaint.getTextHeight()) {
-			++mMaxPageLineCount;
-		}
-
-		mMaxCharCountPerLine = mPaint.getRenderWidth() / mPaint.getTextWidth();
-
-		Rect rect = new Rect();
-		mPaint.getTextBounds("i", 0, 1, rect);
-		mMaxCharCountPerPage = mPaint.getRenderWidth() / (rect.right - rect.left) * mMaxPageLineCount;
-	}
-	
-	public final void onResetTextSize() {
-		resetTextHeight();
-	}
-	
 	protected final void scrollDownBuffer() {
 		// throw away characters at the head of the buffer if some requrements are met  
 		if(mByteMetaList.size() > 0 && mPageCharOffsetInBuffer >= mByteMetaList.peek().charCount) {
@@ -146,10 +115,6 @@ public abstract class Document {
 		}
 	}
 	
-	public int getCharCountOfCurPage () {
-		return mCharCountOfPage;
-	}
-	
 	public boolean turnNextPage () {
 		if(mPageCharOffsetInBuffer + mCharCountOfPage < mContentBuf.length()) {
 			// for scrolldown(turning next page), we simply add up mCharOffsetOfPage to the current char offset
@@ -161,13 +126,13 @@ public abstract class Document {
 	
 	public boolean turnPreviousPage () {
 		// check if we need to read some bytes and prepend them to the beginning of the buffer(if we are near the beginning of the buffer)
-		if(mReadByteBeginOffset > 0 && mPageCharOffsetInBuffer - mMaxCharCountPerPage < 0) {
+		if(mReadByteBeginOffset > 0 && mPageCharOffsetInBuffer - RenderPaint.get().getMaxCharCountPerPage() < 0) {
 			scrollUpBuffer();
 		}
 		if(mPageCharOffsetInBuffer > 0) {
 			mCharOffsetList.clear();
 			// *previous* page should start from here *at most*(if the *previous* page contains mMaxCharCountPerPage characters, which is quite unusual)
-			int beginCharOffset = mPageCharOffsetInBuffer - mMaxCharCountPerPage;
+			int beginCharOffset = mPageCharOffsetInBuffer - RenderPaint.get().getMaxCharCountPerPage();
 			if(beginCharOffset < 0) {	// if we reach the beginning of the file
 				beginCharOffset = 0;
 			} else {
@@ -208,7 +173,7 @@ public abstract class Document {
 
 						lineCount = 0;
 					}
-					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset, lineCount == 0);
+					int charCount = RenderPaint.get().breakText(mContentBuf, lineCharOffset, endCharOffset, lineCount == 0);
 					
 					// note: addFirst
 					mCharOffsetList.addFirst(lineCharOffset);
@@ -220,14 +185,14 @@ public abstract class Document {
 							// note: removeFirst and then add to the last
 							mCharOffsetList.add(mCharOffsetList.removeFirst());
 						}
-						if (mCharOffsetList.size() >= mMaxPageLineCount) break;
+						if (mCharOffsetList.size() >= RenderPaint.get().getMaxPageLineCount()) break;
 						
 						lineCharOffset = endCharOffset = newlineOffset;
 					}
 				}
 			} else {
 				while (lineCharOffset < endCharOffset) {
-					int charCount = mPaint.breakText(mContentBuf, lineCharOffset, endCharOffset, false);
+					int charCount = RenderPaint.get().breakText(mContentBuf, lineCharOffset, endCharOffset, false);
 					mCharOffsetList.addFirst(lineCharOffset);
 					lineCharOffset += charCount;
 				}
@@ -237,11 +202,11 @@ public abstract class Document {
 			for (int i = 0; i < mCharOffsetList.size(); ++i) {
 				if (contentHeight > 0) {
 					boolean isNewline = mContentBuf.charAt(mCharOffsetList.get(i - 1) - 1) == StringUtil.NEW_LINE_CHAR;
-					if(isNewline) contentHeight += mPaint.getParagraphSpacing();
-					else contentHeight += mPaint.getLineSpacing();
+					if(isNewline) contentHeight += RenderPaint.get().getParagraphSpacing();
+					else contentHeight += RenderPaint.get().getLineSpacing();
 				}
-				contentHeight += mPaint.getTextHeight();
-				if (contentHeight > mPaint.getRenderHeight()) {
+				contentHeight += RenderPaint.get().getTextHeight();
+				if (contentHeight > RenderPaint.get().getRenderHeight()) {
 					mPageCharOffsetInBuffer = mCharOffsetList.get(i - 1);
 					break;
 				} else if (i == 0) {
@@ -254,12 +219,12 @@ public abstract class Document {
 		return false;
 	}
 	
-	public void prepareGetLines () {
+	public void prepareGetLines() {
 		mCurContentHeight = 0;
 		mCharCountOfPage = 0;
 		
 		// only do this check once per page
-		if(mReadByteEndOffset < mFileSize && mPageCharOffsetInBuffer + mMaxCharCountPerPage > mContentBuf.length())
+		if(mReadByteEndOffset < mFileSize && mPageCharOffsetInBuffer + RenderPaint.get().getMaxCharCountPerPage() > mContentBuf.length())
 			scrollDownBuffer();
 		
 		// reset newline to the current offset
@@ -274,8 +239,8 @@ public abstract class Document {
 		// reach the end of the file
 		if (mPageCharOffsetInBuffer + mCharCountOfPage >= mContentBuf.length()) return 0;
 
-		mCurContentHeight += mPaint.getTextHeight();
-		if (mCurContentHeight > mPaint.getRenderHeight()) return 0;
+		mCurContentHeight += RenderPaint.get().getTextHeight();
+		if (mCurContentHeight > RenderPaint.get().getRenderHeight()) return 0;
 		byte flags = GET_NEXT_LINE_FLAG_HAS_NEXT_LINE;
 
 		int index = mPageCharOffsetInBuffer + mCharCountOfPage;
@@ -285,7 +250,7 @@ public abstract class Document {
 		}
 
 		boolean needIndent = false;
-		if (mPaint.getFirstLineIndent().length() > 0) {
+		if (RenderPaint.get().getFirstLineIndent().length() > 0) {
 			if (index > 0) {
 				needIndent = mContentBuf.charAt(index - 1) == StringUtil.NEW_LINE_CHAR;
 			} else {
@@ -293,28 +258,28 @@ public abstract class Document {
 			}
 		}
 
-		int charCount = mPaint.breakText(mContentBuf, index, mEndCharIndex, needIndent);
+		int charCount = RenderPaint.get().breakText(mContentBuf, index, mEndCharIndex, needIndent);
 		if (charCount > 0) {
 			sb.append(mContentBuf, index, index + charCount);
 			LayoutUtil.trimWhiteSpaces(sb);
 			mCharCountOfPage += charCount;
 
 			// append indent if carriage return character before the line
-			if (needIndent) sb.insert(0, mPaint.getFirstLineIndent());
+			if (needIndent) sb.insert(0, RenderPaint.get().getFirstLineIndent());
 		}
 
 		int endIndex = mPageCharOffsetInBuffer + mCharCountOfPage;
 		if (endIndex == mNewlineIndex) {
 			++mCharCountOfPage;
 			++mNewlineIndex;
-			mCurContentHeight += mPaint.getParagraphSpacing();
+			mCurContentHeight += RenderPaint.get().getParagraphSpacing();
 			flags |= GET_NEXT_LINE_FLAG_PARAGRAPH_ENDS;
 		} else {
 			// justify when text fill whole line
 			if (endIndex < mContentBuf.length()) {
 				flags |= GET_NEXT_LINE_FLAG_SHOULD_JUSTIFY;
 			}
-			mCurContentHeight += mPaint.getLineSpacing();
+			mCurContentHeight += RenderPaint.get().getLineSpacing();
 		}
 
 		return flags;
@@ -323,7 +288,7 @@ public abstract class Document {
 	public void calculatePagePosition() {
 		try {
 			mPageBeginPosition = mReadByteBeginOffset + mContentBuf.substring(0, mPageCharOffsetInBuffer).getBytes(mEncoding.getName()).length;
-			Chapter chapter = YYReader.getCurrentChapterInfo();
+			Chapter chapter = YYReader.getCurrentChapter();
 			chapter.setReadPosition((int) mPageBeginPosition);
 			YYReader.onReadingChapter(chapter);
 		} catch (Exception e) {
@@ -331,18 +296,12 @@ public abstract class Document {
 		}
 	}
 	
-	public final String getCurrentPageFrontText(int length) {
-		if(mPageCharOffsetInBuffer + length < mContentBuf.length())
-			return mContentBuf.substring(mPageCharOffsetInBuffer, mPageCharOffsetInBuffer + length);
-		return mContentBuf.substring(mPageCharOffsetInBuffer);
-	}
-	
 //	protected long calculatePosition(float percentage) {
 //		return percentage >= 1f ? mFileSize - 200 : (long) (mFileSize * percentage);
 //	}
 
 	protected final long getSafetyPosition(long fileBeginPosition) {
-		if(fileBeginPosition == 0) return 0;
+		if (fileBeginPosition == 0) return 0;
 		try {
 			byte[] tempContentBuf = new byte[1024 * 4];
 			mRandBookFile.seek(fileBeginPosition);
@@ -383,7 +342,7 @@ public abstract class Document {
 	}
 
 	protected final long getBackmostPosition() {
-		long beginPosition = mFileSize - Double.valueOf(mMaxCharCountPerLine * (mMaxPageLineCount / 3) * mEncoding.getMaxCharLength()).intValue();
+		long beginPosition = mFileSize - Double.valueOf(RenderPaint.get().getMaxCharCountPerLine() * (RenderPaint.get().getMaxPageLineCount() / 3) * mEncoding.getMaxCharLength()).intValue();
 		return beginPosition < 1 ? 0 : getSafetyPosition(beginPosition);
 	}
 
@@ -391,7 +350,7 @@ public abstract class Document {
 		return YYReader.getBookName();
 	}
 
-	public abstract boolean adjustReadingProgress(Chapter chapter);
+	public abstract boolean turnToChapter(Chapter chapter);
 	public abstract float calculateReadingProgress();
 
 	private boolean mIsDownloading;

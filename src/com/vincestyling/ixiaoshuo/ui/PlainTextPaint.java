@@ -4,9 +4,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import com.vincestyling.ixiaoshuo.doc.LayoutUtil;
 
-public class TextPaint extends Paint {
+public class PlainTextPaint extends Paint {
 
-	public TextPaint() {
+	public PlainTextPaint() {
 		super(ANTI_ALIAS_FLAG);
 	}
 
@@ -39,8 +39,8 @@ public class TextPaint extends Paint {
 
 		Rect rect = new Rect();
 		getTextBounds("中", 0, 1, rect);
-		mTextWidth = rect.right - rect.left;
-		mTextHeight = rect.bottom - rect.top;
+		mTextWidth = rect.width();
+		mTextHeight = rect.height();
 
 		if (mFirstLineIndent.length() > 0) {
 			mFirstLineIndentWidth = measureText(mFirstLineIndent);

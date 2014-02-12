@@ -21,7 +21,6 @@ import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
-import com.vincestyling.ixiaoshuo.service.ReaderService;
 import com.vincestyling.ixiaoshuo.ui.CommonMenuDialog;
 import com.vincestyling.ixiaoshuo.ui.MainMenuGridView;
 import com.vincestyling.ixiaoshuo.ui.WithoutBookStatisticsView;
@@ -327,7 +326,9 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Book book = (Book) parent.getItemAtPosition(position);
 		if (book != null) {
-			new ReaderService().startReader(getActivity(), book.getBookId());
+			Intent intent = new Intent(getActivity(), ReaderActivity.class);
+			intent.putExtra(Const.BOOK_ID, book.getBookId());
+			getActivity().startActivity(intent);
 		}
 	}
 

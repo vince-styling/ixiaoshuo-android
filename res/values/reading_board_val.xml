@@ -4,9 +4,19 @@
     <dimen name="reading_board_padding_top">25dp</dimen>
     <dimen name="reading_board_line_spacing">15dp</dimen>
     <dimen name="reading_board_paragraph_spacing">15dp</dimen>
-    <dimen name="reading_board_default_text_size">20sp</dimen>
+
+    <dimen name="reading_board_default_text_size">10sp</dimen>
+    <dimen name="reading_board_min_text_size">10sp</dimen>
+    <dimen name="reading_board_max_text_size">30sp</dimen>
+
     <dimen name="reading_board_status_bar_height">24dp</dimen>
     <dimen name="reading_board_page_shadow_width">20dp</dimen>
     <dimen name="reading_board_battery_border_width">1dp</dimen>
+
     <integer name="reading_board_indent_char_count">1</integer>
+
+    <string name="reading_menu_scheme_yellow">奶沫黄</string>
+    <string name="reading_menu_scheme_green1">护眼绿</string>
+    <string name="reading_menu_scheme_green">清妍绿</string>
+    <string name="reading_menu_scheme_blue">天际蓝</string>
 </resources>

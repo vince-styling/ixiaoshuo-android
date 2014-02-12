@@ -1,6 +1,6 @@
 package com.vincestyling.ixiaoshuo.doc;
 
-import android.graphics.Paint;
+import com.vincestyling.ixiaoshuo.ui.RenderPaint;
 
 public class LayoutUtil {
 	private final static char SPACE_CHAR = ' ';	// \u0020
@@ -83,13 +83,13 @@ public class LayoutUtil {
 		}
 		return false;
 	}
-	
-	public static void layoutTextJustified (CharSequence text, int maxWidth, Paint paint, float startX, float constantY, float[] positions) {
+
+	public static void layoutTextJustified (CharSequence text, RenderPaint paint, float startX, float constantY, float[] positions) {
 		int endIndex = text.length();
 		float actualWidth = paint.measureText(text, 0, text.length());
-		
+
 		// A glyphRun(concept in text rendering) contains one or more glyphs.
-		// For SBC_CASE_SPACE_CHARs, I don't increase their kerning, because in chinese text, 
+		// For SBC_CASE_SPACE_CHARs, I don't increase their kerning, because in chinese text,
 		// SBC_CASE_SPACE_CHAR is used for indentation.
 		int glyphRunCount = 0;
 		boolean withinGlyphRun = false;
@@ -97,36 +97,30 @@ public class LayoutUtil {
 			char ch = text.charAt(i);
 			boolean prevWithinGlyphRun = withinGlyphRun;
 			withinGlyphRun = ch == SBC_CASE_SPACE_CHAR || (ch != SPACE_CHAR && ch <= 0x7f);
-			
+
 			if(i > 0 && (!withinGlyphRun || (withinGlyphRun && !prevWithinGlyphRun))) {
 				++glyphRunCount;
 			}
 		}
-		
-		float kerning = (maxWidth - actualWidth) / glyphRunCount;
-		
+
+		float kerning = (paint.getRenderWidth() - actualWidth) / glyphRunCount;
+
 		float previousPosX = startX;
 		withinGlyphRun = false;
 		for (int i = 0, j = 0; i < endIndex; ++i, j+=2) {
 			char ch = text.charAt(i);
 			boolean prevWithinGlyphRun = withinGlyphRun;
 			withinGlyphRun = ch == SBC_CASE_SPACE_CHAR || (ch != SPACE_CHAR && ch <= 0x7f);
-			
+
 			if(i > 0 && (!withinGlyphRun || (withinGlyphRun && !prevWithinGlyphRun))) {
 				previousPosX += kerning;
 			}
-			
+
 			positions[j] = previousPosX;
 			positions[j+1] = constantY;
-			
+
 			previousPosX += paint.measureText(text, i, i + 1);
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		StringBuilder sb = new StringBuilder(" 　   经过了一番强烈的思想斗争，她决定 　   ");
-		trimWhiteSpaces(sb);
-		System.out.println("----" + sb + "____");
 	}
 
 }

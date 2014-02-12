@@ -1,9 +1,6 @@
 package com.vincestyling.ixiaoshuo.event;
 
-import android.content.Context;
-import android.content.Intent;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 
 import java.util.List;
 
@@ -38,17 +35,26 @@ public class YYReader {
 		/** 标记当前正在阅读的章节，同时在翻页时调用，记录阅读进度 */
 		public void onReadingChapter(Chapter chapter);
 
+        /** 标记当前书籍阅读的百分比 */
+        public void onReadingPercent(float percent);
+
+        /** 退出阅读需要调用的方法 */
+        public void onCancelRead();
+
 		/** 判断书籍是否已经加入书架 */
-		public boolean isBookOnShelf();
+		public boolean onIsBookOnShelf();
 
 		/** 将书籍加入书架 */
 		public boolean onAddToBookShelf();
 
 		/** 从书架上移除书籍 */
-		boolean onRemoveInBookShelf();
+		public boolean onRemoveInBookShelf();
 
-		/** 下载某个章节(注意：下载逻辑应在非UI线程内执行) */
+		/** 下载某个章节 */
 		public boolean onDownloadOneChapter(Chapter chapter, OnDownloadChapterListener listener);
+
+        /** 下载多个章节 */
+        public boolean onDownloadChapters();
 	}
 
 	/** 下载某个章节的Listener */
@@ -66,7 +72,6 @@ public class YYReader {
 		public void onDownloadComplete(Chapter chapter);
 	}
 
-	private static Context mContext;
 	private static OnYYReaderListener mOnYYReaderListener;
 
 	/**
@@ -75,17 +80,9 @@ public class YYReader {
 	private YYReader() {
 	}
 
-	/** 开始阅读书籍 */
-	public static void startReader(Context ctx, OnYYReaderListener onYYReaderListener) {
-		mContext = ctx;
+	/** 初始化 */
+	public static void init(OnYYReaderListener onYYReaderListener) {
 		mOnYYReaderListener = onYYReaderListener;
-		Intent intent = new Intent(mContext, ReaderActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		mContext.startActivity(intent);
-	}
-
-	public static Context getContext() {
-		return mContext;
 	}
 
 	public static String getBookName() {
@@ -93,18 +90,18 @@ public class YYReader {
 	}
 
 	public static int getTotalChapterCount() {
-		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetTotalChapterCount() : 0;
+		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetTotalChapterCount() : -1;
 	}
 
 	public static int getUnReadChapterCount() {
-		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetUnReadChapterCount() : 0;
+		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetUnReadChapterCount() : -1;
 	}
 
 	public static int onGetCurrentChapterIndex() {
 		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetCurrentChapterIndex() : -1;
 	}
 
-	public static Chapter getCurrentChapterInfo() {
+	public static Chapter getCurrentChapter() {
 		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetCurrentChapter() : null;
 	}
 
@@ -112,7 +109,7 @@ public class YYReader {
 		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetPrevChapter() : null;
 	}
 
-	public static Chapter getNextChapterInfo() {
+	public static Chapter getNextChapter() {
 		return mOnYYReaderListener != null ? mOnYYReaderListener.onGetNextChapter() : null;
 	}
 
@@ -126,8 +123,20 @@ public class YYReader {
 		}
 	}
 
+    public static void onReadingPercent(float percent) {
+        if (mOnYYReaderListener != null) {
+            mOnYYReaderListener.onReadingPercent(percent);
+        }
+    }
+
+    public static void onCancelRead() {
+        if (mOnYYReaderListener != null) {
+            mOnYYReaderListener.onCancelRead();
+        }
+    }
+
 	public static boolean isBookOnShelf() {
-		return mOnYYReaderListener != null && mOnYYReaderListener.isBookOnShelf();
+		return mOnYYReaderListener != null && mOnYYReaderListener.onIsBookOnShelf();
 	}
 
 	public static boolean addToBookShelf() {
@@ -141,5 +150,9 @@ public class YYReader {
 	public static boolean downloadOneChapter(Chapter chapter, OnDownloadChapterListener listener) {
 		return mOnYYReaderListener != null && mOnYYReaderListener.onDownloadOneChapter(chapter, listener);
 	}
+
+    public static boolean downloadChapters() {
+        return mOnYYReaderListener != null && mOnYYReaderListener.onDownloadChapters();
+    }
 
 }

@@ -5,26 +5,19 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.doc.Document;
 import com.vincestyling.ixiaoshuo.doc.LayoutUtil;
-import com.vincestyling.ixiaoshuo.doc.OnlineDocument;
 import com.vincestyling.ixiaoshuo.event.YYReader;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.ColorScheme;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 
 public class ReadingBoard extends View implements YYReader.OnDownloadChapterListener {
-//	private static final String TAG = "ReadingBoard";
-	RenderPaint mPaint;
 	Document mDoc;
 
 	// added to support full-justification text layout
@@ -35,19 +28,12 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 		super(context, attrs);
 	}
 
-	public void init() throws Exception {
-		mDragPageShadow = (NinePatchDrawable) getContext().getResources().getDrawable(R.drawable.reading_board_page_shadow);
+	public void init(Document doc) throws Exception {
 		mDragPageShadowWidth = (int) getContext().getResources().getDimension(R.dimen.reading_board_page_shadow_width);
+		mDragPageShadow = (NinePatchDrawable) getContext().getResources().getDrawable(R.drawable.reading_board_page_shadow);
 
-		mPaint = new RenderPaint(getContext());
-
-		mDoc = new OnlineDocument(mPaint, this, new OnlineDocument.OnTurnChapterListener() {
-			@Override
-			public void onTurnChapter() {
-				getActivity().refreshStatusBar(mDoc.getReadingInfo());
-			}
-		});
-		adjustReadingProgress(YYReader.getCurrentChapterInfo());
+		mDoc = doc;
+		turnToChapter(YYReader.getCurrentChapter());
 
 		setFocusable(true);
 	}
@@ -70,44 +56,39 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 
 	private Paint.FontMetrics mFontMetrics = new Paint.FontMetrics();
 	private void drawCurrentPageContent() {
-		mPaint.getFontMetrics(mFontMetrics);
+		RenderPaint.get().getFontMetrics(mFontMetrics);
 
 		mDrawableCanvas.setBitmap(mBackupPageBitmap);
 		mDrawableCanvas.drawBitmap(mMainPageBitmap, 0, 0, null);
 
 		mDrawableCanvas.setBitmap(mMainPageBitmap);
 
-		Rect rect = new Rect();
-		getDrawingRect(rect);
-		Drawable bgDrawable = mColorScheme.getReadingDrawable(getResources(), mDrawableCanvas.getWidth(), mDrawableCanvas.getHeight());
-		bgDrawable.setBounds(rect);
-		bgDrawable.draw(mDrawableCanvas);
+		RenderPaint.get().drawReadingBg(mDrawableCanvas);
 
 		mDrawableCanvas.save(Canvas.MATRIX_SAVE_FLAG);
-		mDrawableCanvas.translate(mPaint.getCanvasPaddingLeft(), mPaint.getCanvasPaddingTop() - mFontMetrics.ascent);
+		mDrawableCanvas.translate(RenderPaint.get().getCanvasPaddingLeft(), RenderPaint.get().getCanvasPaddingTop() - mFontMetrics.ascent);
 
 		mDoc.prepareGetLines();
-		float textHeight = mPaint.getTextHeight();
 		StringBuilder sb = new StringBuilder();
 		float contentHeight = 0;
 		byte flags;
 		while (true) {
 			flags = mDoc.getNextLine(sb);
-			if(flags == 0) break;
+			if (flags == 0) break;
 
-			if((flags & Document.GET_NEXT_LINE_FLAG_SHOULD_JUSTIFY) > 0) {
-				LayoutUtil.layoutTextJustified(sb, mPaint.getRenderWidth(), mPaint, 0, contentHeight, mLayoutPositions);
-				mDrawableCanvas.drawPosText(sb.toString(), mLayoutPositions, mPaint);
+			if ((flags & Document.GET_NEXT_LINE_FLAG_SHOULD_JUSTIFY) > 0) {
+				LayoutUtil.layoutTextJustified(sb, RenderPaint.get(), 0, contentHeight, mLayoutPositions);
+				mDrawableCanvas.drawPosText(sb.toString(), mLayoutPositions, RenderPaint.get());
 			} else {
-				mDrawableCanvas.drawText(sb, 0, sb.length(), 0, contentHeight, mPaint);
+				mDrawableCanvas.drawText(sb, 0, sb.length(), 0, contentHeight, RenderPaint.get());
 			}
 			sb.delete(0, sb.length());
 
-			contentHeight += textHeight;
-			if((flags & Document.GET_NEXT_LINE_FLAG_PARAGRAPH_ENDS) > 0)
-				contentHeight += mPaint.getParagraphSpacing();
+			contentHeight += RenderPaint.get().getTextHeight();
+			if ((flags & Document.GET_NEXT_LINE_FLAG_PARAGRAPH_ENDS) > 0)
+				contentHeight += RenderPaint.get().getParagraphSpacing();
 			else
-				contentHeight += mPaint.getLineSpacing();
+				contentHeight += RenderPaint.get().getLineSpacing();
 		}
 
 		mDoc.calculatePagePosition();
@@ -152,13 +133,20 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 		return turnNextPage(false);
 	}
 
-	private ColorScheme mColorScheme;
 	public void setColorScheme(ColorScheme colorScheme) {
-		if (mColorScheme != colorScheme) {
-			mPaint.setColor(colorScheme.getTextColor());
-			mColorScheme = colorScheme;
-			forceRedraw(false);
-		}
+		RenderPaint.get().setColor(colorScheme.getTextColor());
+
+		Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		Drawable bgDrawable = colorScheme.getSchemeDrawable(getResources());
+		bgDrawable.setBounds(0, 0, display.getWidth(), display.getHeight());
+		RenderPaint.get().setReadingBg(bgDrawable);
+
+		forceRedraw(false);
+	}
+
+	public void adjustTextSize(int textSize) {
+		RenderPaint.get().setTextSize(textSize);
+		forceRedraw(false);
 	}
 
 	private void slideSmoothly(float velocityX) {
@@ -384,7 +372,7 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 
 	@Override
 	public void onDownloadStart(Chapter chapter) {
-		mLoadingPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, true);
+		mLoadingPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, false);
 		mDoc.onDownloadStart();
 	}
 
@@ -396,7 +384,7 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 
 		if (chapter.isNativeChapter()) {
 			mDoc.onDownloadComplete(true, willAdjust);
-			if (willAdjust) adjustReadingProgress(chapter);
+			if (willAdjust) turnToChapter(chapter);
 		} else {
 			mDoc.onDownloadComplete(false, willAdjust);
 			if (willAdjust) getActivity().showToastMsg(R.string.without_data);
@@ -408,14 +396,14 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 		return getActivity().onKeyUp(keyCode, event);
 	}
 
-	public void adjustReadingProgress(Chapter chapter) {
-		if (mDoc.adjustReadingProgress(chapter)) forceRedraw(true);
+	public void turnToChapter(Chapter chapter) {
+		if (mDoc.turnToChapter(chapter)) forceRedraw(true);
 	}
 
-	public float calculateReadingProgress() {
-		float percentage = mDoc.calculateReadingProgress();
-		return percentage > 100 ? 100 : percentage;
-	}
+//	public float calculateReadingProgress() {
+//		float percentage = mDoc.calculateReadingProgress();
+//		return percentage > 100 ? 100 : percentage;
+//	}
 
 	private ReaderActivity getActivity() {
 		return (ReaderActivity) getContext();

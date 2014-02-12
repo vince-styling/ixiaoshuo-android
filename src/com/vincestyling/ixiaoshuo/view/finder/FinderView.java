@@ -93,7 +93,6 @@ public class FinderView extends ViewBuilder {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		Log.i("YYReader_FinderView", "onKeyDown");
 		return mLotMainContent.onKeyDown(keyCode, event);
 	}
 

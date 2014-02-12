@@ -119,7 +119,7 @@ public class ChapterListView extends ViewBuilder implements AdapterView.OnItemCl
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		getActivity().getReadingBoard().adjustReadingProgress((Chapter) parent.getItemAtPosition(position));
+		getActivity().getReadingBoard().turnToChapter((Chapter) parent.getItemAtPosition(position));
 		pushBack();
 	}
 

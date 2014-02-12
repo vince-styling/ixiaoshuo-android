@@ -18,7 +18,10 @@ public class FinderMenuGridView extends GridView {
 
 	public FinderMenuGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+	}
 
+	@Override
+	protected void initGrid() {
 		putItem(new GridItem(R.drawable.finder_new_on, R.drawable.finder_new_off, new OnGridItemClickListener(MENU_NEWLY) {
 			public void onGridItemClick() {
 				mFinderView.showView(buildViewBuilder(getGridItemId()));

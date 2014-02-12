@@ -70,7 +70,7 @@ public class BrightnessSetting extends ReaderViewBuilder implements SeekBar.OnSe
 			mBtnLight.setPressed(true);
 			mBtnDark.setPressed(false);
 		}
-		getActivity().setColorScheme(getActivity().getPreferences().getColorScheme());
+//		getActivity().setColorScheme(getActivity().getPreferences().getColorScheme());
 
 		return true;
 	}

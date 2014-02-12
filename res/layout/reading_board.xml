@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent" android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ixiaoshuo="http://schemas.android.com/apk/res/com.vincestyling.ixiaoshuo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.vincestyling.ixiaoshuo.ui.ReadingBoard
             android:id="@+id/readingBoard"
             android:layout_width="match_parent" android:layout_height="match_parent" />
 
-    <TextView android:id="@+id/txvReadingInfo"
+    <TextView android:id="@+id/txvTopInfo"
               android:layout_width="match_parent" android:layout_height="wrap_content"
               android:gravity="center_horizontal" android:layout_alignParentTop="true"
               android:singleLine="true" android:ellipsize="middle" android:textSize="14sp"
@@ -37,8 +40,7 @@
 
         </LinearLayout>
 
-
-        <TextView android:id="@+id/txvRemainChapterInfo"
+        <TextView android:id="@+id/txvBottomInfo"
                   android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:layout_alignParentRight="true" android:singleLine="true" android:textSize="14sp" />
 
@@ -50,22 +52,19 @@
             android:id="@+id/lotReadingHeadbar"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:gravity="center_vertical"
             android:layout_alignParentTop="true"
             android:visibility="gone"
             android:background="@drawable/reading_board_headbar_bg">
 
         <Button android:id="@+id/btnExit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/reading_board_arrow"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/reading_board_arrow_selector"
                 android:layout_alignParentLeft="true" />
 
         <Button android:id="@+id/btnGotoVoiceBook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
                 android:background="@drawable/reading_board_headset_selector"
                 android:visibility="gone"
                 android:layout_alignParentRight="true" />
@@ -82,7 +81,8 @@
         <com.vincestyling.ixiaoshuo.ui.ReadingMenu
                 android:id="@+id/readingMainMenu"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="107dp"
+                ixiaoshuo:columnCount="3"
                 android:background="@drawable/reading_board_menu_bg"
                 android:visibility="gone" />
 

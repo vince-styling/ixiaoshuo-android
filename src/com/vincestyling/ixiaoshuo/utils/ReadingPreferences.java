@@ -12,6 +12,12 @@ public class ReadingPreferences {
 	private int mColorSchemeIndex;
 	private static final String COLOR_SCHEME_INDEX = "colorSchemeIndex";
 
+	private int mTextSize;
+	private static final String TEXT_SIZE = "textSize";
+	private static final int TEXT_SIZE_ADJUST_RANGE = 2;
+	private int mMaxTextSize;
+	private int mMinTextSize;
+
 	private int mBrightness;
 	private static final String BRIGHTNESS = "brightness";
 	public static final int MIN_BRIGHT = 5;                 /** 防止灭屏的最小亮度 */
@@ -25,20 +31,29 @@ public class ReadingPreferences {
 	public ReadingPreferences(Context ctx) {
 		mCtx = ctx;
 
-		mColorSchemes = new ColorScheme[] {
-				new ColorScheme(R.drawable.reading_bg_yellow, 0xff543927, false),
-		};
-//		mDarkColorScheme = new ColorScheme(R.drawable.reading_bg_dark, 0xff818e90);
-//		mDarkColorScheme = new ColorScheme(0xff2C2C2C, 0xffa6a6a6, true);
-		mDarkColorScheme = new ColorScheme(0xff000000, 0xff444444, true);
-
 		SharedPreferences sharedPreferences = getPreferences();
 
-		mColorSchemeIndex = sharedPreferences.getInt(COLOR_SCHEME_INDEX, 0);
+		mTextSize = sharedPreferences.getInt(TEXT_SIZE, 0);
+		if (mTextSize == 0) {
+			mTextSize = mCtx.getResources().getDimensionPixelSize(R.dimen.reading_board_default_text_size);
+		}
+		mMinTextSize = mCtx.getResources().getDimensionPixelSize(R.dimen.reading_board_min_text_size);
+		mMaxTextSize = mCtx.getResources().getDimensionPixelSize(R.dimen.reading_board_max_text_size);
+
+		mColorSchemes = new ColorScheme[] {
+				new ColorScheme(mCtx.getResources().getString(R.string.reading_menu_scheme_green1), 0xffdfeed6, 0xff1e2b16, true),
+				new ColorScheme(mCtx.getResources().getString(R.string.reading_menu_scheme_yellow), R.drawable.reading_bg_yellow, 0xff543927, false),
+				new ColorScheme(mCtx.getResources().getString(R.string.reading_menu_scheme_green), R.drawable.reading_bg_green, 0xff546b56, false),
+				new ColorScheme(mCtx.getResources().getString(R.string.reading_menu_scheme_blue), R.drawable.reading_bg_blue, 0xff3e506a, false),
+		};
+		int defaultColorSchemeIndex = 1;
+		mColorSchemeIndex = sharedPreferences.getInt(COLOR_SCHEME_INDEX, -1);
+		if (mColorSchemeIndex == -1) mColorSchemeIndex = defaultColorSchemeIndex;
+
+		mDarkColorScheme = new ColorScheme("", 0xff000000, 0xff444444, true);
+		mIsDarkMode = sharedPreferences.getBoolean(DARK_MODE, false);
 
 		mBrightness = sharedPreferences.getInt(BRIGHTNESS, -1);
-
-		mIsDarkMode = sharedPreferences.getBoolean(DARK_MODE, false);
 	}
 
 	public SharedPreferences getPreferences() {
@@ -70,6 +85,28 @@ public class ReadingPreferences {
 	public void setIsDarkMode(boolean isDarkMode) {
 		putBoolean(DARK_MODE, isDarkMode);
 		mIsDarkMode = isDarkMode;
+	}
+
+	public boolean increaseTextSize() {
+		if (mTextSize + TEXT_SIZE_ADJUST_RANGE <= mMaxTextSize) {
+			mTextSize += TEXT_SIZE_ADJUST_RANGE;
+			putInt(TEXT_SIZE, mTextSize);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean decreaseTextSize() {
+		if (mTextSize - TEXT_SIZE_ADJUST_RANGE >= mMinTextSize) {
+			mTextSize -= TEXT_SIZE_ADJUST_RANGE;
+			putInt(TEXT_SIZE, mTextSize);
+			return true;
+		}
+		return false;
+	}
+
+	public int getTextSize() {
+		return mTextSize;
 	}
 
 	private void putInt(String key, int value) {

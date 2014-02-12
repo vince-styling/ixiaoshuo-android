@@ -18,7 +18,10 @@ public class MainMenuGridView extends GridView {
 
 	public MainMenuGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+	}
 
+	@Override
+	protected void initGrid() {
 		putItem(new GridItem(R.drawable.menu_bookshelf_on, R.drawable.menu_bookshelf_off, new OnGridItemClickListener(MENU_BOOKSHELF) {
 			public void onGridItemClick() {
 				getActivity().showMenuView(getGridItemId());

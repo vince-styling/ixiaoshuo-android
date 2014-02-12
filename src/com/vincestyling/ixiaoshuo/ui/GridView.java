@@ -21,9 +21,8 @@ public abstract class GridView extends View {
 		mColumnCount = typeArray.getInteger(R.styleable.GridView_columnCount, 0);
 		typeArray.recycle();
 
-		mPaddingTop = getResources().getDimensionPixelSize(R.dimen.globalMenuPadding);
-
 		mItems = new SparseArray<GridItem>();
+		initGrid();
 	}
 
 	private SparseArray<GridItem> mItems;
@@ -31,11 +30,11 @@ public abstract class GridView extends View {
 	// we don't specify LineCount, because we use ColumnCount to calculate it
 	private int mColumnCount;
 
-	// at first, we don't need padding other such as paddingLeft, paddingRight, paddingBottom
-	private int mPaddingTop;
-
-	// the selected itemId, notice : only selectItem method can modify it
+	// the selected itemId
 	private int mSelectedItemId;
+
+	// the selected temp itemId, when TouchEvent.onDown use
+	private int mTempSelectedItemId;
 
 	// highlight drawable, must not transparent, allows nine-patch or normal image
 	protected Drawable mHighlightDrawable;
@@ -45,6 +44,7 @@ public abstract class GridView extends View {
 
 	private int mItemWidth, mItemHeight;
 
+	// is draw the default cache bitmap
 	private boolean mInitialized;
 
 	private synchronized void init() {
@@ -102,9 +102,9 @@ public abstract class GridView extends View {
 	}
 
 	private void highlightItem(Canvas canvas) {
-		if (mSelectedItemId < 1) return;
+		if (mTempSelectedItemId < 1) return;
 
-		int index = mItems.indexOfKey(mSelectedItemId);
+		int index = mItems.indexOfKey(mTempSelectedItemId);
 		Rect itemRect = getItemRect(index);
 		canvas.save(Canvas.CLIP_SAVE_FLAG);
 		canvas.clipRect(itemRect);
@@ -126,22 +126,41 @@ public abstract class GridView extends View {
 		highlightItem(canvas);
 	}
 
+	protected abstract void initGrid();
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
-			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_DOWN:
 				for (int index = 0; index < mItems.size(); index++) {
 					Rect itemRect = getItemRect(index);
 					if (itemRect.contains((int) event.getX(), (int) event.getY())) {
 						int itemId = mItems.keyAt(index);
-						if (selectItem(itemId)) mItems.get(itemId).performClick();
+						if (itemId == mTempSelectedItemId) return false;
+						mTempSelectedItemId = itemId;
+						invalidate();
 						break;
 					}
 				}
 				return true;
+			case MotionEvent.ACTION_MOVE:
+				int index = mItems.indexOfKey(mTempSelectedItemId);
+				if (getItemRect(index).contains((int) event.getX(), (int) event.getY())) return true;
+				mTempSelectedItemId = mSelectedItemId;
+				invalidate();
+				return false;
+			case MotionEvent.ACTION_UP:
+				if (mSelectedItemId != mTempSelectedItemId) {
+					mSelectedItemId = mTempSelectedItemId;
+					mItems.get(mSelectedItemId).performClick();
+					afterEvent();
+				}
+				return false;
 		}
 		return true;
 	}
+
+	protected void afterEvent() {}
 
 	public void putItem(GridItem gridItem) {
 		mItems.put(gridItem.getItemId(), gridItem);
@@ -149,6 +168,7 @@ public abstract class GridView extends View {
 
 	public boolean selectItem(int itemId) {
 		if (mSelectedItemId != itemId) {
+			mTempSelectedItemId = itemId;
 			mSelectedItemId = itemId;
 			invalidate();
 			return true;

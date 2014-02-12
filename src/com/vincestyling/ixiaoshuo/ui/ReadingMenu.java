@@ -11,14 +11,16 @@ import com.vincestyling.ixiaoshuo.event.OnGridItemClickListener;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 import com.vincestyling.ixiaoshuo.view.ViewBuilder;
 import com.vincestyling.ixiaoshuo.view.reader.BrightnessSetting;
+import com.vincestyling.ixiaoshuo.view.reader.FontSetting;
+import com.vincestyling.ixiaoshuo.view.reader.StyleSetting;
 
 public class ReadingMenu extends GridView implements Animation.AnimationListener {
-//	public static final int MENU_FONT = 10;
-//	public static final int MENU_STYLE = 20;
-	public static final int MENU_BRIGHTNESS = 30;
-	public static final int MENU_CATALOG = 40;
-//	public static final int MENU_PROGRESS = 50;
-	public static final int MENU_MORE = 60;
+	public static final int MENU_CATALOG     = 10;
+	public static final int MENU_BRIGHTNESS  = 20;
+	public static final int MENU_ORIENTATION = 30;
+	public static final int MENU_FONT        = 40;
+	public static final int MENU_STYLE       = 50;
+	public static final int MENU_MORE        = 60;
 
 	private ScrollLayout mLotSecondaryMenu;
 	private ViewBuilder.OnShowListener mShowListener;
@@ -31,13 +33,66 @@ public class ReadingMenu extends GridView implements Animation.AnimationListener
 		mInAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_bottom_in);
 	}
 
-	private void initMenu() {
+	@Override
+	protected void initGrid() {
 		if (getItemSize() > 0) return;
-		initGrid();
+
+		putItem(new GridItem(R.drawable.reading_board_setting_font_on, R.drawable.reading_board_setting_font_off, new OnGridItemClickListener(MENU_FONT) {
+			public void onGridItemClick() {
+				mLotSecondaryMenu.showView(new FontSetting(getActivity(), mShowListener));
+			}
+		}));
+
+		putItem(new GridItem(R.drawable.reading_board_setting_style_on, R.drawable.reading_board_setting_style_off, new OnGridItemClickListener(MENU_STYLE) {
+			public void onGridItemClick() {
+				mLotSecondaryMenu.showView(new StyleSetting(getActivity(), mShowListener));
+			}
+		}));
+
+		putItem(new GridItem(R.drawable.reading_board_setting_brightness_on, R.drawable.reading_board_setting_brightness_off, new OnGridItemClickListener(MENU_BRIGHTNESS) {
+			public void onGridItemClick() {
+				mLotSecondaryMenu.showView(new BrightnessSetting(getActivity(), mShowListener));
+			}
+		}));
+
+		putItem(new GridItem(R.drawable.reading_board_setting_catalog_on, R.drawable.reading_board_setting_catalog_off, new OnGridItemClickListener(MENU_CATALOG) {
+			public void onGridItemClick() {
+				getActivity().showChapterListView();
+			}
+		}));
+
+		putItem(new GridItem(R.drawable.reading_board_setting_orientation_on, R.drawable.reading_board_setting_orientation_off, new OnGridItemClickListener(MENU_ORIENTATION) {
+			public void onGridItemClick() {
+				// TODO : apply the orientation setting
+//				if (SettingTable.isReadPortMode(getActivity())) {
+//					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//					SettingTable.setIsReadPortMode(getActivity(), false);
+//				} else {
+//					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//					SettingTable.setIsReadPortMode(getActivity(), true);
+//				}
+			}
+		}));
+
+		putItem(new GridItem(R.drawable.reading_board_setting_more_on, R.drawable.reading_board_setting_more_off, new OnGridItemClickListener(MENU_MORE) {
+			public void onGridItemClick() {
+				// TODO : implement global settings
+//				Intent intent = new Intent(getActivity(), SettingActivity.class);
+//				getActivity().startActivity(intent);
+//				getActivity().getReadingMenu().hideMenu();
+			}
+		}));
+
+		mHighlightDrawable = getResources().getDrawable(R.drawable.reading_board_menu_item_pressed);
+	}
+
+	@Override
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		super.onLayout(changed, left, top, right, bottom);
 
 		mLotSecondaryMenu = (ScrollLayout) getActivity().findViewById(R.id.lotSecondaryMenu);
 		// avoid touch event pass to ReadingBoard, trigger turn page operation
-		mLotSecondaryMenu.setOnTouchListener(new OnTouchListener() {
+		mLotSecondaryMenu.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				return true;
@@ -49,53 +104,6 @@ public class ReadingMenu extends GridView implements Animation.AnimationListener
 				showSecondaryMenu();
 			}
 		};
-	}
-
-	private void initGrid() {
-//		putItem(new GridItem(R.drawable.reading_board_setting_font_on, R.drawable.reading_board_setting_font_off, new OnGridItemClickListener(MENU_FONT) {
-//			public void onGridItemClick() {
-//				mLotSecondaryMenu.showView(new FontSetting(getActivity(), mShowListener));
-//			}
-//		}));
-
-//		putItem(new GridItem(R.drawable.reading_board_setting_style_on, R.drawable.reading_board_setting_style_off, new OnGridItemClickListener(MENU_STYLE) {
-//			public void onGridItemClick() {
-//				mLotSecondaryMenu.showView(new StyleSetting(getActivity(), mShowListener));
-//			}
-//		}));
-
-		putItem(new GridItem(R.drawable.reading_board_setting_catalog_on, R.drawable.reading_board_setting_catalog_off, new OnGridItemClickListener(MENU_CATALOG) {
-			public void onGridItemClick() {
-				getActivity().showChapterListView();
-			}
-		}));
-
-		putItem(new GridItem(R.drawable.reading_board_setting_brightness_on, R.drawable.reading_board_setting_brightness_off, new OnGridItemClickListener(MENU_BRIGHTNESS) {
-			public void onGridItemClick() {
-				mLotSecondaryMenu.showView(new BrightnessSetting(getActivity(), mShowListener));
-			}
-		}));
-
-//		putItem(new GridItem(R.drawable.reading_board_setting_progress_on, R.drawable.reading_board_setting_progress_off, new OnGridItemClickListener(MENU_PROGRESS) {
-//			public void onGridItemClick() {
-//				mLotSecondaryMenu.showView(new ProgressSetting(getActivity(), mShowListener));
-//			}
-//		}));
-
-		putItem(new GridItem(R.drawable.reading_board_setting_more_on, R.drawable.reading_board_setting_more_off, new OnGridItemClickListener(MENU_MORE) {
-			public void onGridItemClick() {
-				getActivity().showToastMsg("点击了更多菜单");
-				hideSecondaryMenu();
-			}
-		}));
-
-		mHighlightDrawable = getResources().getDrawable(R.drawable.reading_board_menu_item_pressed);
-	}
-
-	@Override
-	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-		initMenu();
-		super.onLayout(changed, left, top, right, bottom);
 	}
 
 	public boolean showMenu() {
@@ -147,7 +155,7 @@ public class ReadingMenu extends GridView implements Animation.AnimationListener
 	public void onAnimationRepeat(Animation animation) {
 	}
 
-	public final ReaderActivity getActivity() {
+	public ReaderActivity getActivity() {
 		return (ReaderActivity) getContext();
 	}
 
