@@ -1,145 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/search_hot_key_search_result" xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/lotKeywordSearch"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:background="#f8f4ed">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/title_bg_layer"
-        android:gravity="center">
+        style="@style/top_titlebar">
 
         <TextView
-            android:id="@+id/search_title_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/title_search_txt"
-            android:textColor="#F5FFFA"
-            android:textSize="@dimen/search_title_txt_size" >
-        </TextView>
+            style="@style/top_titlebar_txv"
+            android:text="@string/search_head_title"/>
+
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:background="@drawable/book_shelf_bg_layer"
+            android:layout_height="55dp"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:background="@drawable/book_shelf_deep_bg_layer">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:background="@drawable/search_edit_bg"
-                android:gravity="center"
-                android:orientation="horizontal" >
+                android:background="@drawable/search_input_bar_bg"
+                android:gravity="center">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="15dp"
+                    android:id="@+id/lotBookType"
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="horizontal" >
+                    android:background="@drawable/search_input_term_bg">
 
-                    <com.vincestyling.ixiaoshuo.view.search.SpinnerButton
-                        android:id="@+id/search_type"
+                    <TextView
+                        android:id="@+id/txvBookType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/type_all"
-                        android:textColor="@color/search_type_txt_color"
-                        android:textSize="@dimen/search_type_size" />
+                        android:text="@string/search_type_all"
+                        android:textSize="17sp"
+                        android:textColor="#4d4d4d"/>
 
                     <ImageView
-                        android:id="@+id/arrow"
+                        android:id="@+id/imvSearchArrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:background="@drawable/search_type_down" />
+                        android:background="@drawable/search_type_arrow" />
+
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/edit_bg" />
-
                 <EditText
-                    android:id="@+id/search_wrod_edit"
-                    android:layout_width="200dp"
+                    android:id="@+id/edtSearchKeyword"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="5dp"
                     android:singleLine="true"
-                    android:gravity="center"
+                    android:inputType="text"
                     android:background="@null" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:id="@+id/lotGoSearch"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_marginRight="5dp"
                     android:gravity="center"
-                    android:orientation="horizontal" >
+                    android:background="@drawable/search_input_split">
 
                     <ImageView
-                        android:id="@+id/arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/edit_bg" />
+                        android:background="@drawable/book_search_btn_selector" />
 
-                    <ImageView
-                        android:id="@+id/search_bt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="15dp"
-                        android:background="@drawable/book_search_btn_selector"
-                        android:gravity="center_vertical" />
                 </LinearLayout>
+
             </LinearLayout>
-        </RelativeLayout>
 
-        <com.vincestyling.ixiaoshuo.view.search.KeywordsFlow
-            android:id="@+id/keywordsflow"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:focusableInTouchMode="true" 
-            />
+        </LinearLayout>
 
-    <com.vincestyling.ixiaoshuo.ui.ScrollLayout
-        android:id="@+id/search_result_list"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent" />
-
-    <RelativeLayout
-        android:id="@+id/lotNetworkUnavaliable"
-        android:layout_width="320dp"
-        android:layout_height="200dp"
-        android:layout_centerInParent="true"
-        android:visibility="gone" >
-
-        <ImageView
+        <com.vincestyling.ixiaoshuo.ui.ScrollLayout
+            android:id="@+id/lotSearchContent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/network_unavaliable_tip" />
+            android:layout_height="match_parent"/>
 
-        <Button
-            android:id="@+id/btnFinderRetry"
-            android:layout_width="100dp"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/network_unavaliable_btn_retry_selector" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

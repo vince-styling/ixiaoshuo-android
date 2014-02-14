@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lotSearchTerms"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btnTypeAll"
+        style="@style/search_term_btn"
+        android:text="@string/search_type_all"
+        android:background="@drawable/search_input_term_choice_top_bg"/>
+
+    <Button
+        android:id="@+id/btnTypeText"
+        style="@style/search_term_btn"
+        android:text="@string/search_type_text"
+        android:background="@drawable/search_input_term_choice_middle_bg"/>
+
+    <Button
+        android:id="@+id/btnTypeVoice"
+        style="@style/search_term_btn"
+        android:text="@string/search_type_voice"
+        android:background="@drawable/search_input_term_choice_bottom_bg"/>
+
+</LinearLayout>

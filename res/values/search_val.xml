@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="search_head_title">小说搜索</string>
+    <string name="search_type_all">全部</string>
+    <string name="search_type_text">文字</string>
+    <string name="search_type_voice">有声</string>
+    <string name="search_result_head_title">搜索：%s</string>
+    <string name="search_result_info">为您奋力搜索到 %d 个匹配结果：</string>
+    <string name="please_input_key_word">请输入搜索关键字</string>
+
+    <style name="search_term_btn">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#737373</item>
+    </style>
+
+</resources>
