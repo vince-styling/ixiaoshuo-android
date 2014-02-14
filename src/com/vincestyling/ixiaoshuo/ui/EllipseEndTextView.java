@@ -16,12 +16,19 @@ import java.util.ArrayList;
  * but origin version has some problem, so I did change it
  * @author Vince
  */
-public class EllipseEndTextView extends View implements View.OnClickListener {
-	private int mCollapseBackground;
+public class EllipseEndTextView extends View {
+	// 行距
 	private int mLineSpacing;
+
+	// 收起状态时，最后一行空几个字
+	private int mLastLineCutWordCount;
+
+	// 在OnMeasure时会修改mExpand来标识是否展开，通过onMeasureDone来通知外部做处理
+	private OnMeasureDoneListener mOnMeasureDoneListener;
 
 	public EllipseEndTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+
 		TypedArray typeArray = context.obtainStyledAttributes(attrs, R.styleable.EllipseEndTextView);
 
 		mStrEllipsis = "...";
@@ -31,7 +38,8 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 		mPaint = new PlainTextPaint();
 		mPaint.setColor(typeArray.getColor(R.styleable.EllipseEndTextView_textColor, Color.BLACK));
 		mPaint.setTextSize(typeArray.getDimensionPixelSize(R.styleable.EllipseEndTextView_textSize, 0));
-		mCollapseBackground = typeArray.getResourceId(R.styleable.EllipseEndTextView_collapseBackground, 0);
+		mLastLineCutWordCount = typeArray.getInteger(R.styleable.EllipseEndTextView_lastLineCutWordCount, 0);
+
 		typeArray.recycle();
 	}
 
@@ -57,10 +65,7 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
-		if (!mExpanded) {
-			setBackgroundResource(mCollapseBackground);
-			setOnClickListener(this);
-		}
+		if (mOnMeasureDoneListener != null) mOnMeasureDoneListener.onMeasureDone(this);
 	}
 
 	/**
@@ -129,51 +134,54 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 
 	private int breakWidth(int availableWidth) {
 		int maxWidth = availableWidth - getPaddingLeft() - getPaddingRight();
-		mLines = new ArrayList<int[]>(mMaxLineCount * 2);
+
+		// we assume the width always equals first measure, so we just measure once
+		if (mLines == null) {
+
+			// If maxWidth is -1, interpret that as meaning to render the string on a single
+			// line. Skip everything.
+			if (maxWidth == -1) {
+				mLines = new ArrayList<int[]>(1);
+				mLines.add(new int[]{0, mText.length()});
+			} else {
+				int index = 0;
+				int newlineIndex = 0;
+				int endCharIndex = 0;
+				mLines = new ArrayList<int[]>(mMaxLineCount * 2);
+
+				while (index < mText.length()) {
+					if (index == newlineIndex) {
+						newlineIndex = mText.indexOf(StringUtil.NEW_LINE_STR, newlineIndex);
+						endCharIndex = (newlineIndex != -1) ? newlineIndex : mText.length();
+					}
+
+					int charCount = mPaint.breakText(mText, index, endCharIndex, maxWidth, false);
+					if (charCount > 0) {
+						mLines.add(new int[]{index, index + charCount});
+						index += charCount;
+					}
+
+					if (index == newlineIndex) {
+						newlineIndex++;
+						index++;
+					}
+				}
+			}
+		}
+
 		int widthUsed;
-
-		// If maxWidth is -1, interpret that as meaning to render the string on a single
-		// line. Skip everything.
-		if (maxWidth == -1) {
-			mLines.add(new int[]{0, mText.length()});
-			widthUsed = (int) (mPaint.measureText(mText) + 0.5f);
-		} else {
-			int index = 0;
-			int newlineIndex = 0;
-			int endCharIndex = 0;
-
-			while (index < mText.length()) {
-				if (index == newlineIndex) {
-					newlineIndex = mText.indexOf(StringUtil.NEW_LINE_STR, newlineIndex);
-					endCharIndex = (newlineIndex != -1) ? newlineIndex : mText.length();
-				}
-
-//				boolean needIndent = index == 0 || mText.charAt(index - 1) == StringUtil.NEW_LINE_CHAR;
-				int charCount = mPaint.breakText(mText, index, endCharIndex, maxWidth, false);
-				if (charCount > 0) {
-					mLines.add(new int[]{index, index + charCount});
-					index += charCount;
-				}
-
-				if (index == newlineIndex) {
-					newlineIndex++;
-					index++;
-				}
-			}
-
-			// If we required only one line, return its length, otherwise we used
-			// whatever the maxWidth supplied was.
-			switch (mLines.size()) {
-				case 1:
-					widthUsed = (int) (mPaint.measureText(mText) + 0.5f);
-					break;
-				case 0:
-					widthUsed = 0;
-					break;
-				default:
-					widthUsed = maxWidth;
-					break;
-			}
+		// If we required only one line, return its length, otherwise we used
+		// whatever the maxWidth supplied was.
+		switch (mLines.size()) {
+			case 1:
+				widthUsed = (int) (mPaint.measureText(mText) + 0.5f);
+				break;
+			case 0:
+				widthUsed = 0;
+				break;
+			default:
+				widthUsed = maxWidth;
+				break;
 		}
 
 		return widthUsed + getPaddingLeft() + getPaddingRight();
@@ -193,7 +201,8 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 			if (!mExpanded && mDrawLineCount - i == 1) {
 				float lineDrawWidth = mPaint.measureText(sb);
 				float ellipsisWidth = mPaint.measureText(mStrEllipsis);
-				while (lineDrawWidth + ellipsisWidth > renderWidth) {
+				int lastLineRenderWidth = renderWidth - mPaint.getTextWidth() * mLastLineCutWordCount;
+				while (lineDrawWidth + ellipsisWidth > lastLineRenderWidth) {
 					sb.deleteCharAt(sb.length() - 1);
 					lineDrawWidth = mPaint.measureText(sb);
 				}
@@ -209,8 +218,7 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 		}
 	}
 
-	@Override
-	public void onClick(View v) {
+	public void elipseSwitch() {
 		if (mExpanded) collapse(); else expand();
 	}
 
@@ -228,6 +236,14 @@ public class EllipseEndTextView extends View implements View.OnClickListener {
 		mExpanded = false;
 		requestLayout();
 		invalidate();
+	}
+
+	public void setOnMeasureDoneListener(OnMeasureDoneListener onMeasureDoneListener) {
+		mOnMeasureDoneListener = onMeasureDoneListener;
+	}
+
+	public interface OnMeasureDoneListener {
+		void onMeasureDone(View v);
 	}
 
 }

@@ -20,6 +20,7 @@
     <string name="download_notify_start">正在下载：0%</string>
     <string name="download_notify">正在下载：%1$.1f%%</string>
     <string name="no_summary">[暂无简介]</string>
+    <string name="book_detail_summary_prefix">简介：\n%s</string>
     <string name="added_to_bookshelf">%1$s 已加入书架</string>
     <string name="book_direcotry">目录</string>
     <string name="read_book">阅读</string>
@@ -28,6 +29,9 @@
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
     <string name="last_update_time">最近更新：</string>
+
+    <string name="book_detail_summary_collapse">收起</string>
+    <string name="book_detail_summary_expand">展开</string>
 
     <string name="book_status_tip_newly">新</string>
     <string name="book_status_tip_finished">完</string>

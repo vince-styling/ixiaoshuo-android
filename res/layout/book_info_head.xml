@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:vince="http://schemas.android.com/apk/res/com.vincestyling.ixiaoshuo"
+              xmlns:ixiaoshuo="http://schemas.android.com/apk/res/com.vincestyling.ixiaoshuo"
               android:id="@+id/linear_detail_header"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -143,7 +143,7 @@
                     android:text="@string/read_book"
                     android:textSize="18sp"
                     android:textColor="#ffffff"
-                    android:background="@drawable/book_info_btn_green_selector" />
+                    android:background="@drawable/book_info_btn_green" />
 
                 <Button
                     android:id="@+id/btnDownloadAll"
@@ -153,7 +153,7 @@
                     android:text="@string/download_all"
                     android:textSize="18sp"
                     android:textColor="#ffffff"
-                    android:background="@drawable/book_info_btn_red_selector" />
+                    android:background="@drawable/book_info_btn_red" />
             </LinearLayout>
 
         </LinearLayout>
@@ -165,16 +165,36 @@
 
     </LinearLayout>
 
-    <com.vincestyling.ixiaoshuo.ui.EllipseEndTextView
-        android:id="@+id/txvBookSummary"
+    <RelativeLayout
+        android:id="@+id/lotBookSummary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        vince:textSize="15sp"
-        vince:textColor="#2b2b2b"
-        vince:maxLines="4"
-        vince:lineSpacing="10dp"
-        vince:collapseBackground="@drawable/book_info_btn_expand_selector" />
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <com.vincestyling.ixiaoshuo.ui.EllipseEndTextView
+            android:id="@+id/txvBookSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ixiaoshuo:textSize="14.5sp"
+            ixiaoshuo:textColor="#292d29"
+            ixiaoshuo:maxLines="4"
+            ixiaoshuo:lineSpacing="5dp"
+            ixiaoshuo:lastLineCutWordCount="3"/>
+
+        <TextView
+            android:id="@+id/btnSummaryExpand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/txvBookSummary"
+            android:text="@string/book_detail_summary_expand"
+            android:textSize="14sp"
+            android:textColor="#909090"
+            android:drawableRight="@drawable/book_detail_arrow_down"
+            android:drawablePadding="2dp"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

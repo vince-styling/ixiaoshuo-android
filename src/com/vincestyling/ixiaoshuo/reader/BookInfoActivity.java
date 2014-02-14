@@ -64,7 +64,11 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 	private Button mButtonAnotherType;
 	private Button mButtonGotoRead;
 	private Button mButtonDownload;
+
 	private EllipseEndTextView mBookSummary;
+	private View mLotBookSummary;
+	private TextView mBtnSummaryExpand;
+
 	private TextView mTxvUpdateTime;
 
 	@Override
@@ -93,8 +97,11 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 		mButtonAnotherType = (Button) findViewById(R.id.imvBookAnotherType);
 		mButtonGotoRead = (Button) findViewById(R.id.btnGotoRead);
 		mButtonDownload = (Button) findViewById(R.id.btnDownloadAll);
-		mBookSummary = (EllipseEndTextView) findViewById(R.id.txvBookSummary);
 		mTxvUpdateTime = (TextView) findViewById(R.id.txvUpdateTime);
+
+		mBookSummary = (EllipseEndTextView) findViewById(R.id.txvBookSummary);
+		mBtnSummaryExpand = (TextView) findViewById(R.id.btnSummaryExpand);
+		mLotBookSummary = findViewById(R.id.lotBookSummary);
 
 		mButtonGotoRead.setOnClickListener(this);
 		mButtonDownload.setOnClickListener(this);
@@ -110,13 +117,22 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 	@Override
 	public void onClick(View view) {
 		if (view.equals(mButtonGotoRead)) {
-			// 阅读
 			processReadBook();
-
-		} else if (view.equals(mButtonDownload)) {
-			// 下载全部
+		}
+		else if (view.equals(mButtonDownload)) {
 			processDownloadAll();
-
+		}
+		else if (view.equals(mLotBookSummary)) {
+			mBookSummary.setOnMeasureDoneListener(new EllipseEndTextView.OnMeasureDoneListener() {
+				@Override
+				public void onMeasureDone(View v) {
+					int resId = mBookSummary.isExpanded() ? R.string.book_detail_summary_collapse : R.string.book_detail_summary_expand;
+					mBtnSummaryExpand.setText(resId);
+					resId = mBookSummary.isExpanded() ? R.drawable.book_detail_arrow_up : R.drawable.book_detail_arrow_down;
+					mBtnSummaryExpand.setCompoundDrawablesWithIntrinsicBounds(0, 0, resId, 0);
+				}
+			});
+			mBookSummary.elipseSwitch();
 		}
 	}
 
@@ -235,11 +251,18 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 		String capacity = getString(R.string.book_capacity) + mBook.getCapacityStr();
 		mTextBookCapacity.setText(capacity);
 
-		String summary = mBook.getSummary();
-		if (TextUtils.isEmpty(summary)) {
-			summary = getString(R.string.no_summary);
-		}
-		mBookSummary.setText(summary);
+		mBookSummary.setOnMeasureDoneListener(new EllipseEndTextView.OnMeasureDoneListener() {
+			@Override
+			public void onMeasureDone(View v) {
+				if (mBookSummary.isExpanded()) {
+					mBtnSummaryExpand.setVisibility(View.GONE);
+				} else {
+					mLotBookSummary.setOnClickListener(BookInfoActivity.this);
+				}
+				mBookSummary.setOnMeasureDoneListener(null);
+			}
+		});
+		mBookSummary.setText(String.format(getString(R.string.book_detail_summary_prefix), mBook.getSummary()));
 
 		mTxvUpdateTime.setText(mBook.getLastUpdateTime());
 

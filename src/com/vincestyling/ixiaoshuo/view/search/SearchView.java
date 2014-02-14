@@ -25,7 +25,7 @@ import java.util.TimerTask;
 public class SearchView extends ViewBuilder implements OnClickListener {
 	private String[] mKeywords;
 	private KeywordsFlow keywordsFlow;
-	private SpinnerButton mSpinner;
+//	private SpinnerButton mSpinner;
 	private EditText mSearWord;
 	private ScrollLayout mSearchResultLayout;
 	SearchListView mSearchListView;
@@ -57,39 +57,39 @@ public class SearchView extends ViewBuilder implements OnClickListener {
 		ImageView mSearchBt = (ImageView) findViewById(R.id.search_bt);
 		mSearWord = (EditText) findViewById(R.id.search_wrod_edit);
 		mSearchBt.setOnClickListener(this);
-		mSpinner = (SpinnerButton) findViewById(R.id.search_type);
+//		mSpinner = (SpinnerButton) findViewById(R.id.search_type);
 		mSearchResultLayout = (ScrollLayout) findViewById(R.id.search_result_list);
 		mSearchResultLayout.setVisibility(View.GONE);
 		keywordsFlow = (KeywordsFlow) findViewById(R.id.keywordsflow);
-		mSpinner.setResIdAndViewCreatedListener(R.layout.spinner_dropdown_items, new SpinnerButton.ViewCreatedListener() {
-			@Override
-			public void onViewCreated(View v) {
-				v.findViewById(R.id.textView1).setOnClickListener(
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								mSpinner.setText(R.string.type_all);
-								mSpinner.dismiss();
-							}
-						});
-				v.findViewById(R.id.textView2).setOnClickListener(
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								mSpinner.setText(R.string.type_txt);
-								mSpinner.dismiss();
-							}
-						});
-				v.findViewById(R.id.textView3).setOnClickListener(
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								mSpinner.setText(R.string.type_voice);
-								mSpinner.dismiss();
-							}
-						});
-			}
-		});
+//		mSpinner.setResIdAndViewCreatedListener(R.layout.spinner_dropdown_items, new SpinnerButton.ViewCreatedListener() {
+//			@Override
+//			public void onViewCreated(View v) {
+//				v.findViewById(R.id.textView1).setOnClickListener(
+//						new OnClickListener() {
+//							@Override
+//							public void onClick(View v) {
+//								mSpinner.setText(R.string.type_all);
+//								mSpinner.dismiss();
+//							}
+//						});
+//				v.findViewById(R.id.textView2).setOnClickListener(
+//						new OnClickListener() {
+//							@Override
+//							public void onClick(View v) {
+//								mSpinner.setText(R.string.type_txt);
+//								mSpinner.dismiss();
+//							}
+//						});
+//				v.findViewById(R.id.textView3).setOnClickListener(
+//						new OnClickListener() {
+//							@Override
+//							public void onClick(View v) {
+//								mSpinner.setText(R.string.type_voice);
+//								mSpinner.dismiss();
+//							}
+//						});
+//			}
+//		});
 
 		mSearchListView = new SearchListView(getActivity(), new OnShowListener() {
 			@Override
