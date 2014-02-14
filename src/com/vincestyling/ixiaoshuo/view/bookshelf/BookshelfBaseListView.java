@@ -193,7 +193,7 @@ public abstract class BookshelfBaseListView extends ViewBuilder implements OnIte
 		});
 
 		WithoutBookStatisticsView statisticsView = (WithoutBookStatisticsView) mLotWithoutBooks.findViewById(R.id.lotBookStatistics);
-		statisticsView.setBookCount(100000 + new Random().nextInt(600000));
+		statisticsView.setStatCount(100000 + new Random().nextInt(600000));
 
 
 		mIsInitWithoutBook = true;

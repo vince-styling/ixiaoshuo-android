@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import com.vincestyling.ixiaoshuo.reader.BaseActivity;
 
@@ -25,7 +26,8 @@ public abstract class ViewBuilder implements Animation.AnimationListener {
 	}
 
 	protected void setLayout() {
-		if (mView instanceof LinearLayout) {
+		if (mView instanceof LinearLayout
+				|| mView instanceof FrameLayout) {
 			mView.setLayoutParams(
 					new LinearLayout.LayoutParams(
 							LinearLayout.LayoutParams.MATCH_PARENT,

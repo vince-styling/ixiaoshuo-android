@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -194,6 +195,11 @@ public class StringUtil {
 		}
 
 		return content;
+	}
+
+	private static final Random GLOBAL_RANDOM = new Random(System.currentTimeMillis());
+	public static int nextRandInt(int maxRange) {
+		return GLOBAL_RANDOM.nextInt(maxRange);
 	}
 
 	public static void main(String[] args) throws Exception {

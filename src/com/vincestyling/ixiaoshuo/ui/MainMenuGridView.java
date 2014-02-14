@@ -7,6 +7,7 @@ import com.vincestyling.ixiaoshuo.event.OnGridItemClickListener;
 import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.view.ViewBuilder;
 import com.vincestyling.ixiaoshuo.view.bookshelf.BookshelfView;
+import com.vincestyling.ixiaoshuo.view.detector.DetectorView;
 import com.vincestyling.ixiaoshuo.view.finder.FinderView;
 import com.vincestyling.ixiaoshuo.view.search.SearchView;
 
@@ -37,7 +38,6 @@ public class MainMenuGridView extends GridView {
 		putItem(new GridItem(R.drawable.menu_detector_on, R.drawable.menu_detector_off, new OnGridItemClickListener(MENU_DETECTOR) {
 			public void onGridItemClick() {
 				getActivity().showMenuView(MENU_DETECTOR);
-//				getActivity().showMenuView(getGridItemId());
 			}
 		}));
 
@@ -59,7 +59,6 @@ public class MainMenuGridView extends GridView {
 				}
 			});
 		}
-
 		if (menuId == MENU_FINDER) {
 			return new FinderView(getActivity(), new ViewBuilder.OnShowListener() {
 				@Override
@@ -68,7 +67,6 @@ public class MainMenuGridView extends GridView {
 				}
 			});
 		}
-
 		if (menuId == MENU_SEARCH) {
 			return new SearchView(getActivity(), new ViewBuilder.OnShowListener() {
 				@Override
@@ -77,15 +75,14 @@ public class MainMenuGridView extends GridView {
 				}
 			});
 		}
-		
-//		if (menuId == MENU_DETECTOR) {
-//			return new RadarView(getActivity(), new ViewBuilder.OnShowListener() {
-//				@Override
-//				public void onShow() {
-//					selectItem(MENU_DETECTOR);
-//				}
-//			});
-//		}
+		if (menuId == MENU_DETECTOR) {
+			return new DetectorView(getActivity(), new ViewBuilder.OnShowListener() {
+				@Override
+				public void onShow() {
+					selectItem(MENU_DETECTOR);
+				}
+			});
+		}
 		return null;
 	}
 

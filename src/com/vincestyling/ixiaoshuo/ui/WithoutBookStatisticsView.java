@@ -7,19 +7,6 @@ import android.widget.LinearLayout;
 import com.vincestyling.ixiaoshuo.R;
 
 public class WithoutBookStatisticsView extends LinearLayout {
-	private int[] mNumRes = {
-			R.drawable.book_shelf_num0,
-			R.drawable.book_shelf_num1,
-			R.drawable.book_shelf_num2,
-			R.drawable.book_shelf_num3,
-			R.drawable.book_shelf_num4,
-			R.drawable.book_shelf_num5,
-			R.drawable.book_shelf_num6,
-			R.drawable.book_shelf_num7,
-			R.drawable.book_shelf_num8,
-			R.drawable.book_shelf_num9
-	};
-
 	public WithoutBookStatisticsView(Context context) {
 		super(context);
 	}
@@ -28,13 +15,29 @@ public class WithoutBookStatisticsView extends LinearLayout {
 		super(context, attrs);
 	}
 
-	public void setBookCount(int bookCount) {
+	protected int[] getNumRes() {
+		return new int[] {
+				R.drawable.book_shelf_num0,
+				R.drawable.book_shelf_num1,
+				R.drawable.book_shelf_num2,
+				R.drawable.book_shelf_num3,
+				R.drawable.book_shelf_num4,
+				R.drawable.book_shelf_num5,
+				R.drawable.book_shelf_num6,
+				R.drawable.book_shelf_num7,
+				R.drawable.book_shelf_num8,
+				R.drawable.book_shelf_num9
+		};
+	}
+
+	public void setStatCount(int statCount) {
 		removeAllViews();
-		String bookCountStr = String.valueOf(bookCount);
-		for (int i = 0; i < bookCountStr.length(); i++) {
+		int[] mNumRes = getNumRes();
+		String statCountStr = String.valueOf(statCount);
+		for (int i = 0; i < statCountStr.length(); i++) {
 			ImageView numView = new ImageView(getContext());
 			numView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			numView.setImageResource(mNumRes[Character.getNumericValue(bookCountStr.charAt(i))]);
+			numView.setImageResource(mNumRes[Character.getNumericValue(statCountStr.charAt(i))]);
 			addView(numView);
 		}
 	}
