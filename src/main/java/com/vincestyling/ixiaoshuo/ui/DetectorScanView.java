@@ -133,7 +133,7 @@ public class DetectorScanView extends View {
 			mMatrix = new Matrix();
 
 			mAnim = ObjectAnimator.ofFloat(this, "degrees", 360);
-			mAnim.setDuration(2000);
+			mAnim.setDuration(1200);
 			mAnim.setInterpolator(new LinearInterpolator());
 			mAnim.setRepeatCount(ValueAnimator.INFINITE);
 			mAnim.setRepeatMode(ValueAnimator.INFINITE);
