@@ -1,104 +1,69 @@
 package com.vincestyling.ixiaoshuo.view.bookshelf;
 
-import android.graphics.Color;
-import android.view.KeyEvent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.event.Notifier;
-import com.vincestyling.ixiaoshuo.reader.MainActivity;
-import com.vincestyling.ixiaoshuo.ui.ScrollLayout;
-import com.vincestyling.ixiaoshuo.view.ViewBuilder;
+import com.vincestyling.ixiaoshuo.ui.TopTabIndicator;
+import com.vincestyling.ixiaoshuo.utils.AppLog;
+import com.vincestyling.ixiaoshuo.view.BaseFragment;
+import com.vincestyling.ixiaoshuo.view.PageIndicator;
 
-public class BookshelfView extends ViewBuilder {
-	private ScrollLayout mLotMainContent;
-	Button mBtnTextBookshelf, mBtnVoiceBookshelf;
+public class BookshelfView extends BaseFragment {
+	public static final int PAGER_INDEX = 0;
 
-	public BookshelfView(MainActivity activity, OnShowListener onShowListener) {
-		mShowListener = onShowListener;
-		mViewId = R.id.lotBookshelf;
-		setActivity(activity);
-	}
+	private ViewPager mShelfPager;
+	private MyAdapter mAdapter;
+	private PageIndicator mIndicator;
 
 	@Override
-	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.book_shelf, null);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.book_shelf, container, false);
+
+		mAdapter = new MyAdapter(getActivity().getSupportFragmentManager());
+		mShelfPager = (ViewPager) view.findViewById(R.id.shelfPager);
+		mShelfPager.setAdapter(mAdapter);
+
+		mIndicator = (TopTabIndicator) view.findViewById(R.id.pageIndicator);
+		mIndicator.setViewPager(mShelfPager);
+
+		return view;
 	}
 
-	@Override
-	public void init() {
-		mLotMainContent = (ScrollLayout) findViewById(R.id.lotBookShelfContent);
+	private FragmentCreator[] mMenus = {
+			new FragmentCreator(R.string.type_txt, BookshelfTextListView.class),
+			new FragmentCreator(R.string.type_voice, BookshelfVoiceListView.class),
+			new FragmentCreator(R.string.type_local, BookshelfLocalListView.class)
+	};
 
-		mBtnTextBookshelf = (Button) findViewById(R.id.btnTextBookshelf);
-		mBtnVoiceBookshelf = (Button) findViewById(R.id.btnVoiceBookshelf);
-
-		mBtnTextBookshelf.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mLotMainContent.showView(new BookshelfTextListView(getActivity(), new OnShowListener() {
-					@Override
-					public void onShow() {
-						highlightBtn(mBtnTextBookshelf);
-					}
-				}));
-				highlightBtn(mBtnTextBookshelf);
-			}
-		});
-
-		mBtnVoiceBookshelf.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mLotMainContent.showView(new BookshelfVoiceListView(getActivity(), new OnShowListener() {
-					@Override
-					public void onShow() {
-						highlightBtn(mBtnVoiceBookshelf);
-					}
-				}));
-				highlightBtn(mBtnVoiceBookshelf);
-			}
-		});
-
-		mBtnTextBookshelf.performClick();
-
-		getActivity().getReaderApplication().getMainHandler().putNotifier(Notifier.NOTIFIER_BOOKSHELF_REFRESH, new Notifier() {
-			public void onNotified() {
-				mLotMainContent.resumeView();
-			}
-		});
-	}
-
-	private void highlightBtn(View btnView) {
-		if (btnView == mBtnTextBookshelf) {
-			turnOnButton(mBtnTextBookshelf);
-		} else {
-			turnOffButton(mBtnTextBookshelf);
+	private class MyAdapter extends FragmentStatePagerAdapter {
+		public MyAdapter(FragmentManager fm) {
+			super(fm);
 		}
 
-		if (btnView == mBtnVoiceBookshelf) {
-			turnOnButton(mBtnVoiceBookshelf);
-		} else {
-			turnOffButton(mBtnVoiceBookshelf);
+		@Override
+		public int getCount() {
+			return mMenus.length;
 		}
-	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return mLotMainContent.onKeyDown(keyCode, event);
-	}
+		@Override
+		public Fragment getItem(int position) {
+			return mMenus[position].newInstance();
+		}
 
-	private void turnOnButton(Button btnView) {
-		btnView.setBackgroundResource(R.drawable.title_item_selected);
-		btnView.setTextColor(Color.parseColor("#fefffc"));
-	}
-
-	private void turnOffButton(Button btnView) {
-		btnView.setBackgroundColor(Color.TRANSPARENT);
-		btnView.setTextColor(Color.parseColor("#b1d596"));
-	}
-
-	@Override
-	public MainActivity getActivity() {
-		return (MainActivity) super.getActivity();
+		@Override
+		public CharSequence getPageTitle(int position) {
+			int resId = mMenus[position].getTitleResId();
+			if (resId > 0) {
+				return getResources().getString(resId);
+			}
+			return null;
+		}
 	}
 
 }

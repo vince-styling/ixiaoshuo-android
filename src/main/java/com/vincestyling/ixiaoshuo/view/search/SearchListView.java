@@ -26,7 +26,6 @@ public class SearchListView extends ViewBuilder implements AbsListView.OnScrollL
 	private int mPageNo = 1;
 
 	public SearchListView(MainActivity activity, OnShowListener onShowListener) {
-		mViewId = R.id.lotKeywordSearch;
 		mShowListener = onShowListener;
 		setActivity(activity);
 	}

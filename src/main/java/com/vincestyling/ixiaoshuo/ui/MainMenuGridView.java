@@ -51,38 +51,38 @@ public class MainMenuGridView extends GridView {
 	}
 
 	public ViewBuilder buildViewBuilder(int menuId) {
-		if (menuId == MENU_BOOKSHELF) {
-			return new BookshelfView(getActivity(), new ViewBuilder.OnShowListener() {
-				@Override
-				public void onShow() {
-					selectItem(MENU_BOOKSHELF);
-				}
-			});
-		}
-		if (menuId == MENU_FINDER) {
-			return new FinderView(getActivity(), new ViewBuilder.OnShowListener() {
-				@Override
-				public void onShow() {
-					selectItem(MENU_FINDER);
-				}
-			});
-		}
-		if (menuId == MENU_SEARCH) {
-			return new SearchView(getActivity(), new ViewBuilder.OnShowListener() {
-				@Override
-				public void onShow() {
-					selectItem(MENU_SEARCH);
-				}
-			});
-		}
-		if (menuId == MENU_DETECTOR) {
-			return new DetectorView(getActivity(), new ViewBuilder.OnShowListener() {
-				@Override
-				public void onShow() {
-					selectItem(MENU_DETECTOR);
-				}
-			});
-		}
+//		if (menuId == MENU_BOOKSHELF) {
+//			return new BookshelfView(getActivity(), new ViewBuilder.OnShowListener() {
+//				@Override
+//				public void onShow() {
+//					selectItem(MENU_BOOKSHELF);
+//				}
+//			});
+//		}
+//		if (menuId == MENU_FINDER) {
+//			return new FinderView(getActivity(), new ViewBuilder.OnShowListener() {
+//				@Override
+//				public void onShow() {
+//					selectItem(MENU_FINDER);
+//				}
+//			});
+//		}
+//		if (menuId == MENU_SEARCH) {
+//			return new SearchView(getActivity(), new ViewBuilder.OnShowListener() {
+//				@Override
+//				public void onShow() {
+//					selectItem(MENU_SEARCH);
+//				}
+//			});
+//		}
+//		if (menuId == MENU_DETECTOR) {
+//			return new DetectorView(getActivity(), new ViewBuilder.OnShowListener() {
+//				@Override
+//				public void onShow() {
+//					selectItem(MENU_DETECTOR);
+//				}
+//			});
+//		}
 		return null;
 	}
 

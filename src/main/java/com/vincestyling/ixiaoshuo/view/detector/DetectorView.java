@@ -1,25 +1,19 @@
 package com.vincestyling.ixiaoshuo.view.detector;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.ui.DetectorScanView;
 import com.vincestyling.ixiaoshuo.ui.DetectorUsageStatisticsView;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
-import com.vincestyling.ixiaoshuo.view.ViewBuilder;
+import com.vincestyling.ixiaoshuo.view.BaseFragment;
 
-public class DetectorView extends ViewBuilder {
-	public DetectorView(MainActivity activity, OnShowListener onShowListener) {
-		mViewId = R.id.lotDetector;
-		mShowListener = onShowListener;
-		setActivity(activity);
-	}
-
-	@Override
-	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.detector, null);
-	}
+public class DetectorView extends BaseFragment {
+	public static final int PAGER_INDEX = 2;
 
 	private static int mInitUserCount = generateInitUserCount();  // 虚拟默认用户数目
 
@@ -35,18 +29,22 @@ public class DetectorView extends ViewBuilder {
 	private InnerHandler mHandler;
 
 	@Override
-	public void init() {
-		mUsageStatisticsView = (DetectorUsageStatisticsView) findViewById(R.id.lotUsageStatistics);
-		mScanView = (DetectorScanView) findViewById(R.id.radarSechView);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.detector, container, false);
+
+		mUsageStatisticsView = (DetectorUsageStatisticsView) view.findViewById(R.id.lotUsageStatistics);
+		mScanView = (DetectorScanView) view.findViewById(R.id.radarSechView);
 //		mScanView.setOnPlayingListener(this);
 
 		mHandler = new InnerHandler();
+
+		return view;
 	}
 
 	@Override
-	public void resume() {
+	public void onResume() {
 		mHandler.sendEmptyMessage(UPDATE_USER_COUNT);
-		super.resume();
+		super.onResume();
 	}
 
 	private class InnerHandler extends Handler {

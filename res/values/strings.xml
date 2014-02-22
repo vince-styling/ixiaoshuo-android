@@ -40,8 +40,9 @@
     <!-- 搜索 -->
     <string name="title_search_txt">小说搜索</string>
     <string name="type_all">全部</string>
-    <string name="type_txt">文字小说</string>
-    <string name="type_voice">有声读物</string>
+    <string name="type_txt">文字</string>
+    <string name="type_voice">有声</string>
+    <string name="type_local">本地</string>
 
     <!-- 发现 -->
     <string name="finder_tab_type_txt">文字小说</string>

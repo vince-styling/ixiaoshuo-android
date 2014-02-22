@@ -1,42 +1,36 @@
 package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.graphics.Color;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.ui.FinderMenuGridView;
 import com.vincestyling.ixiaoshuo.ui.ScrollLayout;
+import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.ViewBuilder;
 
-public class FinderView extends ViewBuilder {
+public class FinderView extends BaseFragment {
+	public static final int PAGER_INDEX = 1;
+
 	private ScrollLayout mLotMainContent;
 	private FinderMenuGridView mFinderMenuView;
 	private Button mBtnTextsBook, mBtnVoicesBook;
 
-	public FinderView(MainActivity activity, OnShowListener onShowListener) {
-		mShowListener = onShowListener;
-		mViewId = R.id.lotBookFinder;
-		setActivity(activity);
-	}
-
 	@Override
-	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.finder, null);
-	}
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.finder, container, false);
 
-	@Override
-	public void init() {
-		mLotMainContent = (ScrollLayout) findViewById(R.id.lotBookFinderContent);
+		mLotMainContent = (ScrollLayout) view.findViewById(R.id.lotBookFinderContent);
 
-		mFinderMenuView = (FinderMenuGridView) findViewById(R.id.finderMenuView);
+		mFinderMenuView = (FinderMenuGridView) view.findViewById(R.id.finderMenuView);
 		mFinderMenuView.setFinderView(this);
 
-		mBtnTextsBook = (Button) findViewById(R.id.btnTextsBook);
-		mBtnVoicesBook = (Button) findViewById(R.id.btnVoicesBook);
+		mBtnTextsBook = (Button) view.findViewById(R.id.btnTextsBook);
+		mBtnVoicesBook = (Button) view.findViewById(R.id.btnVoicesBook);
 
 		mBtnTextsBook.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -53,6 +47,8 @@ public class FinderView extends ViewBuilder {
 		});
 
 		onBtnClick(mBtnTextsBook);
+
+		return view;
 	}
 
 	private void onBtnClick(Button btnView) {
@@ -89,11 +85,6 @@ public class FinderView extends ViewBuilder {
 
 	public void showView(ViewBuilder builder) {
 		mLotMainContent.showView(builder);
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return mLotMainContent.onKeyDown(keyCode, event);
 	}
 
 }

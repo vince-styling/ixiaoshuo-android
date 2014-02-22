@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/lotBookFinder" xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +27,7 @@
                 android:background="@drawable/title_item_selected"
                 android:text="@string/finder_tab_type_txt"
                 android:includeFontPadding="false"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <Button
                 android:id="@+id/btnVoicesBook"
@@ -34,33 +37,49 @@
                 android:background="@null"
                 android:text="@string/finder_tab_type_voice"
                 android:includeFontPadding="false"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <com.vincestyling.ixiaoshuo.ui.FinderMenuGridView android:id="@+id/finderMenuView"
-            android:layout_width="match_parent" android:layout_height="50dp"
-            android:background="@drawable/book_shelf_deep_bg_layer" />
+    <com.vincestyling.ixiaoshuo.ui.FinderMenuGridView
+        android:id="@+id/finderMenuView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/book_shelf_deep_bg_layer"/>
 
-    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                    android:background="@color/finder_booklist_bg">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/finder_booklist_bg">
 
-        <com.vincestyling.ixiaoshuo.ui.ScrollLayout android:id="@+id/lotBookFinderContent"
-                android:layout_width="match_parent" android:layout_height="match_parent" />
+        <com.vincestyling.ixiaoshuo.ui.ScrollLayout
+            android:id="@+id/lotBookFinderContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-        <RelativeLayout android:id="@+id/lotNetworkUnavaliable"
-                        android:layout_width="320dp" android:layout_height="200dp"
-                        android:visibility="gone" android:layout_centerInParent="true">
+        <RelativeLayout
+            android:id="@+id/lotNetworkUnavaliable"
+            android:layout_width="320dp"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            android:layout_centerInParent="true">
 
-            <ImageView android:layout_width="match_parent" android:layout_height="match_parent"
-                       android:layout_marginBottom="10dp" android:layout_marginRight="10dp"
-                       android:src="@drawable/network_unavaliable_tip" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/network_unavaliable_tip"/>
 
-            <Button android:id="@+id/btnFinderRetry" android:layout_width="100dp" android:layout_height="56dp"
-                    android:background="@drawable/network_unavaliable_btn_retry_selector"
-                    android:layout_alignParentBottom="true" android:layout_alignParentRight="true" />
+            <Button
+                android:id="@+id/btnFinderRetry"
+                android:layout_width="100dp"
+                android:layout_height="56dp"
+                android:background="@drawable/network_unavaliable_btn_retry_selector"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"/>
 
         </RelativeLayout>
 

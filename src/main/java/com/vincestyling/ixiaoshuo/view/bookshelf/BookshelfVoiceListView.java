@@ -4,13 +4,9 @@ import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.reader.MainActivity;
 
 public class BookshelfVoiceListView extends BookshelfBaseListView {
-
-	public BookshelfVoiceListView(MainActivity activity, OnShowListener onShowListener) {
-		super(activity, R.id.lotBookShelfVoice, onShowListener);
-	}
+	public static final int PAGER_INDEX = 1;
 
 	@Override
 	public void loadData() {

@@ -1,8 +1,8 @@
 package com.vincestyling.ixiaoshuo.reader;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends FragmentActivity {
 
 	public ReaderApplication getReaderApplication() {
 		return (ReaderApplication) super.getApplication();

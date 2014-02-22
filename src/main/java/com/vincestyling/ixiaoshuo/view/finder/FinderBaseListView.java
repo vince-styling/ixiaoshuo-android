@@ -211,7 +211,6 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	}
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		Log.i("YYReader_FinderBaseVeiw", "onKeyDown");
 		return mView.onKeyDown(keyCode, event);
 	}
 

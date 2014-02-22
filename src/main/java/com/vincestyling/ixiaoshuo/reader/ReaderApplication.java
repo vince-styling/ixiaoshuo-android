@@ -14,15 +14,6 @@ public class ReaderApplication extends Application {
 		AppDAO.init(this);
 		Netroid.init(this);
 		mMainHandler = new MainHandler();
-		//CrashHandler.getInstance().init(this);
-	}
-
-	MainActivity mMainActivity;
-	public void setMainActivity(MainActivity mainActivity) {
-		mMainActivity = mainActivity;
-	}
-	public MainActivity getMainActivity() {
-		return mMainActivity;
 	}
 
 	private Toast mToast;

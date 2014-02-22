@@ -1,9 +1,11 @@
 package com.vincestyling.ixiaoshuo.view.search;
 
 import android.graphics.Rect;
-import android.util.Log;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -11,23 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.ui.ScrollLayout;
-import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
-import com.vincestyling.ixiaoshuo.view.ViewBuilder;
+import com.vincestyling.ixiaoshuo.view.BaseFragment;
 
-public class SearchView extends ViewBuilder implements View.OnClickListener, View.OnTouchListener {
-	public SearchView(MainActivity activity, OnShowListener onShowListener) {
-		mViewId = R.id.lotKeywordSearch;
-		mShowListener = onShowListener;
-		setActivity(activity);
-	}
-
-	@Override
-	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.search_layout, null);
-	}
+public class SearchView extends BaseFragment implements View.OnClickListener, View.OnTouchListener {
+	public static final int PAGER_INDEX = 3;
 
 	private ScrollLayout mlotSearchContent;
 	private SearchListView mSearchListView;
@@ -50,21 +41,25 @@ public class SearchView extends ViewBuilder implements View.OnClickListener, Vie
 	private final static int URL_VALUE_VOICE = 2;  /** 有声书籍类型 */
 
 	@Override
-	public void init() {
-		mLotGoSearch = findViewById(R.id.lotGoSearch);
-		mEdtSearchKeyword = (EditText) findViewById(R.id.edtSearchKeyword);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.search, container, false);
 
-		mTxvBookType = (TextView) findViewById(R.id.txvBookType);
-		mImvSearchArrow = findViewById(R.id.imvSearchArrow);
-		mLotBookType = findViewById(R.id.lotBookType);
+		mLotGoSearch = view.findViewById(R.id.lotGoSearch);
+		mEdtSearchKeyword = (EditText) view.findViewById(R.id.edtSearchKeyword);
+
+		mTxvBookType = (TextView) view.findViewById(R.id.txvBookType);
+		mImvSearchArrow = view.findViewById(R.id.imvSearchArrow);
+		mLotBookType = view.findViewById(R.id.lotBookType);
 		mLotBookType.setOnClickListener(this);
 		mLotGoSearch.setOnClickListener(this);
 		mCurrentType = URL_VALUE_ALL;
 
-		mView.setOnTouchListener(this);
+		view.setOnTouchListener(this);
 
-		mlotSearchContent = (ScrollLayout) findViewById(R.id.lotSearchContent);
+		mlotSearchContent = (ScrollLayout) view.findViewById(R.id.lotSearchContent);
 		mlotSearchContent.setVisibility(View.GONE);
+
+		return view;
 	}
 
 	@Override
@@ -72,7 +67,7 @@ public class SearchView extends ViewBuilder implements View.OnClickListener, Vie
 		if (view.equals(mLotGoSearch)) {
 			String word = mEdtSearchKeyword.getText().toString();
 			if (StringUtil.isBlank(word)) {
-				getActivity().showToastMsg(R.string.please_input_key_word);
+				getBaseActivity().showToastMsg(R.string.please_input_key_word);
 			}
 		}
 		else if (view.equals(mLotBookType)) {
@@ -167,16 +162,5 @@ public class SearchView extends ViewBuilder implements View.OnClickListener, Vie
 		hideSearchTerms(true);
 		return false;
 	}
-
-	@Override
-	public void pushBack() {
-		hideSearchTerms(false);
-		super.pushBack();
-	}
-
-	//	@Override
-//	public MainActivity getActivity() {
-//		return (MainActivity) super.getActivity();
-//	}
 
 }
