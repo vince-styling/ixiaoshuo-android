@@ -3,8 +3,10 @@ package com.vincestyling.ixiaoshuo.view;
 import android.support.v4.view.ViewPager;
 
 /**
- * A PageIndicator is responsible to show an visual indicator on the total views
- * number and the current visible view.
+ * A PageIndicator is responsible to show an visual indicator
+ * on the total views number and the current visible view.
+ * This class original belong of
+ * 		JakeWharton's ViewPagerIndicator(http://viewpagerindicator.com/).
  */
 public interface PageIndicator extends ViewPager.OnPageChangeListener {
     /**

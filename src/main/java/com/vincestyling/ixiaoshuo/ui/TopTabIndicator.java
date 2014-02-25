@@ -6,39 +6,30 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewConfigurationCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.view.PageIndicator;
 
-import static android.graphics.Paint.ANTI_ALIAS_FLAG;
-
 public class TopTabIndicator extends LinearLayout implements PageIndicator {
-	private static final int INVALID_POINTER = -1;
+	private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private Drawable mAreaDrawable;
 
-	private final Paint mPaint = new Paint(ANTI_ALIAS_FLAG);
 	private ViewPager mViewPager;
 	private ViewPager.OnPageChangeListener mListener;
+
 	private int mCurrentPage;
 	private float mPageOffset;
 	private int mScrollState;
+
 	private int mBtnWidth;
 	private int mBtnSpacing;
 	private int mContentAreaPadding;
 	private int mContentAreaMarginExtra;
 	private int mTextColorOn;
 	private int mTextColorOff;
-
-	private int mTouchSlop;
-	private float mLastMotionX = -1;
-	private int mActivePointerId = INVALID_POINTER;
-	private boolean mIsDragging;
 
 	public TopTabIndicator(Context context) {
 		this(context, null);
@@ -62,8 +53,7 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 
 		mPaint.setTextSize(getResources().getDimension(R.dimen.top_tab_btn_textsize));
 
-		final ViewConfiguration configuration = ViewConfiguration.get(context);
-		mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
+		mAreaDrawable = getResources().getDrawable(R.drawable.title_bg_content_area);
 	}
 
 	@Override
@@ -82,16 +72,14 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 
 		if (mBtnWidth == 0 && mBtnSpacing == 0) return;
 
-		Drawable drawable = getResources().getDrawable(R.drawable.title_bg_content_area);
-
 		Rect areaRect = new Rect();
 		areaRect.left = getPaddingLeft();
 		areaRect.right = getWidth() - getPaddingRight();
-		areaRect.top = (getHeight() - mContentAreaMarginExtra - drawable.getIntrinsicHeight()) / 2;
-		areaRect.bottom = areaRect.top + drawable.getIntrinsicHeight();
+		areaRect.top = (getHeight() - mContentAreaMarginExtra - mAreaDrawable.getIntrinsicHeight()) / 2;
+		areaRect.bottom = areaRect.top + mAreaDrawable.getIntrinsicHeight();
 
-		drawable.setBounds(areaRect);
-		drawable.draw(canvas);
+		mAreaDrawable.setBounds(areaRect);
+		mAreaDrawable.draw(canvas);
 
 		areaRect.left += mContentAreaPadding;
 		areaRect.right -= mContentAreaPadding;
@@ -118,18 +106,17 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 
 
 		Rect tabRect = new Rect(areaRect);
-		tabRect.left = tabRect.left + mCurrentPage * mBtnWidth + mCurrentPage * mBtnSpacing;
-		tabRect.left += mPageOffset * (mBtnWidth + mBtnSpacing);
+		tabRect.left += (mCurrentPage + mPageOffset) * (mBtnWidth + mBtnSpacing);
 		tabRect.right = tabRect.left + mBtnWidth;
 
-		drawable = getResources().getDrawable(R.drawable.title_item_selected);
-		drawable.setBounds(tabRect);
-		drawable.draw(canvas);
+		Drawable selectedDrawle = getResources().getDrawable(R.drawable.title_item_selected);
+		selectedDrawle.setBounds(tabRect);
+		selectedDrawle.draw(canvas);
 
 
 		for (int pos = 0; pos < count; pos++) {
 			tabRect = new Rect(areaRect);
-			tabRect.left = tabRect.left + pos * mBtnWidth + pos * mBtnSpacing;
+			tabRect.left += pos * (mBtnWidth + mBtnSpacing);
 			tabRect.right = tabRect.left + mBtnWidth;
 
 			String pageTitle = (String) mViewPager.getAdapter().getPageTitle(pos);
@@ -149,64 +136,33 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 
 	public boolean onTouchEvent(MotionEvent ev) {
 		if (super.onTouchEvent(ev)) return true;
+		if (mViewPager == null) return false;
 
-		if (mViewPager == null || mViewPager.getAdapter().getCount() == 0) {
-			return false;
-		}
+		final int count = mViewPager.getAdapter().getCount();
+		if (count == 0) return false;
 
 		switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
-				mLastMotionX = ev.getX();
-				break;
-
-			case MotionEvent.ACTION_MOVE:
-				final int activePointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
-				final float x = MotionEventCompat.getX(ev, activePointerIndex);
-				final float deltaX = x - mLastMotionX;
-
-				if (!mIsDragging) {
-					if (Math.abs(deltaX) > mTouchSlop) {
-						mIsDragging = true;
-					}
-				}
-
-				if (mIsDragging) {
-					mLastMotionX = x;
-					if (mViewPager.isFakeDragging() || mViewPager.beginFakeDrag()) {
-						mViewPager.fakeDragBy(deltaX);
-					}
-				}
-
-				break;
-
-			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
-				if (!mIsDragging) {
-					final int count = mViewPager.getAdapter().getCount();
-					final int width = getWidth();
-					final float halfWidth = width / 2f;
-					final float sixthWidth = width / 6f;
 
-					if ((mCurrentPage > 0) && (ev.getX() < halfWidth - sixthWidth)) {
-						if (action != MotionEvent.ACTION_CANCEL) {
-							mViewPager.setCurrentItem(mCurrentPage - 1);
-						}
-						return true;
-					} else if ((mCurrentPage < count - 1) && (ev.getX() > halfWidth + sixthWidth)) {
-						if (action != MotionEvent.ACTION_CANCEL) {
-							mViewPager.setCurrentItem(mCurrentPage + 1);
-						}
+				Rect areaRect = new Rect();
+				areaRect.left = getPaddingLeft();
+				areaRect.right = getWidth() - getPaddingRight();
+				areaRect.top = (getHeight() - mContentAreaMarginExtra - mAreaDrawable.getIntrinsicHeight()) / 2;
+				areaRect.bottom = areaRect.top + mAreaDrawable.getIntrinsicHeight();
+
+				for (int pos = 0; pos < count; pos++) {
+					RectF tabRect = new RectF(areaRect);
+					tabRect.left += pos * (mBtnWidth + mBtnSpacing);
+					tabRect.right = tabRect.left + mBtnWidth;
+
+					if (tabRect.contains(ev.getX(), ev.getY())) {
+						mViewPager.setCurrentItem(pos);
 						return true;
 					}
-					// 理解ViewPager FakeDrag 机制。
 				}
-
-				mIsDragging = false;
-				mActivePointerId = INVALID_POINTER;
-				if (mViewPager.isFakeDragging()) mViewPager.endFakeDrag();
 				break;
 		}
+
 		return true;
 	}
 
