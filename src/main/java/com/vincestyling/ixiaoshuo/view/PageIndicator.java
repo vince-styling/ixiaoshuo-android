@@ -28,11 +28,6 @@ public interface PageIndicator extends ViewPager.OnPageChangeListener {
     void setCurrentItem(int item);
 
     /**
-     * Set a page change listener which will receive forwarded events.
-     */
-    void setOnPageChangeListener(ViewPager.OnPageChangeListener listener);
-
-    /**
      * Notify the indicator that the fragment list has changed.
      */
     void notifyDataSetChanged();

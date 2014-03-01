@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
-import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.SysUtil;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.ViewBuilder;
