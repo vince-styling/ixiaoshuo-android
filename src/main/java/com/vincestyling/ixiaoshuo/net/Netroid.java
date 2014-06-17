@@ -1,20 +1,13 @@
 package com.vincestyling.ixiaoshuo.net;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.Network;
 import com.duowan.mobile.netroid.RequestQueue;
-import com.duowan.mobile.netroid.cache.CacheWrapper;
-import com.duowan.mobile.netroid.cache.DiskBasedCache;
-import com.duowan.mobile.netroid.cache.MemoryBasedCache;
-import com.duowan.mobile.netroid.request.ImageRequest;
-import com.duowan.mobile.netroid.stack.HttpClientStack;
-import com.duowan.mobile.netroid.stack.HttpStack;
+import com.duowan.mobile.netroid.cache.BitmapImageCache;
+import com.duowan.mobile.netroid.cache.DiskCache;
 import com.duowan.mobile.netroid.stack.HurlStack;
 import com.duowan.mobile.netroid.toolbox.BasicNetwork;
 import com.duowan.mobile.netroid.toolbox.ImageLoader;
@@ -35,65 +28,33 @@ import java.util.List;
 
 public class Netroid {
 
-	/** the queue :-) */
+	/** The queue. :-) */
 	private static RequestQueue mRequestQueue;
 
-	/** the image loader :-) */
+	/** The image loader. :-) */
 	private static ImageLoader mImageLoader;
 
-	/** the server api prefix */
+	/** The server api prefix. */
 	public static final String API = "http://ixiaoshuo.vincestyling.com/";
-
 
 	/** Nothing to see here. */
 	private Netroid() {}
 
 	public static void init(Context ctx) {
 		if (mRequestQueue == null) {
-			mRequestQueue = newRequestQueue(ctx,
-					new CacheWrapper(Const.HTTP_CACHE_KEY_MEMORY, new MemoryBasedCache(Const.HTTP_MEMORY_CACHE_SIZE)),
-					new CacheWrapper(Const.HTTP_CACHE_KEY_DISK, new DiskBasedCache(
-							new File(ctx.getCacheDir(), Const.HTTP_DISK_CACHE_DIR_NAME), Const.HTTP_DISK_CACHE_SIZE)));
-			mImageLoader = new SelfImageLoader(mRequestQueue);
+			Network network = new BasicNetwork(new HurlStack(API, null), HTTP.UTF_8);
+			mRequestQueue = new RequestQueue(network, 6,
+					new DiskCache(new File(ctx.getCacheDir(), Const.HTTP_DISK_CACHE_DIR_NAME), Const.HTTP_DISK_CACHE_SIZE));
+
+			mImageLoader = new SelfImageLoader(mRequestQueue, new BitmapImageCache(Const.HTTP_MEMORY_CACHE_SIZE));
+
+			mRequestQueue.start();
 		} else {
 			throw new IllegalStateException("initialized");
 		}
 	}
 
-	/**
-	 * Creates a default instance of the worker pool and calls {@link com.duowan.mobile.netroid.RequestQueue#start()} on it.
-	 * @param context A {@link android.content.Context} to use for creating the cache dir.
-	 * @return A started {@link com.duowan.mobile.netroid.RequestQueue} instance.
-	 */
-	private static RequestQueue newRequestQueue(Context context, CacheWrapper... caches) {
-		int poolSize = 6;
-
-		HttpStack stack;
-		String userAgent = "ixiaoshuo";
-		try {
-			String packageName = context.getPackageName();
-			PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
-			userAgent = packageName + "/" + info.versionCode;
-		} catch (PackageManager.NameNotFoundException e) {
-			AppLog.e(e);
-		}
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			stack = new HurlStack(userAgent);
-		} else {
-			// Prior to Gingerbread, HttpUrlConnection was unreliable.
-			// See: http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-			stack = new HttpClientStack(userAgent);
-		}
-
-		Network network = new BasicNetwork(stack, HTTP.UTF_8);
-		RequestQueue queue = new RequestQueue(network, poolSize, caches);
-		queue.start();
-
-		return queue;
-	}
-
-	private static RequestQueue get() {
+	public static RequestQueue get() {
 		if (mRequestQueue != null) {
 			return mRequestQueue;
 		} else {

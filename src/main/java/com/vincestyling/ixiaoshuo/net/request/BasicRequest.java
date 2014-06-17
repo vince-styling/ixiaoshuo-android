@@ -2,8 +2,8 @@ package com.vincestyling.ixiaoshuo.net.request;
 
 import com.duowan.mobile.netroid.*;
 import com.vincestyling.ixiaoshuo.net.GObjectMapper;
+import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.net.Respond;
-import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
 
 import java.util.concurrent.TimeUnit;
@@ -12,7 +12,6 @@ public abstract class BasicRequest<T> extends Request<T> {
 
 	public BasicRequest(String url, Listener<T> listener) {
 		super(url, listener);
-		setCacheSequence(Const.HTTP_CACHE_KEY_MEMORY, Const.HTTP_CACHE_KEY_DISK);
 		setCacheExpireTime(TimeUnit.MINUTES, 20);
 	}
 
@@ -37,5 +36,9 @@ public abstract class BasicRequest<T> extends Request<T> {
 	}
 
 	protected abstract T convert(Respond respond);
+
+	public void execute() {
+		Netroid.get().add(this);
+	}
 
 }

@@ -29,12 +29,6 @@
             <version>r12</version>
         </dependency>
 
-        <!--<dependency>
-            <groupId>com.viewpagerindicator</groupId>
-            <artifactId>library</artifactId>
-            <version>2.4.1</version>
-        </dependency>-->
-
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
@@ -42,9 +36,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.yy.android.gameLibs</groupId>
-            <artifactId>netroid-sdk</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <groupId>com.duowan.android.netroid</groupId>
+            <artifactId>netroid</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
         <dependency>
