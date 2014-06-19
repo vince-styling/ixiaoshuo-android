@@ -1,10 +1,11 @@
 package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.content.Intent;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.Display;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import com.duowan.mobile.netroid.Listener;
@@ -13,38 +14,28 @@ import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
-import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
+import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
-import com.vincestyling.ixiaoshuo.view.ViewBuilder;
 
-public abstract class FinderBaseListView extends ViewBuilder implements AbsListView.OnScrollListener, OnItemClickListener {
+public abstract class FinderBaseListView extends BaseFragment implements AbsListView.OnScrollListener, OnItemClickListener {
 	protected EndlessListAdapter<Book> mAdapter;
 	private View mLotNetworkUnavaliable;
+	private ListView mListView;
 
-	protected int mPageNo = 1;
 	protected boolean mHasNextPage = true;
+	protected int mPageNo = 1;
 	protected int mBookType;
 
-	public FinderBaseListView(int bookType, MainActivity activity, int viewId, OnShowListener onShowListener) {
-		mBookType = bookType;
-		mShowListener = onShowListener;
-		setActivity(activity);
-		mViewId = viewId;
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotFinderNetworkUnavaliable);
+		mListView = (ListView) getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
+		return mListView;
 	}
 
 	@Override
-	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
-		mView.setId(mViewId);
-	}
-
-	@Override
-	public void init() {
-		if (getListView().getAdapter() != null) return;
-
-		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotNetworkUnavaliable);
-
+	public void onViewCreated(View view, Bundle savedInstanceState) {
 		mAdapter = new EndlessListAdapter<Book>() {
 			@Override
 			protected View getView(int position, View convertView) {
@@ -69,7 +60,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 					convertView.setTag(holder);
 
 					convertView.setLayoutParams(new AbsListView.LayoutParams(
-							getListView().getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
+							FinderBaseListView.this.getView().getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
 				} else {
 					holder = (Holder) convertView.getTag();
 				}
@@ -104,23 +95,16 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 			}
 		};
 
-		getListView().setAdapter(mAdapter);
-		getListView().setOnScrollListener(this);
-		getListView().setOnItemClickListener(this);
+		mListView.setOnItemClickListener(this);
+		mListView.setOnScrollListener(this);
+		mListView.setAdapter(mAdapter);
 	}
 
 	protected abstract void setBookTips(TextView txvBookTips, Book book);
 
 	@Override
-	public void resume() {
-		Button btnFinderRetry = (Button) mLotNetworkUnavaliable.findViewById(R.id.btnFinderRetry);
-		btnFinderRetry.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				loadNextPage();
-			}
-		});
-		super.resume();
+	public void onResume() {
+		super.onResume();
 
 		if (mAdapter.getItemCount() > 0) {
 			mLotNetworkUnavaliable.setVisibility(View.GONE);
@@ -130,8 +114,7 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 	}
 
 	private void loadNextPage() {
-		if (!mHasNextPage) return;
-		loadData();
+		if (mHasNextPage) loadData();
 	}
 
 	protected Listener<PaginationList<Book>> getListener() {
@@ -156,12 +139,10 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 
 			@Override
 			public void onError(NetroidError error) {
-				if (isInFront()) {
-					if (mAdapter.getItemCount() > 0) {
-						getActivity().showToastMsg(R.string.without_data);
-					} else {
-						mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
-					}
+				if (mAdapter.getItemCount() > 0) {
+					getBaseActivity().showToastMsg(R.string.without_data);
+				} else {
+					mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
 				}
 			}
 		};
@@ -200,18 +181,4 @@ public abstract class FinderBaseListView extends ViewBuilder implements AbsListV
 		ImageView imvBookStatusSplit;
 		View lotBookStatus;
 	}
-
-	protected ListView getListView() {
-		return (ListView) mView;
-	}
-
-	@Override
-	public MainActivity getActivity() {
-		return (MainActivity) super.getActivity();
-	}
-	
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return mView.onKeyDown(keyCode, event);
-	}
-
 }

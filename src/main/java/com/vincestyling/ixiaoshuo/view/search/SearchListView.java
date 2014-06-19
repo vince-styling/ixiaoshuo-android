@@ -40,7 +40,7 @@ public class SearchListView extends ViewBuilder implements AbsListView.OnScrollL
 	public void init() {
 		if (getListView().getAdapter() != null) return;
 
-		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotNetworkUnavaliable);
+//		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotNetworkUnavaliable);
 
 		mAdapter = new EndlessListAdapter<Book>() {
 			@Override

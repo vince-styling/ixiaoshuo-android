@@ -1,6 +1,7 @@
 package com.vincestyling.ixiaoshuo.ui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -37,12 +38,16 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 		super(context, attrs);
 		if (isInEditMode()) return;
 
+		TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.TopTabIndicator);
+
 		// must specifing BtnWidth or BtnSpacingWidth alternative
 		// if both specified, we'll calculate all tabs size and make tabs center.
 		// if only specify BtnWidth, we'll use maxmuim width and averagely the extra spacing between Button.
 		// if only specify BtnSpacingWidth, we'll use maxmuim width and averagely the remaining width to each Button.
-		mBtnWidth = getResources().getDimensionPixelSize(R.dimen.top_tab_btn_width);
-		mBtnSpacing = getResources().getDimensionPixelSize(R.dimen.top_tab_btn_spacing);
+		mBtnWidth = array.getDimensionPixelOffset(R.styleable.TopTabIndicator_btnWidth, 0);
+		mBtnSpacing = array.getDimensionPixelOffset(R.styleable.TopTabIndicator_btnSpacing, 0);
+
+		array.recycle();
 
 		mContentAreaPadding = getResources().getDimensionPixelSize(R.dimen.top_tab_content_area_padding);
 		mContentAreaMarginExtra = getResources().getDimensionPixelSize(R.dimen.top_tab_content_area_margin_extra);
@@ -127,8 +132,8 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 		}
 	}
 
+	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		if (super.onTouchEvent(ev)) return true;
 		if (mViewPager == null) return false;
 
 		final int count = mViewPager.getAdapter().getCount();

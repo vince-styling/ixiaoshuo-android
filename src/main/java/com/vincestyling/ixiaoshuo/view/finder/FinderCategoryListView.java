@@ -34,7 +34,7 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 	@Override
 	public void init() {
 		if (mLotNetworkUnavaliable != null) return;
-		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotNetworkUnavaliable);
+		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotFinderNetworkUnavaliable);
 
 		mAdapter = new EndlessListAdapter<Category>() {
 			@Override
@@ -119,9 +119,9 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Category category = mAdapter.getItem(position);
-		if (category == null) return;
-		mCategoriesView.showView(new FinderCategoryBookListView(category.getId(), mCategoriesView.getBookType(), getActivity()));
+//		Category category = mAdapter.getItem(position);
+//		if (category == null) return;
+//		mCategoriesView.showView(new FinderCategoryBookListView(category.getId(), mCategoriesView.getBookType(), getActivity()));
 	}
 
 	protected ListView getListView() {

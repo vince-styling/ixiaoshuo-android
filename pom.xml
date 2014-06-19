@@ -25,8 +25,8 @@
     <dependencies>
         <dependency>
             <groupId>com.google.android</groupId>
-            <artifactId>android-support-v4</artifactId>
-            <version>r12</version>
+            <artifactId>android-support-v13</artifactId>
+            <version>v13</version>
         </dependency>
 
         <dependency>
@@ -56,10 +56,6 @@
                 <artifactId>android-maven-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                    <!--<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
-                    <assetsDirectory>${project.basedir}/assets</assetsDirectory>
-                    <resourceDirectory>${project.basedir}/res</resourceDirectory>
-                    <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>-->
                     <sdk><platform>14</platform></sdk>
                 </configuration>
                 <extensions>true</extensions>

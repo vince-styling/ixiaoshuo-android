@@ -1,16 +1,10 @@
 package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.widget.TextView;
-import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.reader.MainActivity;
 
-public class FinderUpdatesBookListView extends FinderBaseListView {
-
-	public FinderUpdatesBookListView(int bookType, MainActivity activity, OnShowListener onShowListener) {
-		super(bookType, activity, R.id.lsvFinderUpdatesBooks, onShowListener);
-	}
+public class FinderUpdatesBookView extends FinderBaseListView {
 
 	@Override
 	protected void loadData() {

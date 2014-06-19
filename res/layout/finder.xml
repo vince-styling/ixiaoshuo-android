@@ -1,88 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ixiaoshuo="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.vincestyling.ixiaoshuo.ui.TopTabIndicator
+        android:id="@+id/pageIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:background="@drawable/title_bg_layer">
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        ixiaoshuo:btnWidth="80dp"
+        android:background="@drawable/title_bg_layer"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:padding="5dp"
-            android:background="@drawable/title_bg_content_area">
-
-            <Button
-                android:id="@+id/btnTextsBook"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/title_item_selected"
-                android:text="@string/finder_tab_type_txt"
-                android:includeFontPadding="false"
-                android:textSize="18sp"/>
-
-            <Button
-                android:id="@+id/btnVoicesBook"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@null"
-                android:text="@string/finder_tab_type_voice"
-                android:includeFontPadding="false"
-                android:textSize="18sp"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <com.vincestyling.ixiaoshuo.ui.FinderMenuGridView
-        android:id="@+id/finderMenuView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/book_shelf_deep_bg_layer"/>
-
-    <RelativeLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/finderPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/finder_booklist_bg">
-
-        <com.vincestyling.ixiaoshuo.ui.ScrollLayout
-            android:id="@+id/lotBookFinderContent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <RelativeLayout
-            android:id="@+id/lotNetworkUnavaliable"
-            android:layout_width="320dp"
-            android:layout_height="200dp"
-            android:visibility="gone"
-            android:layout_centerInParent="true">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/network_unavaliable_tip"/>
-
-            <Button
-                android:id="@+id/btnFinderRetry"
-                android:layout_width="100dp"
-                android:layout_height="56dp"
-                android:background="@drawable/network_unavaliable_btn_retry_selector"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"/>
-
-        </RelativeLayout>
-
-    </RelativeLayout>
+        android:background="@color/finder_booklist_bg"/>
 
 </LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.vincestyling.ixiaoshuo.ui.FinderTabIndicator
+        android:id="@+id/multilistIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@drawable/book_shelf_deep_bg_layer"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.vincestyling.ixiaoshuo.ui.NonSwipeableViewPager
+            android:id="@+id/finderPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <include
+            android:id="@+id/lotFinderNetworkUnavaliable"
+            layout="@layout/network_unavaliable" />
+
+    </RelativeLayout>
+
+</LinearLayout>

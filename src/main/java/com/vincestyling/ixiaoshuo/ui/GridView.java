@@ -102,8 +102,6 @@ public abstract class GridView extends View {
 	}
 
 	private void highlightItem(Canvas canvas) {
-		if (mTempSelectedItemId < 1) return;
-
 		int index = mItems.indexOfKey(mTempSelectedItemId);
 		Rect itemRect = getItemRect(index);
 		canvas.save(Canvas.CLIP_SAVE_FLAG);

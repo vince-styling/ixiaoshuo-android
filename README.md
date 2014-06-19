@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=libs/android-support-v13.jar -DgroupId=com.google.android -DartifactId=android-support-v13 -Dversion=v13 -Dpackaging=jar -DgeneratePom=true

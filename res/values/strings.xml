@@ -45,8 +45,8 @@
     <string name="type_local">本地</string>
 
     <!-- 发现 -->
-    <string name="finder_tab_type_txt">文字小说</string>
-    <string name="finder_tab_type_voice">有声读物</string>
+    <string name="finder_tab_type_simply">简略</string>
+    <string name="finder_tab_type_amply">详尽</string>
 
     <!-- 雷达 -->
     <string name="user_count_txt">"附近在看 周围检索到%1$s部"</string>

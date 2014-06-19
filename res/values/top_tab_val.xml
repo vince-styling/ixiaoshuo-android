@@ -4,10 +4,13 @@
     <color name="top_tab_text_on">#fefffc</color>
     <color name="top_tab_text_off">#b1d596</color>
 
-    <dimen name="top_tab_btn_width">0dp</dimen>
-    <dimen name="top_tab_btn_spacing">20dp</dimen>
     <dimen name="top_tab_btn_textsize">18sp</dimen>
     <dimen name="top_tab_content_area_padding">5dp</dimen>
     <dimen name="top_tab_content_area_margin_extra">3dp</dimen>
+
+    <declare-styleable name="TopTabIndicator">
+        <attr name="btnWidth" format="dimension"/>
+        <attr name="btnSpacing" format="dimension"/>
+    </declare-styleable>
 
 </resources>
