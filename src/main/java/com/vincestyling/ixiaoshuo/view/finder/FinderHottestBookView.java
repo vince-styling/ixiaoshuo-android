@@ -8,7 +8,7 @@ public class FinderHottestBookView extends FinderBaseListView {
 
 	@Override
 	protected void loadData() {
-		Netroid.getHottestBookList(mPageNo, getListener());
+		Netroid.getHottestBookList(mPageNum, getListener());
 	}
 
 	@Override

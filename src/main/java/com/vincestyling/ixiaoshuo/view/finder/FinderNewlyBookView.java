@@ -9,7 +9,7 @@ public class FinderNewlyBookView extends FinderBaseListView {
 
 	@Override
 	protected void loadData() {
-		Netroid.getNewlyBookList(mPageNo, getListener());
+		Netroid.getNewlyBookList(mPageNum, getListener());
 	}
 
 	@Override

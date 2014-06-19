@@ -2,6 +2,7 @@ package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +24,14 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 	private View mLotNetworkUnavaliable;
 	private ListView mListView;
 
+	private boolean shouldRestore;
+	private int index, top;
+
+	private static final int PAGE_SIZE = 20;
 	protected boolean mHasNextPage = true;
-	protected int mPageNo = 1;
-	protected int mBookType;
+	protected int mPageNum = 1;
+	// TODO : this variable should modify when adding header drap load previous page!!
+	protected int mHeadMissPageCount;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,6 +104,16 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 		mListView.setOnItemClickListener(this);
 		mListView.setOnScrollListener(this);
 		mListView.setAdapter(mAdapter);
+
+		if (savedInstanceState != null) {
+			mPageNum = savedInstanceState.getInt(PAGE_NUM, 1);
+			mHeadMissPageCount = mPageNum - 1;
+
+			index = savedInstanceState.getInt(INDEX, -1);
+			top = savedInstanceState.getInt(TOP, -1);
+
+			shouldRestore = index >= 0;
+		}
 	}
 
 	protected abstract void setBookTips(TextView txvBookTips, Book book);
@@ -122,19 +138,26 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 			@Override
 			public void onPreExecute() {
 				mLotNetworkUnavaliable.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onNetworking() {
 				mAdapter.setIsLoadingData(true);
 			}
 
 			@Override
 			public void onFinish() {
 				mAdapter.setIsLoadingData(false);
+				shouldRestore = false;
 			}
 
 			@Override
 			public void onSuccess(PaginationList<Book> bookList) {
 				mHasNextPage = bookList.hasNextPage();
 				mAdapter.addAll(bookList);
-				mPageNo++;
+				mPageNum++;
+
+				if (shouldRestore) mListView.setSelectionFromTop(index, top);
 			}
 
 			@Override
@@ -181,4 +204,34 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 		ImageView imvBookStatusSplit;
 		View lotBookStatus;
 	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// solution by http://stackoverflow.com/a/16753664/1294681
+		// NOTE : index and top values always are positive number
+		int index = mListView.getFirstVisiblePosition();
+		View child = mListView.getChildAt(0);
+		int top = (child == null) ? 0 : child.getTop();
+
+		child = mListView.getChildAt(1);
+		if (top < 0 && child != null) {
+			top = child.getTop();
+			index++;
+		}
+
+		int pageNum = 0;
+		while (index < pageNum++ * PAGE_SIZE || index > pageNum * PAGE_SIZE - 1);
+		index -= (pageNum - 1) * PAGE_SIZE;
+		pageNum += mHeadMissPageCount;
+
+		outState.putInt(PAGE_NUM, pageNum);
+		outState.putInt(INDEX, index);
+		outState.putInt(TOP, top);
+
+		Log.e("InstanceState", "index : " + index + " top : " + top + " pageNum : " + pageNum);
+	}
+
+	public static final String PAGE_NUM = "page_num";
+	public static final String INDEX = "list_index";
+	public static final String TOP = "list_top";
 }

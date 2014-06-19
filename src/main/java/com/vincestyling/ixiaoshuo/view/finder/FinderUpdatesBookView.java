@@ -8,7 +8,7 @@ public class FinderUpdatesBookView extends FinderBaseListView {
 
 	@Override
 	protected void loadData() {
-		Netroid.getBookListByUpdateStatus(Book.STATUS_FINISHED, mPageNo, getListener());
+		Netroid.getBookListByUpdateStatus(Book.STATUS_FINISHED, mPageNum, getListener());
 	}
 
 	@Override

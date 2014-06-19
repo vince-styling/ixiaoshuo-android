@@ -7,7 +7,7 @@ public class FinderCategoryBookListView extends FinderHottestBookView {
 
 	@Override
 	protected void loadData() {
-		Netroid.getBookListByCategory(mCatId, mPageNo, getListener());
+		Netroid.getBookListByCategory(mCatId, mPageNum, getListener());
 	}
 
 }
