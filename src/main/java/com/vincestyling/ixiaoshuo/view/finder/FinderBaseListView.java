@@ -2,6 +2,7 @@ package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -24,14 +25,13 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 	private View mLotNetworkUnavaliable;
 	private ListView mListView;
 
-	private boolean shouldRestore;
-	private int index, top;
-
 	private static final int PAGE_SIZE = 20;
-	protected boolean mHasNextPage = true;
-	protected int mPageNum = 1;
-	// TODO : this variable should modify when adding header drap load previous page!!
-	protected int mHeadMissPageCount;
+	private boolean mHasNextPage = true;
+	private int mStartPageNum = 1;
+	private int mEndPageNum;
+
+	private int index, top, additionalPage;
+	private boolean shouldRestore;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,13 +106,14 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 		mListView.setAdapter(mAdapter);
 
 		if (savedInstanceState != null) {
-			mPageNum = savedInstanceState.getInt(PAGE_NUM, 1);
-			mHeadMissPageCount = mPageNum - 1;
+			additionalPage = savedInstanceState.getInt(ADDITIONAL_PAGE, 0);
+			mStartPageNum = savedInstanceState.getInt(PAGE_NUM, 1);
+			mEndPageNum = mStartPageNum - 1;
 
 			index = savedInstanceState.getInt(INDEX, -1);
 			top = savedInstanceState.getInt(TOP, -1);
 
-			shouldRestore = index >= 0;
+			shouldRestore = index >= 0 && top >= 0;
 		}
 	}
 
@@ -130,10 +131,14 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 	}
 
 	private void loadNextPage() {
-		if (mHasNextPage) loadData();
+		if (mHasNextPage) loadData(++mEndPageNum, getListener(true));
 	}
 
-	protected Listener<PaginationList<Book>> getListener() {
+	private void loadPrevPage() {
+		if (mStartPageNum > 1) loadData(--mStartPageNum, getListener(false));
+	}
+
+	private Listener<PaginationList<Book>> getListener(final boolean isLoadNextPage) {
 		return new Listener<PaginationList<Book>>() {
 			@Override
 			public void onPreExecute() {
@@ -148,16 +153,37 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 			@Override
 			public void onFinish() {
 				mAdapter.setIsLoadingData(false);
-				shouldRestore = false;
 			}
 
 			@Override
 			public void onSuccess(PaginationList<Book> bookList) {
-				mHasNextPage = bookList.hasNextPage();
-				mAdapter.addAll(bookList);
-				mPageNum++;
+				if (isLoadNextPage) {
+					Log.e("InstanceState", "add to last endPageNum : " + mEndPageNum);
+					mHasNextPage = bookList.hasNextPage();
+					mAdapter.addLast(bookList);
+				} else {
+					Log.e("InstanceState", "add to first startPageNum : " + mStartPageNum);
+					mAdapter.addFirst(bookList);
+				}
 
-				if (shouldRestore) mListView.setSelectionFromTop(index, top);
+				if (additionalPage > 0) {
+					Log.e("InstanceState", "additional next page");
+					additionalPage = 0;
+					loadNextPage();
+				} else if (additionalPage < 0) {
+					Log.e("InstanceState", "additional prev page");
+					additionalPage = 0;
+					loadPrevPage();
+				} else if (shouldRestore) {
+					Log.e("InstanceState", "restore selection itemCount : " + mAdapter.getItemCount() + " index : " + index + " top : " + top);
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							mListView.setSelectionFromTop(index, top);
+							shouldRestore = false;
+						}
+					}, 50);
+				}
 			}
 
 			@Override
@@ -167,11 +193,20 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 				} else {
 					mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
 				}
+
+				shouldRestore = false;
+				additionalPage = 0;
+
+				if (isLoadNextPage) {
+					mEndPageNum--;
+				} else {
+					mStartPageNum--;
+				}
 			}
 		};
 	}
 
-	protected abstract void loadData();
+	protected abstract void loadData(int pageNum, Listener<PaginationList<Book>> listener);
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -208,6 +243,9 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// solution by http://stackoverflow.com/a/16753664/1294681
+		int upFillItemCount = 0;
+		int indexOfPage = 0;
+
 		// NOTE : index and top values always are positive number
 		int index = mListView.getFirstVisiblePosition();
 		View child = mListView.getChildAt(0);
@@ -216,21 +254,39 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 		child = mListView.getChildAt(1);
 		if (top < 0 && child != null) {
 			top = child.getTop();
+			upFillItemCount++;
+			indexOfPage++;
 			index++;
 		}
 
+		// calculate which page was index on
 		int pageNum = 0;
 		while (index < pageNum++ * PAGE_SIZE || index > pageNum * PAGE_SIZE - 1);
+		// index relative to current page
 		index -= (pageNum - 1) * PAGE_SIZE;
-		pageNum += mHeadMissPageCount;
+		pageNum += mStartPageNum - 1;
+
+		int visibleChildCount = mListView.getLastVisiblePosition() - mListView.getFirstVisiblePosition() + 1;
+		upFillItemCount = index == 0 && upFillItemCount == 1 ? 1 : 0;
+		int downFillItemCount = visibleChildCount - indexOfPage - 1;
+
+		if (index + downFillItemCount >= PAGE_SIZE) { // need next page
+			outState.putInt(ADDITIONAL_PAGE, 1);
+		}
+
+		if (index - upFillItemCount < 0) { // need previous page
+			outState.putInt(ADDITIONAL_PAGE, -1);
+			index += PAGE_SIZE;
+		}
 
 		outState.putInt(PAGE_NUM, pageNum);
 		outState.putInt(INDEX, index);
 		outState.putInt(TOP, top);
 
-		Log.e("InstanceState", "index : " + index + " top : " + top + " pageNum : " + pageNum);
+		Log.e("InstanceState", "index : " + index + " top : " + top + " pageNum : " + pageNum + " upFillItemCount : " + upFillItemCount + " downFillItemCount : " + downFillItemCount);
 	}
 
+	public static final String ADDITIONAL_PAGE = "additional_page";
 	public static final String PAGE_NUM = "page_num";
 	public static final String INDEX = "list_index";
 	public static final String TOP = "list_top";

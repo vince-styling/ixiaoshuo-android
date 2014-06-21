@@ -1,14 +1,16 @@
 package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.widget.TextView;
+import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
+import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class FinderHottestBookView extends FinderBaseListView {
 
 	@Override
-	protected void loadData() {
-		Netroid.getHottestBookList(mPageNum, getListener());
+	protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
+		Netroid.getHottestBookList(pageNum, listener);
 	}
 
 	@Override

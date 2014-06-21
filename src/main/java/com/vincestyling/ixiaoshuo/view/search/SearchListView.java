@@ -154,7 +154,7 @@ public class SearchListView extends ViewBuilder implements AbsListView.OnScrollL
 			@Override
 			public void onSuccess(PaginationList<Book> bookList) {
 				mHasNextPage = bookList.hasNextPage();
-				mAdapter.addAll(bookList);
+				mAdapter.addLast(bookList);
 				mPageNo++;
 			}
 

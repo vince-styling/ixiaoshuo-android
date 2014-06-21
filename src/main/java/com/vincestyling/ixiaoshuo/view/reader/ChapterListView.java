@@ -92,7 +92,7 @@ public class ChapterListView extends ViewBuilder implements AdapterView.OnItemCl
 				if (mAdapter == null) return;
 
 				mAdapter.setIsLoadingData(false);
-				mAdapter.addAll(chapterList);
+				mAdapter.addLast(chapterList);
 				for (int i = 0; i < mAdapter.getItemCount(); i++) {
 					if (mAdapter.getItem(i).isReading()) {
 						getListView().setSelection(i > 1 ? i - 2 : i);

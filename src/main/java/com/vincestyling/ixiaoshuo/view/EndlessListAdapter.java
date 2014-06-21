@@ -140,13 +140,23 @@ public abstract class EndlessListAdapter<T> extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void addAll(List<T> items) {
+	public void addLast(List<T> items) {
 		data.addAll(items);
 		notifyDataSetChanged();
 	}
 
-	public void addAll(List<T> items, boolean redrawList) {
+	public void addLast(List<T> items, boolean redrawList) {
 		data.addAll(items);
+		if (redrawList) notifyDataSetChanged();
+	}
+
+	public void addFirst(List<T> items) {
+		data.addAll(0, items);
+		notifyDataSetChanged();
+	}
+
+	public void addFirst(List<T> items, boolean redrawList) {
+		data.addAll(0, items);
 		if (redrawList) notifyDataSetChanged();
 	}
 

@@ -103,7 +103,7 @@ public class FinderCategoryListView extends ViewBuilder implements OnItemClickLi
 
 			@Override
 			public void onSuccess(List<Category> categories) {
-				mAdapter.addAll(categories);
+				mAdapter.addLast(categories);
 			}
 
 			@Override

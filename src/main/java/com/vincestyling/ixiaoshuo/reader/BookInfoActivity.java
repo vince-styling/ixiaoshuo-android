@@ -293,7 +293,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 			public void onSuccess(PaginationList<Chapter> chapterList) {
 				mTotalChapterCount = chapterList.getTotalItemCount();
 				mHasNextPage = chapterList.hasNextPage();
-				mAdapter.addAll(chapterList);
+				mAdapter.addLast(chapterList);
 				mPageNo++;
 
 				updateDownloadStatus();
@@ -331,7 +331,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 			public void onSuccess(PaginationList<Chapter> chapterList) {
 				mTotalChapterCount = chapterList.getTotalItemCount();
 				mHasNextPage = chapterList.hasNextPage();
-				mAdapter.addAll(chapterList);
+				mAdapter.addLast(chapterList);
 				mPageNo++;
 
 				boolean isShowing = mProgressDialog.isShowing();
