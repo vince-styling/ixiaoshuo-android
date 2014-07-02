@@ -3,27 +3,33 @@ package com.vincestyling.ixiaoshuo.view.finder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
+import com.vincestyling.ixiaoshuo.ui.PullToLoadPage;
+import com.vincestyling.ixiaoshuo.ui.PullToLoadPageListView;
+import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
-import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
+import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
 
-public abstract class FinderBaseListView extends BaseFragment implements AbsListView.OnScrollListener, OnItemClickListener {
-	protected EndlessListAdapter<Book> mAdapter;
+public abstract class FinderBaseListView extends BaseFragment implements
+		OnItemClickListener, PullToLoadPageListView.OnLoadingPageListener {
+
+	protected PaginationAdapter<Book> mAdapter;
 	private View mLotNetworkUnavaliable;
-	private ListView mListView;
+	private PullToLoadPageListView mListView;
 
 	private static final int PAGE_SIZE = 20;
 	private boolean mHasNextPage = true;
@@ -36,15 +42,49 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotFinderNetworkUnavaliable);
-		mListView = (ListView) getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
+		mListView = (PullToLoadPageListView) getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
 		return mListView;
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
-		mAdapter = new EndlessListAdapter<Book>() {
+		if (savedInstanceState != null) {
+			mHasNextPage = savedInstanceState.getBoolean(HAS_NEXT_PAGE, true);
+			additionalPage = savedInstanceState.getInt(ADDITIONAL_PAGE, 0);
+			mStartPageNum = savedInstanceState.getInt(PAGE_NUM, 1);
+			mEndPageNum = mStartPageNum - 1;
+
+			index = savedInstanceState.getInt(INDEX, -1);
+			top = savedInstanceState.getInt(TOP, -1);
+
+			shouldRestore = index >= 0 && top >= 0;
+		}
+
+		if (mStartPageNum > 1) {
+			View rootView = getActivity().getLayoutInflater().inflate(R.layout.finder_list_pull_to_load, null);
+			mListView.setPullToLoadPrevPageView(new PullToLoadPage(R.string.pull_to_load_prev_page, rootView) {
+				@Override
+				public int takePageNum() {
+					return mStartPageNum;
+				}
+			});
+		}
+
+		if (mHasNextPage) {
+			View rootView = getActivity().getLayoutInflater().inflate(R.layout.finder_list_pull_to_load, null);
+			mListView.setPullToLoadNextPageView(new PullToLoadPage(R.string.pull_to_load_next_page, rootView) {
+				@Override
+				public int takePageNum() {
+					return mEndPageNum;
+				}
+			});
+		}
+
+		mListView.setOnLoadingPageListener(this);
+
+		mAdapter = new PaginationAdapter<Book>(PAGE_SIZE) {
 			@Override
-			protected View getView(int position, View convertView) {
+			public View getView(int position, View convertView, ViewGroup parent) {
 				Holder holder;
 				if (convertView == null) {
 					convertView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_list_item, null);
@@ -85,57 +125,26 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 				setBookTips(holder.txvBookTips, book);
 
 				if (!mHasNextPage) {
+					// TODO : test when reach last page then scroll back situation.
 					int posDiffer = mAdapter.getItemCount() - position;
 					holder.lotDivider.setVisibility(posDiffer == 1 ? View.GONE : View.VISIBLE);
 				}
 
 				return convertView;
 			}
-
-			@Override
-			protected View initProgressView() {
-				View progressView = getActivity().getLayoutInflater().inflate(R.layout.contents_loading, null);
-				Display display = getActivity().getWindowManager().getDefaultDisplay();
-				progressView.setLayoutParams(new AbsListView.LayoutParams(display.getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
-				return progressView;
-			}
 		};
 
-		mListView.setOnItemClickListener(this);
-		mListView.setOnScrollListener(this);
 		mListView.setAdapter(mAdapter);
-
-		if (savedInstanceState != null) {
-			additionalPage = savedInstanceState.getInt(ADDITIONAL_PAGE, 0);
-			mStartPageNum = savedInstanceState.getInt(PAGE_NUM, 1);
-			mEndPageNum = mStartPageNum - 1;
-
-			index = savedInstanceState.getInt(INDEX, -1);
-			top = savedInstanceState.getInt(TOP, -1);
-
-			shouldRestore = index >= 0 && top >= 0;
-		}
+		mListView.setOnItemClickListener(this);
 	}
 
 	protected abstract void setBookTips(TextView txvBookTips, Book book);
 
 	@Override
 	public void onResume() {
+		if (mAdapter.getItemCount() == 0) mListView.triggerLoadNextPage();
+		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		super.onResume();
-
-		if (mAdapter.getItemCount() > 0) {
-			mLotNetworkUnavaliable.setVisibility(View.GONE);
-		} else {
-			loadNextPage();
-		}
-	}
-
-	private void loadNextPage() {
-		if (mHasNextPage) loadData(++mEndPageNum, getListener(true));
-	}
-
-	private void loadPrevPage() {
-		if (mStartPageNum > 1) loadData(--mStartPageNum, getListener(false));
 	}
 
 	private Listener<PaginationList<Book>> getListener(final boolean isLoadNextPage) {
@@ -146,36 +155,20 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 			}
 
 			@Override
-			public void onNetworking() {
-				mAdapter.setIsLoadingData(true);
-			}
-
-			@Override
 			public void onFinish() {
-				mAdapter.setIsLoadingData(false);
-			}
-
-			@Override
-			public void onSuccess(PaginationList<Book> bookList) {
 				if (isLoadNextPage) {
-					Log.e("InstanceState", "add to last endPageNum : " + mEndPageNum);
-					mHasNextPage = bookList.hasNextPage();
-					mAdapter.addLast(bookList);
+					mListView.finishLoadNextPage();
 				} else {
-					Log.e("InstanceState", "add to first startPageNum : " + mStartPageNum);
-					mAdapter.addFirst(bookList);
+					mListView.finishLoadPrevPage();
 				}
 
 				if (additionalPage > 0) {
-					Log.e("InstanceState", "additional next page");
 					additionalPage = 0;
-					loadNextPage();
+					mListView.triggerLoadNextPage();
 				} else if (additionalPage < 0) {
-					Log.e("InstanceState", "additional prev page");
 					additionalPage = 0;
-					loadPrevPage();
+					mListView.triggerLoadPrevPage();
 				} else if (shouldRestore) {
-					Log.e("InstanceState", "restore selection itemCount : " + mAdapter.getItemCount() + " index : " + index + " top : " + top);
 					new Handler().postDelayed(new Runnable() {
 						@Override
 						public void run() {
@@ -183,6 +176,16 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 							shouldRestore = false;
 						}
 					}, 50);
+				}
+			}
+
+			@Override
+			public void onSuccess(PaginationList<Book> bookList) {
+				if (isLoadNextPage) {
+					mHasNextPage = bookList.hasNextPage();
+					mAdapter.addLast(bookList);
+				} else {
+					mAdapter.addFirst(bookList);
 				}
 			}
 
@@ -200,7 +203,7 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 				if (isLoadNextPage) {
 					mEndPageNum--;
 				} else {
-					mStartPageNum--;
+					mStartPageNum++;
 				}
 			}
 		};
@@ -220,13 +223,31 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {}
+	public boolean onLoadNextPage() { // don't call this method directly
+		if (mHasNextPage) {
+			loadData(++mEndPageNum, getListener(true));
+			return true;
+		}
+		return false;
+	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		if (mAdapter.shouldRequestNextPage(firstVisibleItem, visibleItemCount, totalItemCount)) {
-			loadNextPage();
+	public boolean hasNextPage() {
+		return mHasNextPage;
+	}
+
+	@Override
+	public boolean onLoadPrevPage() { // don't call this method directly
+		if (mStartPageNum > 1) {
+			loadData(--mStartPageNum, getListener(false));
+			return true;
 		}
+		return false;
+	}
+
+	@Override
+	public boolean hasPrevPage() {
+		return mStartPageNum > 1;
 	}
 
 	class Holder {
@@ -242,11 +263,12 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		// solution by http://stackoverflow.com/a/16753664/1294681
+		// index and top calculation from http://stackoverflow.com/a/16753664/1294681
 		int upFillItemCount = 0;
+		int additionalPage = 0;
 		int indexOfPage = 0;
 
-		// NOTE : index and top values always are positive number
+		// NOTE : index and top values always are positive number.
 		int index = mListView.getFirstVisiblePosition();
 		View child = mListView.getChildAt(0);
 		int top = (child == null) ? 0 : child.getTop();
@@ -259,34 +281,57 @@ public abstract class FinderBaseListView extends BaseFragment implements AbsList
 			index++;
 		}
 
-		// calculate which page was index on
+		// Decrease when index calculation included the header.
+		if (mStartPageNum > 1 && index > 0) index--;
+
+
+		// Calculate which page was index on.
 		int pageNum = 0;
 		while (index < pageNum++ * PAGE_SIZE || index > pageNum * PAGE_SIZE - 1);
-		// index relative to current page
+
+		// Index relative to current page.
 		index -= (pageNum - 1) * PAGE_SIZE;
 		pageNum += mStartPageNum - 1;
 
+		// Calculate how much items in the up and bottom of current position enough to fill ListView.
 		int visibleChildCount = mListView.getLastVisiblePosition() - mListView.getFirstVisiblePosition() + 1;
 		upFillItemCount = index == 0 && upFillItemCount == 1 ? 1 : 0;
 		int downFillItemCount = visibleChildCount - indexOfPage - 1;
 
-		if (index + downFillItemCount >= PAGE_SIZE) { // need next page
-			outState.putInt(ADDITIONAL_PAGE, 1);
+
+		// If the last child view wasn't footer, we determine if current page
+		// have enough items to fill remaning gap after current index.
+		child = mListView.getChildAt(mListView.getChildCount() - 1);
+		if (child.findViewById(R.id.txvBookName) != null) {
+			if (index + downFillItemCount >= PAGE_SIZE) {
+				additionalPage = 1;
+			}
 		}
 
-		if (index - upFillItemCount < 0) { // need previous page
-			outState.putInt(ADDITIONAL_PAGE, -1);
+
+		// index between two pages, need previous page.
+		if (index - upFillItemCount < 0) {
+			additionalPage = -1;
 			index += PAGE_SIZE;
 		}
 
+
+		int restoredStartPageNum = Math.min(pageNum, pageNum + additionalPage);
+		// If pages include the header while next restoring state.
+		if (restoredStartPageNum > 1) index++;
+
+
+		outState.putBoolean(HAS_NEXT_PAGE, mHasNextPage);
+		outState.putInt(ADDITIONAL_PAGE, additionalPage);
 		outState.putInt(PAGE_NUM, pageNum);
 		outState.putInt(INDEX, index);
 		outState.putInt(TOP, top);
 
-		Log.e("InstanceState", "index : " + index + " top : " + top + " pageNum : " + pageNum + " upFillItemCount : " + upFillItemCount + " downFillItemCount : " + downFillItemCount);
+		AppLog.e("top : " + top + " index : " + index + " pageNum : " + pageNum + " additional : " + additionalPage + " up : " + upFillItemCount + " down : " + downFillItemCount);
 	}
 
 	public static final String ADDITIONAL_PAGE = "additional_page";
+	public static final String HAS_NEXT_PAGE = "has_next_page";
 	public static final String PAGE_NUM = "page_num";
 	public static final String INDEX = "list_index";
 	public static final String TOP = "list_top";

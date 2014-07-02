@@ -3,7 +3,7 @@ package com.vincestyling.ixiaoshuo.utils;
 import android.util.Log;
 
 public class AppLog {
-	private static final String TAG = "ixiaoshuo";
+	private static final String TAG = "ixiaoshuo_console";
 
 	public static void d(String msg) {
 		Log.d(TAG, msg);

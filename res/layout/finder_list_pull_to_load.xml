@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!--
+        gravity="bottom" is important, which ensures that
+        the header view when shown, has an effect of being pulled from the bottom
+
+        The following redundant RelativeLayouts are also necessary, which ensure that
+        when the header view is being pulled(height is being increased), the ImageViews
+        and TextViews inside will always remain the original height(not squeezed)
+    -->
+    <LinearLayout
+        android:id="@+id/vg_header_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/finder_listview_header_container_height"
+        android:gravity="bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/finder_listview_header_container_height"
+            android:gravity="center">
+
+            <ProgressBar
+                android:id="@+id/prbLoading"
+                android:layout_width="@dimen/finder_listview_header_content_height"
+                android:layout_height="@dimen/finder_listview_header_content_height"
+                android:indeterminate="true"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/finder_listview_header_content_height"
+                android:layout_marginLeft="2dp"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/txvCurrentPage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="#bdbdbc"
+                    android:textSize="11dp"/>
+
+                <TextView
+                    android:id="@+id/txvMotion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#808080"
+                    android:textSize="14dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
