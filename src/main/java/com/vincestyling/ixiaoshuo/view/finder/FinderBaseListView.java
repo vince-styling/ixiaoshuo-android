@@ -52,7 +52,6 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		if (savedInstanceState != null) {
-			mHasNextPage = savedInstanceState.getBoolean(HAS_NEXT_PAGE, true);
 			additionalPage = savedInstanceState.getInt(ADDITIONAL_PAGE, 0);
 			mStartPageNum = savedInstanceState.getInt(PAGE_NUM, 1);
 			mEndPageNum = mStartPageNum - 1;
@@ -359,7 +358,6 @@ public abstract class FinderBaseListView extends BaseFragment implements
 		if (restoredStartPageNum > 1) index++;
 
 
-		outState.putBoolean(HAS_NEXT_PAGE, mHasNextPage);
 		outState.putInt(ADDITIONAL_PAGE, additionalPage);
 		outState.putInt(PAGE_NUM, pageNum);
 		outState.putInt(INDEX, index);
@@ -369,7 +367,6 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	}
 
 	public static final String ADDITIONAL_PAGE = "additional_page";
-	public static final String HAS_NEXT_PAGE = "has_next_page";
 	public static final String PAGE_NUM = "page_num";
 	public static final String INDEX = "list_index";
 	public static final String TOP = "list_top";
