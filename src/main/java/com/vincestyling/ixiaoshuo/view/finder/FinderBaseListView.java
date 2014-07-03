@@ -1,6 +1,7 @@
 package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.content.Intent;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -23,6 +24,8 @@ import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
+
+import java.util.Arrays;
 
 public abstract class FinderBaseListView extends BaseFragment implements
 		OnItemClickListener, PullToLoadPageListView.OnLoadingPageListener {
@@ -82,6 +85,42 @@ public abstract class FinderBaseListView extends BaseFragment implements
 
 		mListView.setOnLoadingPageListener(this);
 
+
+		StateListDrawable selectorDrwb = new StateListDrawable() {
+			private boolean mIsPressed;
+			@Override
+			protected boolean onStateChange(int[] stateSet) {
+				boolean result = super.onStateChange(stateSet);
+
+				int aboveChildIndex = mListView.getMotionPosition() - mListView.getFirstVisiblePosition();
+				if (--aboveChildIndex < 0) return result;
+
+				if (Arrays.binarySearch(stateSet, android.R.attr.state_pressed) > -1) {
+					if (mIsPressed) return result;
+
+					if (aboveChildIndex == 0 && mStartPageNum == 1 || aboveChildIndex > 0) {
+						View child = mListView.getChildAt(aboveChildIndex);
+						Holder holder = (Holder) child.getTag();
+						if (holder != null) {
+							holder.lotDivider.setBackgroundResource(R.drawable.finder_booklist_divider_pressed_layer);
+							mIsPressed = true;
+						}
+					}
+				} else if (mIsPressed) {
+					View child = mListView.getChildAt(aboveChildIndex);
+					Holder holder = (Holder) child.getTag();
+					holder.lotDivider.setBackgroundResource(R.drawable.finder_booklist_divider_layer);
+					mIsPressed = false;
+				}
+
+				return result;
+			}
+		};
+		selectorDrwb.addState(new int[]{android.R.attr.state_pressed},
+				getResources().getDrawable(R.color.finder_booklist_bg_pressed));
+		mListView.setSelector(selectorDrwb);
+
+
 		mAdapter = new PaginationAdapter<Book>(PAGE_SIZE) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -125,7 +164,6 @@ public abstract class FinderBaseListView extends BaseFragment implements
 				setBookTips(holder.txvBookTips, book);
 
 				if (!mHasNextPage) {
-					// TODO : test when reach last page then scroll back situation.
 					int posDiffer = mAdapter.getItemCount() - position;
 					holder.lotDivider.setVisibility(posDiffer == 1 ? View.GONE : View.VISIBLE);
 				}

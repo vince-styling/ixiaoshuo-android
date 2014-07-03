@@ -207,6 +207,8 @@ public class PullToLoadPageListView extends ListView implements ScrollerImpl.OnF
 
 				initOrResetVelocityTracker();
 				mVelocityTracker.addMovement(ev);
+
+				mMotionPosition = findMotionRow(ev.getY());
 				break;
 		}
 		return super.onInterceptTouchEvent(ev);
@@ -547,5 +549,38 @@ public class PullToLoadPageListView extends ListView implements ScrollerImpl.OnF
 	public static interface PullToLoadCallback {
 		void onStartLoading();
 		void onEndLoading();
+	}
+
+	private int mMotionPosition;
+
+	public int getMotionPosition() {
+		return mMotionPosition;
+	}
+
+	/**
+	 * Find which position is motion on. this method copy into public from 4.0 source code.
+	 * @param y Y coordinate of the motion event.
+	 * @return Selected index (starting at 0) of the data item.
+	 */
+	public int findMotionRow(float y) {
+		int childCount = getChildCount();
+		if (childCount > 0) {
+			if (!isStackFromBottom()) {
+				for (int i = 0; i < childCount; i++) {
+					View v = getChildAt(i);
+					if (y <= v.getBottom()) {
+						return getFirstVisiblePosition() + i;
+					}
+				}
+			} else {
+				for (int i = childCount - 1; i >= 0; i--) {
+					View v = getChildAt(i);
+					if (y >= v.getTop()) {
+						return getFirstVisiblePosition() + i;
+					}
+				}
+			}
+		}
+		return INVALID_POSITION;
 	}
 }
