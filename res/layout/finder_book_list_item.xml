@@ -1,119 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/linear_finder_list_item"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:background="@drawable/finder_booklist_bg_selector">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="16dp"
-        android:paddingBottom="14dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:padding="10dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/txvBookName"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="bottom"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:textColor="#4d4d4d"
-                        android:textSize="19sp" />
-
-                    <LinearLayout
-                        android:id="@+id/lotBookStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="15dp"
-                        android:layout_gravity="top"
-                        android:layout_marginLeft="2dp"
-                        android:background="@drawable/red_flag" >
-
-                        <TextView
-                            android:id="@+id/txvBookStatus1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true"
-                            android:text="@string/book_status_tip_finished"
-                            android:textColor="#ffffff"
-                            android:textSize="10sp" />
-
-                        <ImageView
-                            android:id="@+id/imvBookStatusSplit"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="2dp"
-                            android:src="@drawable/red_flag_split" />
-
-                        <TextView
-                            android:id="@+id/txvBookStatus2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true"
-                            android:text="@string/book_status_tip_both_type"
-                            android:textColor="#ffffff"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/txvBookCapacity"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:gravity="bottom"
-                android:singleLine="true"
-                android:textColor="#bdbdbc"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/txvBookTips"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/book_tips_bg"
-                android:singleLine="true"
-                android:textColor="#e9a002"
-                android:textSize="14sp" />
-        </LinearLayout>
+        <com.vincestyling.ixiaoshuo.ui.ComplexBookNameView
+            android:id="@+id/txvBookName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="5dp"/>
 
         <TextView
-            android:id="@+id/txvBookSummary"
-            android:layout_width="match_parent"
+            android:id="@+id/txvBookCapacity"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:paddingTop="10dp"
+            android:layout_gravity="bottom"
+            android:paddingRight="5dp"
             android:singleLine="true"
-            android:textColor="#808080"
-            android:textSize="15sp" />
+            android:textColor="#bdbdbc"
+            android:textSize="11sp"/>
+
+        <TextView
+            android:id="@+id/txvBookTips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/book_tips_bg"
+            android:singleLine="true"
+            android:textColor="#e9a002"
+            android:textSize="14sp"/>
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/txvBookSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="#808080"
+        android:textSize="15sp"/>
 
     <FrameLayout
         android:id="@+id/lotDivider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/finder_booklist_divider_layer" />
+        android:layout_marginTop="10dp"
+        android:background="@drawable/finder_booklist_divider_layer"/>
 
 </LinearLayout>

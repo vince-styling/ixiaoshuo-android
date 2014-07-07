@@ -7,10 +7,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
@@ -18,6 +16,7 @@ import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
+import com.vincestyling.ixiaoshuo.ui.ComplexBookNameView;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPage;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPageListView;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
@@ -130,37 +129,26 @@ public abstract class FinderBaseListView extends BaseFragment implements
 					holder = new Holder();
 					holder.lotDivider = convertView.findViewById(R.id.lotDivider);
 
-					holder.txvBookName = (TextView) convertView.findViewById(R.id.txvBookName);
+					holder.txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
 					holder.txvBookSummary = (TextView) convertView.findViewById(R.id.txvBookSummary);
-
-					holder.lotBookStatus = convertView.findViewById(R.id.lotBookStatus);
-					holder.txvBookStatus1 = (TextView) convertView.findViewById(R.id.txvBookStatus1);
-					holder.txvBookStatus2 = (TextView) convertView.findViewById(R.id.txvBookStatus2);
-					holder.imvBookStatusSplit = (ImageView) convertView.findViewById(R.id.imvBookStatusSplit);
 
 					holder.txvBookTips = (TextView) convertView.findViewById(R.id.txvBookTips);
 					holder.txvBookCapacity = (TextView) convertView.findViewById(R.id.txvBookCapacity);
 
 					convertView.setTag(holder);
 
-					convertView.setLayoutParams(new AbsListView.LayoutParams(
-							FinderBaseListView.this.getView().getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
+//					convertView.setLayoutParams(new AbsListView.LayoutParams(
+//							FinderBaseListView.this.getView().getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
 				} else {
 					holder = (Holder) convertView.getTag();
 				}
 
 				Book book = mAdapter.getItem(position);
 
-				holder.txvBookName.setText(book.getName());
+				holder.txvBookName.setBook(book);
+				setBookTips(holder.txvBookTips, book);
 				holder.txvBookSummary.setText(book.getSummary());
 				holder.txvBookCapacity.setText(book.getCapacityStr());
-
-				holder.txvBookStatus1.setVisibility(book.isFinished() ? View.VISIBLE : View.GONE);
-				holder.txvBookStatus2.setVisibility(book.isBothType() ? View.VISIBLE : View.GONE);
-				holder.lotBookStatus.setVisibility(holder.txvBookStatus1.getVisibility() == View.VISIBLE || holder.txvBookStatus2.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
-				holder.imvBookStatusSplit.setVisibility(holder.txvBookStatus1.getVisibility() == View.VISIBLE && holder.txvBookStatus2.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
-
-				setBookTips(holder.txvBookTips, book);
 
 				if (!mHasNextPage) {
 					int posDiffer = mAdapter.getItemCount() - position;
@@ -288,14 +276,11 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	}
 
 	class Holder {
-		TextView txvBookName;
+		ComplexBookNameView txvBookName;
 		TextView txvBookSummary;
-		TextView txvBookStatus1, txvBookStatus2;
 		TextView txvBookCapacity;
 		TextView txvBookTips;
 		View lotDivider;
-		ImageView imvBookStatusSplit;
-		View lotBookStatus;
 	}
 
 	@Override

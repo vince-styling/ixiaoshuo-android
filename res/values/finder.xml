@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="finder_listview_header_container_height">70dp</dimen>
+    <dimen name="finder_listview_header_container_height">64dp</dimen>
     <dimen name="finder_listview_header_content_height">38dp</dimen>
 
     <string name="pull_to_load_prev_page">下拉加载上一页</string>
     <string name="pull_to_load_next_page">上拉加载下一页</string>
     <string name="current_page_note">当前第%d页</string>
     <string name="loading_page_note">正在加载第%d页……</string>
+
+    <dimen name="finder_booklist_bookname_flag">10sp</dimen>
+    <color name="finder_booklist_bookname_flag">#ffffff</color>
+    <dimen name="finder_booklist_bookname_flag_padding">1dp</dimen>
+    <dimen name="finder_booklist_bookname_flag_marginleft">2dp</dimen>
+    <dimen name="finder_booklist_bookname_flag_split_padding">1dp</dimen>
+
+    <color name="finder_booklist_bookname">#4d4d4d</color>
+    <dimen name="finder_booklist_bookname">19sp</dimen>
 
 </resources>
