@@ -63,13 +63,6 @@
     <string name="add_faild">添加失败"</string>
     <string name="play_faild">无法播放"</string>
 
-    <string name="without_book_tips">您的书架上还没有任何小说</string>
-    <string name="without_book_finder_tip1">去发现一本好书</string>
-    <string name="without_book_finder_tip2">最热门网络小说任您品读…</string>
-    <string name="without_book_finder_tip3">最好听的有声读物任您收听…</string>
-    <string name="without_book_radar_tip1">开启小说雷达检索</string>
-    <string name="without_book_radar_tip2">雷达精准探测，扫描有惊喜…</string>
-
     <!--  本地-->
     <string name="local_scan">"扫描"</string>
     <string name="local_add">"添加"</string>

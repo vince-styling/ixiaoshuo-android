@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="without_book_tips">您的书架上还没有任何小说</string>
+    <string name="without_book_finder_tip1">去发现一本好书</string>
+    <string name="without_book_finder_tip2">最热门网络小说任您品读…</string>
+    <string name="without_book_finder_tip3">最好听的有声读物任您收听…</string>
+    <string name="without_book_radar_tip1">开启小说雷达检索</string>
+    <string name="without_book_radar_tip2">雷达精准探测，扫描有惊喜…</string>
+    
+    <dimen name="without_book_container_bg_corner_radius">5dp</dimen>
+    <color name="without_book_container_bg_border">#c2b29d</color>
+    <dimen name="without_book_container_bg_border">1dp</dimen>
+
+    <style name="without_book_menu_container">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="without_book_menu_primary_txt">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">#cd9c57</item>
+    </style>
+
+    <style name="without_book_menu_secondary_txt">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">#b09a7b</item>
+    </style>
+</resources>
