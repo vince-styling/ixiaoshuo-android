@@ -53,6 +53,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".reader.CategoryBookListActivity"/>
+
     </application>
 
 </manifest> 

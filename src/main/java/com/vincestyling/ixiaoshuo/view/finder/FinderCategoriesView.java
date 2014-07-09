@@ -1,18 +1,106 @@
 package com.vincestyling.ixiaoshuo.view.finder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
+import com.duowan.mobile.netroid.Listener;
+import com.duowan.mobile.netroid.NetroidError;
 import com.vincestyling.ixiaoshuo.R;
+import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.pojo.Category;
+import com.vincestyling.ixiaoshuo.pojo.Const;
+import com.vincestyling.ixiaoshuo.reader.CategoryBookListActivity;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
+import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
 
-// TODO : is any way to extending the FinderBaseListView ?
-public class FinderCategoriesView extends BaseFragment {
+import java.util.List;
+
+public class FinderCategoriesView extends BaseFragment implements AdapterView.OnItemClickListener {
+	private EndlessListAdapter<Category> mAdapter;
+	private View mLotNetworkUnavaliable;
+	private ListView mListView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return getActivity().getLayoutInflater().inflate(R.layout.finder_book_categories, null);
+		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotFinderNetworkUnavaliable);
+		mListView = (ListView) getActivity().getLayoutInflater().inflate(R.layout.finder_book_categories, null);
+		return mListView;
 	}
 
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		mAdapter = new EndlessListAdapter<Category>() {
+			@Override
+			protected View getView(int position, View convertView) {
+				TextView txvCategoryName, txvCategoryBookCount;
+				if (convertView == null) {
+					convertView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_category_item, null);
+				}
+
+				txvCategoryName = (TextView) convertView.findViewById(R.id.txvCategoryName);
+				txvCategoryBookCount = (TextView) convertView.findViewById(R.id.txvCategoryBookCount);
+
+				Category category = getItem(position);
+				txvCategoryName.setText(category.getName());
+				txvCategoryBookCount.setText(String.format(
+						getResources().getString(R.string.finder_categories_amount), category.getBookCount()));
+
+				return convertView;
+			}
+
+			@Override
+			protected View initProgressView() {
+				return getActivity().getLayoutInflater().inflate(R.layout.contents_loading, null);
+			}
+		};
+
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+	}
+
+	@Override
+	public void onResume() {
+		mLotNetworkUnavaliable.setVisibility(View.GONE);
+		if (mAdapter.getItemCount() == 0) loadData();
+		super.onResume();
+	}
+
+	private void loadData() {
+		Netroid.getCategories(new Listener<List<Category>>() {
+			@Override
+			public void onPreExecute() {
+				mAdapter.setIsLoadingData(true);
+			}
+
+			@Override
+			public void onFinish() {
+				mAdapter.setIsLoadingData(false);
+			}
+
+			@Override
+			public void onSuccess(List<Category> categories) {
+				mAdapter.addLast(categories);
+			}
+
+			@Override
+			public void onError(NetroidError error) {
+				mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
+			}
+		});
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		Category category = mAdapter.getItem(position);
+		Intent intent = new Intent(getActivity(), CategoryBookListActivity.class);
+		intent.putExtra(Const.CATEGORY_NAME, category.getName());
+		intent.putExtra(Const.CATEGORY_ID, category.getId());
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		getActivity().startActivity(intent);
+	}
 }

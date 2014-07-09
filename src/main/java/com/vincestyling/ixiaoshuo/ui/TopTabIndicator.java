@@ -19,6 +19,7 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 	private Drawable mAreaDrawable;
 
 	private ViewPager mViewPager;
+	private ViewPager.OnPageChangeListener mListener;
 
 	private int mScrollingToPage;
 	private float mPageOffset;
@@ -120,7 +121,7 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 			String pageTitle = (String) mViewPager.getAdapter().getPageTitle(pos);
 
 			RectF bounds = new RectF(tabRect);
-			bounds.right = mPaint.measureText(pageTitle, 0, pageTitle.length());
+			bounds.right = mPaint.measureText(pageTitle);
 			bounds.bottom = mPaint.descent() - mPaint.ascent();
 
 			bounds.left += (tabRect.width() - bounds.right) / 2.0f;
@@ -188,6 +189,10 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 		setCurrentItem(initialPosition);
 	}
 
+	public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
+		mListener = listener;
+	}
+
 	@Override
 	public void setCurrentItem(int item) {
 		if (mViewPager == null) {
@@ -204,6 +209,7 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
+		if (mListener != null) mListener.onPageScrollStateChanged(state);
 	}
 
 	@Override
@@ -211,10 +217,13 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 		mPageOffset = positionOffset;
 		mScrollingToPage = position;
 		invalidate();
+		if (mListener != null)
+			mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
 	}
 
 	@Override
 	public void onPageSelected(int position) {
+		if (mListener != null) mListener.onPageSelected(position);
 	}
 
 }

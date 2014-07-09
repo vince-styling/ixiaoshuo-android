@@ -64,4 +64,6 @@
         <item name="android:background">@drawable/finder_booklist_divider_layer</item>
     </style>
 
+    <string name="finder_categories_amount">共%d部</string>
+
 </resources>

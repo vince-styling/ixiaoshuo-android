@@ -6,6 +6,8 @@ public class Const {
     public static final String SETTING = "setting";         /** 通常设置文件 */
 
     public static final String BOOK_ID = "book_id";
+    public static final String CATEGORY_ID = "category_id";
+    public static final String CATEGORY_NAME = "category_name";
 
 	// http parameters
 	public static final int HTTP_CACHE_KEY_DISK = 100;

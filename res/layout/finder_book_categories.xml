@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vincestyling.ixiaoshuo.ui.ScrollLayout
-        xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/lotFinderCategoriesContent"
-        android:layout_width="match_parent" android:layout_height="match_parent" />
+<ListView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:listSelector="@drawable/finder_booklist_bg_selector"
+    android:cacheColorHint="@android:color/transparent"
+    android:divider="@color/finder_category_list_divier"
+    android:dividerHeight="1dp"/>

@@ -2,20 +2,19 @@
 <resources>
 
     <!-- about bookshelf -->
-    <item name="lotBookShelfText" type="id" />
-    <item name="lotBookShelfVoice" type="id" />
-    <item name="lotBookShelfLocal" type="id" />
+    <item name="lotBookShelfText" type="id"/>
+    <item name="lotBookShelfVoice" type="id"/>
+    <item name="lotBookShelfLocal" type="id"/>
 
     <!-- about finder -->
-    <item name="lsvFinderCategoryBooks" type="id" />
-    <item name="lsvFinderUpdatesBooks" type="id" />
-    <item name="lsvFinderHottestBooks" type="id" />
-    <item name="lsvFinderNewlyBooks" type="id" />
-    
-    
-    <!--  abount search-->
-    
-     <item name="local_list_view" type="id" />
-    
+    <item name="lsvFinderCategoryBooks" type="id"/>
+    <item name="lsvFinderUpdatesBooks" type="id"/>
+    <item name="lsvFinderHottestBooks" type="id"/>
+    <item name="lsvFinderNewlyBooks" type="id"/>
 
+
+    <!--  abount search-->
+    <item name="local_list_view" type="id"/>
+
+    <item name="btnClose" type="id"/>
 </resources>

@@ -11,10 +11,10 @@ import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.ui.TopTabIndicator;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.FragmentCreator;
-import com.vincestyling.ixiaoshuo.view.PageIndicator;
 
-public class FinderView extends BaseFragment {
+public class FinderView extends BaseFragment implements ViewPager.OnPageChangeListener {
 	public static final int PAGER_INDEX = 1;
+	public static boolean IS_ON_SIMPLY_STYLE = true;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -26,7 +26,8 @@ public class FinderView extends BaseFragment {
 		ViewPager finderPager = (ViewPager) view.findViewById(R.id.finderPager);
 		finderPager.setAdapter(new MyAdapter());
 
-		PageIndicator indicator = (TopTabIndicator) view.findViewById(R.id.pageIndicator);
+		TopTabIndicator indicator = (TopTabIndicator) view.findViewById(R.id.pageIndicator);
+		indicator.setOnPageChangeListener(this);
 		indicator.setViewPager(finderPager);
 	}
 
@@ -57,4 +58,16 @@ public class FinderView extends BaseFragment {
 		}
 	}
 
+	@Override
+	public void onPageSelected(int position) {
+		IS_ON_SIMPLY_STYLE = position == 0;
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state) {
+	}
+
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+	}
 }
