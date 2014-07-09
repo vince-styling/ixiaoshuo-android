@@ -8,6 +8,7 @@ import com.duowan.mobile.netroid.Network;
 import com.duowan.mobile.netroid.RequestQueue;
 import com.duowan.mobile.netroid.cache.BitmapImageCache;
 import com.duowan.mobile.netroid.cache.DiskCache;
+import com.duowan.mobile.netroid.image.NetworkImageView;
 import com.duowan.mobile.netroid.stack.HurlStack;
 import com.duowan.mobile.netroid.toolbox.BasicNetwork;
 import com.duowan.mobile.netroid.toolbox.ImageLoader;
@@ -43,8 +44,8 @@ public class Netroid {
 	public static void init(Context ctx) {
 		if (mRequestQueue == null) {
 			Network network = new BasicNetwork(new HurlStack(API, null), HTTP.UTF_8);
-			mRequestQueue = new RequestQueue(network, 6,
-					new DiskCache(new File(ctx.getCacheDir(), Const.HTTP_DISK_CACHE_DIR_NAME), Const.HTTP_DISK_CACHE_SIZE));
+			File cacheDir = new File(ctx.getCacheDir(), Const.HTTP_DISK_CACHE_DIR_NAME);
+			mRequestQueue = new RequestQueue(network, 6, new DiskCache(cacheDir, Const.HTTP_DISK_CACHE_SIZE));
 
 			mImageLoader = new SelfImageLoader(mRequestQueue, new BitmapImageCache(Const.HTTP_MEMORY_CACHE_SIZE));
 
@@ -146,4 +147,13 @@ public class Netroid {
 		getImageLoader().get(url, listener, 0, 0);
 	}
 
+	public static void displayImage(String url, NetworkImageView imageView, int defaultImageResId, int errorImageResId) {
+		imageView.setDefaultImageResId(defaultImageResId);
+		imageView.setErrorImageResId(errorImageResId);
+		imageView.setImageUrl(url, getImageLoader());
+	}
+
+	public static void displayImage(String url, NetworkImageView imageView) {
+		displayImage(url, imageView, 0, 0);
+	}
 }

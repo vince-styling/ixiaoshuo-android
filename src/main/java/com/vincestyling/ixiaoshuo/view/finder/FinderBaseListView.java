@@ -34,7 +34,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	private PullToLoadPageListView mListView;
 
 	private static final int PAGE_SIZE = 20;
-	private boolean mHasNextPage = true;
+	protected boolean mHasNextPage = true;
 	private int mStartPageNum = 1;
 	private int mEndPageNum;
 
@@ -122,40 +122,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
 		mAdapter = new PaginationAdapter<Book>(PAGE_SIZE) {
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				Holder holder;
-				if (convertView == null) {
-					convertView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_list_item, null);
-
-					holder = new Holder();
-					holder.lotDivider = convertView.findViewById(R.id.lotDivider);
-
-					holder.txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
-					holder.txvBookSummary = (TextView) convertView.findViewById(R.id.txvBookSummary);
-
-					holder.txvBookTips = (TextView) convertView.findViewById(R.id.txvBookTips);
-					holder.txvBookCapacity = (TextView) convertView.findViewById(R.id.txvBookCapacity);
-
-					convertView.setTag(holder);
-
-//					convertView.setLayoutParams(new AbsListView.LayoutParams(
-//							FinderBaseListView.this.getView().getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
-				} else {
-					holder = (Holder) convertView.getTag();
-				}
-
-				Book book = mAdapter.getItem(position);
-
-				holder.txvBookName.setBook(book);
-				setBookTips(holder.txvBookTips, book);
-				holder.txvBookSummary.setText(book.getSummary());
-				holder.txvBookCapacity.setText(book.getCapacityStr());
-
-				if (!mHasNextPage) {
-					int posDiffer = mAdapter.getItemCount() - position;
-					holder.lotDivider.setVisibility(posDiffer == 1 ? View.GONE : View.VISIBLE);
-				}
-
-				return convertView;
+				return adapterGetView(position, convertView);
 			}
 		};
 
@@ -163,7 +130,44 @@ public abstract class FinderBaseListView extends BaseFragment implements
 		mListView.setOnItemClickListener(this);
 	}
 
+	protected View adapterGetView(int position, View convertView) {
+		Holder holder;
+		if (convertView == null) {
+			convertView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_list_item, null);
+
+			holder = new Holder();
+			holder.lotDivider = convertView.findViewById(R.id.lotDivider);
+
+			holder.txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
+			holder.txvBookSummary = (TextView) convertView.findViewById(R.id.txvBookSummary);
+
+			holder.txvBookTips = (TextView) convertView.findViewById(R.id.txvBookTips);
+			holder.txvBookCapacity = (TextView) convertView.findViewById(R.id.txvBookCapacity);
+
+			convertView.setTag(holder);
+		} else {
+			holder = (Holder) convertView.getTag();
+		}
+
+		Book book = mAdapter.getItem(position);
+
+		holder.txvBookName.setIsEnableFinishedState(isEnableFinishedState());
+		holder.txvBookName.setBook(book);
+
+		setBookTips(holder.txvBookTips, book);
+		holder.txvBookSummary.setText(book.getSummary());
+		holder.txvBookCapacity.setText(book.getCapacityStr());
+
+		if (!mHasNextPage) {
+			int posDiffer = mAdapter.getItemCount() - position;
+			holder.lotDivider.setVisibility(posDiffer == 1 ? View.GONE : View.VISIBLE);
+		}
+
+		return convertView;
+	}
+
 	protected abstract void setBookTips(TextView txvBookTips, Book book);
+	protected boolean isEnableFinishedState() { return true; }
 
 	@Override
 	public void onResume() {
@@ -275,7 +279,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
 		return mStartPageNum > 1;
 	}
 
-	class Holder {
+	protected class Holder {
 		ComplexBookNameView txvBookName;
 		TextView txvBookSummary;
 		TextView txvBookCapacity;

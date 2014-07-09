@@ -5,17 +5,21 @@ import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
-import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
-public class FinderNewlyBookView extends FinderBaseListView {
+public class FinderAmplyUpdatesBookView extends FinderAmplyBaseBookView {
 
 	@Override
 	protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
-		Netroid.getNewlyBookList(pageNum, listener);
+		Netroid.getBookListByUpdateStatus(Book.STATUS_FINISHED, pageNum, listener);
 	}
 
 	@Override
 	protected void setBookTips(TextView txvBookTips, Book book) {
-		txvBookTips.setText(StringUtil.getDiffWithNow(book.getLastUpdateTime()));
+		txvBookTips.setText(book.getCatName());
+	}
+
+	@Override
+	protected boolean isEnableFinishedState() {
+		return false;
 	}
 }

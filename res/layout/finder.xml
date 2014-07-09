@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
-        ixiaoshuo:btnWidth="80dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        ixiaoshuo:btnSpacing="50dp"
         android:background="@drawable/title_bg_layer"/>
 
     <android.support.v4.view.ViewPager

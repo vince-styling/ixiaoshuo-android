@@ -32,7 +32,7 @@ public class FinderView extends BaseFragment {
 
 	private FragmentCreator[] mMenus = {
 			new FragmentCreator(R.string.finder_tab_type_simply, FinderSimplyView.class),
-			new FragmentCreator(R.string.finder_tab_type_amply, FinderSimplyView.class),
+			new FragmentCreator(R.string.finder_tab_type_amply, FinderAmplyView.class),
 	};
 
 	private class MyAdapter extends FragmentStatePagerAdapter {

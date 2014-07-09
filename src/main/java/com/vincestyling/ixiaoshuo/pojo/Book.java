@@ -136,7 +136,7 @@ public class Book {
 		return isBothType ? 1 : 0;
 	}
 
-	public void setIsBothType(boolean isBothType) {
+	public void setBothType(boolean isBothType) {
 		this.isBothType = isBothType;
 	}
 

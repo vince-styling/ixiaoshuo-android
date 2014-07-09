@@ -22,6 +22,8 @@ public class FinderSimplyView extends BaseFragment {
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
+		mMenus = buildMenus();
+
 		ViewPager finderPager = (ViewPager) view.findViewById(R.id.finderPager);
 		finderPager.setAdapter(new MyAdapter());
 
@@ -29,12 +31,16 @@ public class FinderSimplyView extends BaseFragment {
 		indicator.setViewPager(finderPager);
 	}
 
-	private FragmentCreator[] mMenus = {
-			new FragmentCreator(FinderNewlyBookView.class),
-			new FragmentCreator(FinderHottestBookView.class),
-			new FragmentCreator(FinderUpdatesBookView.class),
-			new FragmentCreator(FinderCategoriesView.class),
-	};
+	private FragmentCreator[] mMenus;
+
+	protected FragmentCreator[] buildMenus() {
+		return new FragmentCreator[]{
+				new FragmentCreator(FinderSimplyNewlyBookView.class),
+				new FragmentCreator(FinderSimplyHottestBookView.class),
+				new FragmentCreator(FinderSimplyUpdatesBookView.class),
+				new FragmentCreator(FinderCategoriesView.class),
+		};
+	}
 
 	private class MyAdapter extends FragmentStatePagerAdapter {
 		public MyAdapter() {

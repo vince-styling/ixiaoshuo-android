@@ -5,7 +5,7 @@ import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
-public class FinderCategoryBookListView extends FinderHottestBookView {
+public class FinderCategoryBookListView extends FinderSimplyHottestBookView {
 	private int mCatId;
 
 	@Override

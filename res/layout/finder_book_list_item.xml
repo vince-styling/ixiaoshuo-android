@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:padding="10dp">
 
-
         <com.vincestyling.ixiaoshuo.ui.ComplexBookNameView
             android:id="@+id/txvBookName"
             android:layout_width="0dp"
@@ -19,43 +18,21 @@
             android:paddingRight="5dp"/>
 
         <TextView
-            android:id="@+id/txvBookCapacity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:paddingRight="5dp"
-            android:singleLine="true"
-            android:textColor="#bdbdbc"
-            android:textSize="11sp"/>
+            style="@style/finder_book_list_item_capacity"/>
 
         <TextView
-            android:id="@+id/txvBookTips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@drawable/book_tips_bg"
-            android:singleLine="true"
-            android:textColor="#e9a002"
-            android:textSize="14sp"/>
+            style="@style/finder_book_list_item_tips"/>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/txvBookSummary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:singleLine="true"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textColor="#808080"
-        android:textSize="15sp"/>
+        style="@style/finder_book_list_item_summary"/>
 
     <FrameLayout
-        android:id="@+id/lotDivider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@drawable/finder_booklist_divider_layer"/>
+        style="@style/finder_book_list_item_divider"/>
 
 </LinearLayout>
