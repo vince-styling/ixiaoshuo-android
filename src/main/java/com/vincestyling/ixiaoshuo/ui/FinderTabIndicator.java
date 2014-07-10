@@ -12,6 +12,7 @@ import com.vincestyling.ixiaoshuo.view.PageIndicator;
 
 public class FinderTabIndicator extends LinearLayout implements PageIndicator {
 	private ViewPager mViewPager;
+	private ViewPager.OnPageChangeListener mListener;
 
 	private int mBtnWidth;
 	private int mBtnHeight;
@@ -106,6 +107,7 @@ public class FinderTabIndicator extends LinearLayout implements PageIndicator {
 
 		mViewPager = view;
 		mViewPager.setOnPageChangeListener(this);
+		if (mListener != null) mListener.onPageSelected(0);
 
 		invalidate();
 	}
@@ -114,6 +116,12 @@ public class FinderTabIndicator extends LinearLayout implements PageIndicator {
 	public void setViewPager(ViewPager view, int initialPosition) {
 		setViewPager(view);
 		setCurrentItem(initialPosition);
+		if (mListener != null) mListener.onPageSelected(initialPosition);
+	}
+
+	@Override
+	public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
+		mListener = listener;
 	}
 
 	@Override
@@ -131,14 +139,18 @@ public class FinderTabIndicator extends LinearLayout implements PageIndicator {
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
+		if (mListener != null) mListener.onPageScrollStateChanged(state);
 	}
 
 	@Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+		if (mListener != null)
+			mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
 	}
 
 	@Override
 	public void onPageSelected(int position) {
+		if (mListener != null) mListener.onPageSelected(position);
 		invalidate();
 	}
 

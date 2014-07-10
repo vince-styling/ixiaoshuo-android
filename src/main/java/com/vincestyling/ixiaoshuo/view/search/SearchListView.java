@@ -32,7 +32,7 @@ public class SearchListView extends ViewBuilder implements AbsListView.OnScrollL
 
 	@Override
 	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
+		mView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_list_content, null);
 		mView.setId(mViewId);
 	}
 
@@ -108,7 +108,7 @@ public class SearchListView extends ViewBuilder implements AbsListView.OnScrollL
 
 	@Override
 	public void resume() {
-		Button btnFinderRetry = (Button) mLotNetworkUnavaliable.findViewById(R.id.btnFinderRetry);
+		Button btnFinderRetry = (Button) mLotNetworkUnavaliable.findViewById(R.id.btnRetry);
 		btnFinderRetry.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

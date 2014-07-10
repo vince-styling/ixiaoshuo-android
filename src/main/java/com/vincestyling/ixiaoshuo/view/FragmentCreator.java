@@ -29,12 +29,7 @@ public class FragmentCreator {
 		return null;
 	}
 
-//	public Fragment newInstance(View view) {
-//		try {
-//			return clazz.getDeclaredConstructor(View.class).newInstance(view);
-//		} catch (Exception e) {
-//			AppLog.e(e);
-//		}
-//		return null;
-//	}
+	public Class<? extends BaseFragment> getClazz() {
+		return clazz;
+	}
 }

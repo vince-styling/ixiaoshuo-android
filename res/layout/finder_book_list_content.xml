@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/lsvCategories"
+    <com.vincestyling.ixiaoshuo.ui.PullToLoadPageListView
+        android:id="@+id/lsvFinder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:listSelector="@drawable/finder_booklist_bg_selector"
-        android:cacheColorHint="@android:color/transparent"
-        android:divider="@color/finder_category_list_divier"
-        android:dividerHeight="1dp"/>
+        android:fastScrollEnabled="true"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:cacheColorHint="@android:color/transparent"/>
 
     <include
         layout="@layout/network_unavaliable"/>

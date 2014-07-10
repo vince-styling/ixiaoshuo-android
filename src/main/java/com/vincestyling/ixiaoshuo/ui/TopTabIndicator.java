@@ -179,6 +179,7 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 
 		mViewPager = view;
 		mViewPager.setOnPageChangeListener(this);
+		if (mListener != null) mListener.onPageSelected(0);
 
 		invalidate();
 	}
@@ -187,8 +188,10 @@ public class TopTabIndicator extends LinearLayout implements PageIndicator {
 	public void setViewPager(ViewPager view, int initialPosition) {
 		setViewPager(view);
 		setCurrentItem(initialPosition);
+		if (mListener != null) mListener.onPageSelected(initialPosition);
 	}
 
+	@Override
 	public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
 		mListener = listener;
 	}

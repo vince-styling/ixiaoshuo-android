@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lotNetworkUnavaliable"
     android:layout_width="320dp"
     android:layout_height="200dp"
     android:layout_centerInParent="true"
@@ -14,7 +15,7 @@
         android:src="@drawable/network_unavaliable_tip"/>
 
     <Button
-        android:id="@+id/btnFinderRetry"
+        android:id="@+id/btnRetry"
         android:layout_width="100dp"
         android:layout_height="56dp"
         android:background="@drawable/network_unavaliable_btn_retry_selector"

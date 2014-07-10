@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
@@ -19,7 +20,6 @@ import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.ui.ComplexBookNameView;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPage;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPageListView;
-import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
@@ -30,8 +30,8 @@ public abstract class FinderBaseListView extends BaseFragment implements
 		OnItemClickListener, PullToLoadPageListView.OnLoadingPageListener {
 
 	protected PaginationAdapter<Book> mAdapter;
-	private View mLotNetworkUnavaliable;
 	private PullToLoadPageListView mListView;
+	private View mLotNetworkUnavaliable;
 
 	private static final int PAGE_SIZE = 20;
 	protected boolean mHasNextPage = true;
@@ -43,13 +43,17 @@ public abstract class FinderBaseListView extends BaseFragment implements
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotFinderNetworkUnavaliable);
-		mListView = (PullToLoadPageListView) getActivity().getLayoutInflater().inflate(R.layout.finder_book_listview, null);
-		return mListView;
+		RelativeLayout view = (RelativeLayout) inflater.inflate(R.layout.finder_book_list_content, null);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+		view.setLayoutParams(params);
+		return view;
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
+		mListView = (PullToLoadPageListView) view.findViewById(R.id.lsvFinder);
+
 		if (savedInstanceState != null) {
 			additionalPage = savedInstanceState.getInt(ADDITIONAL_PAGE, 0);
 			mStartPageNum = savedInstanceState.getInt(PAGE_NUM, 1);
@@ -128,6 +132,14 @@ public abstract class FinderBaseListView extends BaseFragment implements
 
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
+
+		mLotNetworkUnavaliable = view.findViewById(R.id.lotNetworkUnavaliable);
+		mLotNetworkUnavaliable.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mListView.triggerLoadNextPage();
+			}
+		});
 	}
 
 	protected View adapterGetView(int position, View convertView) {
@@ -172,7 +184,6 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	@Override
 	public void onResume() {
 		if (mAdapter.getItemCount() == 0) mListView.triggerLoadNextPage();
-		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		super.onResume();
 	}
 
@@ -181,6 +192,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
 			@Override
 			public void onPreExecute() {
 				mLotNetworkUnavaliable.setVisibility(View.GONE);
+				mListView.setVisibility(View.VISIBLE);
 			}
 
 			@Override
@@ -224,6 +236,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
 					getBaseActivity().showToastMsg(R.string.without_data);
 				} else {
 					mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
+					mListView.setVisibility(View.GONE);
 				}
 
 				shouldRestore = false;
@@ -352,7 +365,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
 		outState.putInt(INDEX, index);
 		outState.putInt(TOP, top);
 
-		AppLog.e("top : " + top + " index : " + index + " pageNum : " + pageNum + " additional : " + additionalPage + " up : " + upFillItemCount + " down : " + downFillItemCount);
+//		AppLog.e("top : " + top + " index : " + index + " pageNum : " + pageNum + " additional : " + additionalPage + " up : " + upFillItemCount + " down : " + downFillItemCount);
 	}
 
 	public static final String ADDITIONAL_PAGE = "additional_page";

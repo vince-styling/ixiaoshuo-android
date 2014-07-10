@@ -8,13 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.ui.TopTabIndicator;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.FragmentCreator;
+import com.vincestyling.ixiaoshuo.view.PageIndicator;
 
 public class FinderView extends BaseFragment implements ViewPager.OnPageChangeListener {
 	public static final int PAGER_INDEX = 1;
-	public static boolean IS_ON_SIMPLY_STYLE = true;
+	private static boolean IS_ON_SIMPLY_STYLE;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class FinderView extends BaseFragment implements ViewPager.OnPageChangeLi
 		ViewPager finderPager = (ViewPager) view.findViewById(R.id.finderPager);
 		finderPager.setAdapter(new MyAdapter());
 
-		TopTabIndicator indicator = (TopTabIndicator) view.findViewById(R.id.pageIndicator);
+		PageIndicator indicator = (PageIndicator) view.findViewById(R.id.pageIndicator);
 		indicator.setOnPageChangeListener(this);
 		indicator.setViewPager(finderPager);
 	}
@@ -56,6 +56,10 @@ public class FinderView extends BaseFragment implements ViewPager.OnPageChangeLi
 			int resId = mMenus[position].getTitleResId();
 			return resId > 0 ? getResources().getString(resId) : null;
 		}
+	}
+
+	public static boolean isOnSimplyStyle() {
+		return IS_ON_SIMPLY_STYLE;
 	}
 
 	@Override

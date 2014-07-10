@@ -13,19 +13,9 @@
         android:paddingRight="20dp"
         android:background="@drawable/book_shelf_deep_bg_layer"/>
 
-    <RelativeLayout
+    <com.vincestyling.ixiaoshuo.ui.NonSwipeableViewPager
+        android:id="@+id/finderPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.vincestyling.ixiaoshuo.ui.NonSwipeableViewPager
-            android:id="@+id/finderPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <include
-            android:id="@+id/lotFinderNetworkUnavaliable"
-            layout="@layout/network_unavaliable" />
-
-    </RelativeLayout>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

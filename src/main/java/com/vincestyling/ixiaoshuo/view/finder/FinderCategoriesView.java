@@ -27,13 +27,13 @@ public class FinderCategoriesView extends BaseFragment implements AdapterView.On
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mLotNetworkUnavaliable = getActivity().findViewById(R.id.lotFinderNetworkUnavaliable);
-		mListView = (ListView) getActivity().getLayoutInflater().inflate(R.layout.finder_book_categories, null);
-		return mListView;
+		return inflater.inflate(R.layout.finder_book_categories, null);
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
+		mListView = (ListView) view.findViewById(R.id.lsvCategories);
+
 		mAdapter = new EndlessListAdapter<Category>() {
 			@Override
 			protected View getView(int position, View convertView) {
@@ -61,11 +61,18 @@ public class FinderCategoriesView extends BaseFragment implements AdapterView.On
 
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
+
+		mLotNetworkUnavaliable = view.findViewById(R.id.lotNetworkUnavaliable);
+		mLotNetworkUnavaliable.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				loadData();
+			}
+		});
 	}
 
 	@Override
 	public void onResume() {
-		mLotNetworkUnavaliable.setVisibility(View.GONE);
 		if (mAdapter.getItemCount() == 0) loadData();
 		super.onResume();
 	}
@@ -74,6 +81,8 @@ public class FinderCategoriesView extends BaseFragment implements AdapterView.On
 		Netroid.getCategories(new Listener<List<Category>>() {
 			@Override
 			public void onPreExecute() {
+				mLotNetworkUnavaliable.setVisibility(View.GONE);
+				mListView.setVisibility(View.VISIBLE);
 				mAdapter.setIsLoadingData(true);
 			}
 
@@ -84,12 +93,13 @@ public class FinderCategoriesView extends BaseFragment implements AdapterView.On
 
 			@Override
 			public void onSuccess(List<Category> categories) {
-				mAdapter.addLast(categories);
+				mAdapter.setData(categories);
 			}
 
 			@Override
 			public void onError(NetroidError error) {
 				mLotNetworkUnavaliable.setVisibility(View.VISIBLE);
+				mListView.setVisibility(View.GONE);
 			}
 		});
 	}

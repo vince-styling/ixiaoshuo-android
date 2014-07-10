@@ -23,7 +23,7 @@ public class CategoryBookListActivity extends BaseActivity {
 			return;
 		}
 
-		FinderBaseListView finderView = FinderView.IS_ON_SIMPLY_STYLE ?
+		FinderBaseListView finderView = FinderView.isOnSimplyStyle() ?
 				new FinderSimplyCategoryBookView(categoryId) : new FinderAmplyCategoryBookView(categoryId);
 
 		setContentView(R.layout.finder_category_booklist);
