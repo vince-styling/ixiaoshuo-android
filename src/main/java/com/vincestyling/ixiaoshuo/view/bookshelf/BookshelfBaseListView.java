@@ -20,8 +20,8 @@ import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 import com.vincestyling.ixiaoshuo.ui.CommonMenuDialog;
+import com.vincestyling.ixiaoshuo.ui.RoundedRepeatBackgroundDrawable;
 import com.vincestyling.ixiaoshuo.ui.WithoutBookStatisticsView;
-import com.vincestyling.ixiaoshuo.ui.WithoutbookBackgroundDrawable;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 
 import java.util.List;
@@ -39,8 +39,13 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
 		View view = getActivity().getLayoutInflater().inflate(R.layout.book_shelf_content, null);
 
 		mLotWithoutBooks = view.findViewById(R.id.lotWithoutBooks);
-		mLotWithoutBooks.findViewById(R.id.lotWithoutBookBanner)
-				.setBackgroundDrawable(new WithoutbookBackgroundDrawable(getResources()));
+
+		RoundedRepeatBackgroundDrawable drawable = new RoundedRepeatBackgroundDrawable();
+		drawable.setBackgroundDrawable(getResources().getDrawable(R.drawable.book_shelf_without_book_stripe));
+		drawable.setCornerRadius(getResources().getDimension(R.dimen.without_book_container_bg_corner_radius));
+		drawable.setBorderWidth(getResources().getDimension(R.dimen.without_book_container_bg_border));
+		drawable.setBorderColor(getResources().getColor(R.color.without_book_container_bg_border));
+		mLotWithoutBooks.findViewById(R.id.lotWithoutBookBanner).setBackgroundDrawable(drawable);
 
 		mLotBookShelf = view.findViewById(R.id.lotBookShelf);
 

@@ -1,14 +1,12 @@
 package com.vincestyling.ixiaoshuo.ui;
 
-import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import com.vincestyling.ixiaoshuo.R;
 
 import java.lang.ref.WeakReference;
 
-public class WithoutbookBackgroundDrawable extends Drawable {
+public class RoundedRepeatBackgroundDrawable extends Drawable {
 	private final Paint mBGPaint;
 	private BitmapDrawable mDrawable;
 	private final Paint mBorderPaint;
@@ -20,13 +18,7 @@ public class WithoutbookBackgroundDrawable extends Drawable {
 	private float mCornerRadius;
 	private float mBorderWidth;
 
-	public WithoutbookBackgroundDrawable(Resources res) {
-		mDrawable = (BitmapDrawable) res.getDrawable(R.drawable.book_shelf_without_book_stripe);
-		mDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-
-		mCornerRadius = res.getDimension(R.dimen.without_book_container_bg_corner_radius);
-		mBorderWidth = res.getDimension(R.dimen.without_book_container_bg_border);
-
+	public RoundedRepeatBackgroundDrawable() {
 		mBGPaint = new Paint();
 		mBGPaint.setAntiAlias(true);
 		mBGPaint.setStyle(Paint.Style.FILL);
@@ -34,8 +26,6 @@ public class WithoutbookBackgroundDrawable extends Drawable {
 		mBorderPaint = new Paint();
 		mBorderPaint.setAntiAlias(true);
 		mBorderPaint.setStyle(Paint.Style.STROKE);
-		mBorderPaint.setStrokeWidth(mBorderWidth);
-		mBorderPaint.setColor(res.getColor(R.color.without_book_container_bg_border));
 	}
 
 	@Override
@@ -113,16 +103,21 @@ public class WithoutbookBackgroundDrawable extends Drawable {
 		return mBounds.height();
 	}
 
-	public void setCornerRadius(float radius) {
-		mCornerRadius = radius;
+	public void setBackgroundDrawable(Drawable drawable) {
+		mDrawable = (BitmapDrawable) drawable;
+		mDrawable.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
 	}
 
-	public void setBorderWidth(float width) {
-		mBorderPaint.setStrokeWidth(width);
-		mBorderWidth = width;
+	public void setCornerRadius(float cornerRadius) {
+		mCornerRadius = cornerRadius;
 	}
 
-	public void setBorderColor(int color) {
-		mBorderPaint.setColor(color);
+	public void setBorderWidth(float borderWidth) {
+		mBorderPaint.setStrokeWidth(borderWidth);
+		mBorderWidth = borderWidth;
+	}
+
+	public void setBorderColor(int borderColor) {
+		mBorderPaint.setColor(borderColor);
 	}
 }
