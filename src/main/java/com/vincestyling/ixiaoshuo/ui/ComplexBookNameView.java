@@ -96,7 +96,9 @@ public class ComplexBookNameView extends View {
 		mMeasureHeight += getPaddingTop() + getPaddingBottom();
 
 		int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
-		mShouldEllipsize = mMeasureWidth > widthSpecSize;
+		mBoundsF.set(getPaddingLeft(), getPaddingTop(),
+				widthSpecSize - getPaddingRight(), mMeasureHeight - getPaddingBottom());
+		mShouldEllipsize = mMeasureWidth > mBoundsF.width();
 
 		setMeasuredDimension(widthSpecSize, (int) mMeasureHeight);
 //		AppLog.e(String.format("width : %f height : %f", mMeasureWidth, mMeasureHeight));
@@ -107,8 +109,6 @@ public class ComplexBookNameView extends View {
 		super.onDraw(canvas);
 		if (mBook == null) return;
 
-		mBoundsF.set(getPaddingLeft(), getPaddingTop(),
-				getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
 		canvas.clipRect(mBoundsF);
 
 
@@ -205,7 +205,7 @@ public class ComplexBookNameView extends View {
 		invalidate();
 	}
 
-	private boolean mIsEnableFinishedState;
+	private boolean mIsEnableFinishedState = true;
 
 	public void setIsEnableFinishedState(boolean isEnableFinishedState) {
 		mIsEnableFinishedState = isEnableFinishedState;
