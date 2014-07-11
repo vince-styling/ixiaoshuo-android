@@ -197,9 +197,14 @@ public class StringUtil {
 		return content;
 	}
 
-	private static final Random GLOBAL_RANDOM = new Random(System.currentTimeMillis());
-	public static int nextRandInt(int maxRange) {
-		return GLOBAL_RANDOM.nextInt(maxRange);
+	private static final Random GLOBAL_RANDOM = new Random();
+	public static int nextRandInt(int max) {
+		GLOBAL_RANDOM.setSeed(System.currentTimeMillis());
+		return GLOBAL_RANDOM.nextInt(max);
+	}
+
+	public static int nextRandInt(int min, int max) {
+		return min + nextRandInt(max - min);
 	}
 
 	public static void main(String[] args) throws Exception {

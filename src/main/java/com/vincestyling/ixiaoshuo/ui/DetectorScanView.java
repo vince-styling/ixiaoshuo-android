@@ -23,6 +23,8 @@ public class DetectorScanView extends View {
 	private ShadowFadeAnimator mShadowFadeAnimator;
 	private LightPointFadeAnimator mLightPointFadeAnimator;
 
+	private OnScanListener mOnScanListener;
+
 	public DetectorScanView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
@@ -141,6 +143,7 @@ public class DetectorScanView extends View {
 		}
 
 		public void start() {
+			if (mAnim.isStarted()) return;
 			mAnim.start();
 		}
 
@@ -181,6 +184,7 @@ public class DetectorScanView extends View {
 		}
 
 		public void start() {
+			if (mAnim.isStarted()) return;
 			mAnim.start();
 		}
 
@@ -203,7 +207,6 @@ public class DetectorScanView extends View {
 			mAlpha = alpha;
 			invalidate();
 		}
-
 	}
 
 	private class LightPointFadeAnimator {
@@ -274,20 +277,22 @@ public class DetectorScanView extends View {
 			mAlpha = alpha;
 			invalidate();
 		}
-
 	}
 
 	public void start() {
-		mRotateAnimator.start();
+		mOnScanListener.onPlayStart();
 		mLightPointFadeAnimator.start();
+		mShadowFadeAnimator.start();
+		mRotateAnimator.start();
 		mIsStartPlaying = true;
 		touchUp();
 		invalidate();
 	}
 
 	public void stop() {
-		mRotateAnimator.stop();
+		mOnScanListener.onPlayStop();
 		mLightPointFadeAnimator.stop();
+		mRotateAnimator.stop();
 		mIsStartPlaying = false;
 	}
 
@@ -333,17 +338,22 @@ public class DetectorScanView extends View {
 		return mIsStartPlaying;
 	}
 
-	@Override
-	protected void onAttachedToWindow() {
+	public void onVisible() {
 		mShadowFadeAnimator.start();
-		super.onAttachedToWindow();
 	}
 
-	@Override
-	protected void onDetachedFromWindow() {
-		stop();
+	public void onHidden() {
 		mShadowFadeAnimator.stop();
-		super.onDetachedFromWindow();
+		stop();
+	}
+
+	public void setOnScanListener(OnScanListener onScanListener) {
+		mOnScanListener = onScanListener;
+	}
+
+	public interface OnScanListener {
+		void onPlayStart();
+		void onPlayStop();
 	}
 
 }

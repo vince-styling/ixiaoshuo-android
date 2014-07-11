@@ -44,7 +44,7 @@
             android:layout_weight="1"/>
 
         <com.vincestyling.ixiaoshuo.ui.DetectorScanView
-            android:id="@+id/radarSechView"
+            android:id="@+id/detectorScanView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

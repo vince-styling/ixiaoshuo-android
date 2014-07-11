@@ -25,6 +25,10 @@ public class AppLog {
 		Log.e(TAG, msg);
 	}
 
+	public static void e(String format, Object... args) {
+		Log.e(TAG, String.format(format, args));
+	}
+
 	public static void e(String msg, Throwable tr) {
 		Log.e(TAG, msg, tr);
 	}
