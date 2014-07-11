@@ -35,10 +35,6 @@ public class ComplexBookNameView extends View {
 		mFlagTextColor = getResources().getColor(R.color.finder_booklist_bookname_flag);
 	}
 
-	private StringBuilder mNameBuf;
-
-	private float mMeasureWidth, mMeasureHeight;
-
 	private int mFlagTextPadding, mFlagTextSize, mFlagTextColor, mFlagMarginLeft, mFlagSplitPadding;
 	private int mFlagWidth, mFlagHeight;
 
@@ -53,54 +49,71 @@ public class ComplexBookNameView extends View {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		mMeasureWidth = mMeasureHeight = mFlagWidth = mFlagHeight = 0;
+		float measureWidth = 0;
+		float measureHeight = 0;
+		mFlagWidth = mFlagHeight = 0;
 
-		if (mIsEnableFinishedState && mBook.isFinished()) measureOneWord();
+		if (mSatisficer.isFirstConditionSatisfy(mBook)) {
+			String text = getResources().getString(mSatisficer.firstConditionLabel(mBook));
+			mPaint.setTextSize(mFlagTextSize);
 
-		if (mBook.isBothType()) {
-			if (mMeasureWidth == 0) measureOneWord();
-			else mMeasureWidth *= 2;
+			mBoundsF.setEmpty();
+			mBoundsF.right = mPaint.measureText(text);
+			mBoundsF.bottom = mPaint.descent() - mPaint.ascent();
+
+			measureWidth += mBoundsF.width() + mFlagTextPadding * 2;
+			measureHeight += mBoundsF.height() + mFlagTextPadding * 2;
 		}
 
-		if (mIsEnableFinishedState && mBook.isFinished() && mBook.isBothType()) {
+		if (mSatisficer.isSecondConditionSatisfy(mBook)) {
+			String text = getResources().getString(mSatisficer.secondConditionLabel(mBook));
+			if (measureWidth == 0) mPaint.setTextSize(mFlagTextSize);
+
+			mBoundsF.setEmpty();
+			mBoundsF.right = mPaint.measureText(text);
+			mBoundsF.bottom = mPaint.descent() - mPaint.ascent();
+
+			measureWidth += mBoundsF.width() + mFlagTextPadding * 2;
+			if (measureHeight == 0) measureHeight += mBoundsF.height() + mFlagTextPadding * 2;
+		}
+
+		if (mSatisficer.isFirstConditionSatisfy(mBook) && mSatisficer.isSecondConditionSatisfy(mBook)) {
 			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 			bitmapOptions.inJustDecodeBounds = true;
 			BitmapFactory.decodeResource(getResources(), R.drawable.red_flag_split, bitmapOptions);
-			mMeasureWidth += bitmapOptions.outWidth;
-			mMeasureWidth += mFlagSplitPadding * 2;
+			measureWidth += bitmapOptions.outWidth;
+			measureWidth += mFlagSplitPadding * 2;
 		}
 
-		if (mMeasureWidth > 0) {
+		if (measureWidth > 0) {
 			Drawable flagDrawable = getResources().getDrawable(R.drawable.red_flag);
 			flagDrawable.getPadding(mBounds);
 
-			mMeasureWidth += mBounds.left + mBounds.right + mFlagMarginLeft;
-			mMeasureHeight += mBounds.top + mBounds.bottom;
+			measureWidth += mBounds.left + mBounds.right + mFlagMarginLeft;
+			measureHeight += mBounds.top + mBounds.bottom;
 
-			mFlagWidth = (int) mMeasureWidth;
-			mFlagHeight = (int) mMeasureHeight;
+			mFlagWidth = (int) measureWidth;
+			mFlagHeight = (int) measureHeight;
 		}
 
-		mNameBuf.append(mBook.getName());
 		mPaint.setTextSize(mTextSize);
 		mBoundsF.setEmpty();
 		mBoundsF.bottom = mPaint.descent() - mPaint.ascent();
-		mBoundsF.right = mPaint.measureText(mNameBuf, 0, mNameBuf.length());
-		mNameBuf.setLength(0);
+		mBoundsF.right = mPaint.measureText(mBook.getName());
 
 		mTextWidth = mBoundsF.width();
 		mTextHeight = mBoundsF.height();
 
-		mMeasureWidth += mTextWidth;
-		mMeasureHeight = mTextHeight + mMeasureHeight * .5f;
-		mMeasureHeight += getPaddingTop() + getPaddingBottom();
+		measureWidth += mTextWidth;
+		measureHeight = mTextHeight + measureHeight * .5f;
+		measureHeight += getPaddingTop() + getPaddingBottom();
 
 		int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
 		mBoundsF.set(getPaddingLeft(), getPaddingTop(),
-				widthSpecSize - getPaddingRight(), mMeasureHeight - getPaddingBottom());
-		mShouldEllipsize = mMeasureWidth > mBoundsF.width();
+				widthSpecSize - getPaddingRight(), measureHeight - getPaddingBottom());
+		mShouldEllipsize = measureWidth > mBoundsF.width();
 
-		setMeasuredDimension(widthSpecSize, (int) mMeasureHeight);
+		setMeasuredDimension(widthSpecSize, (int) measureHeight);
 //		AppLog.e(String.format("width : %f height : %f", mMeasureWidth, mMeasureHeight));
 	}
 
@@ -114,7 +127,7 @@ public class ComplexBookNameView extends View {
 
 		mPaint.setColor(mTextColor);
 		mPaint.setTextSize(mTextSize);
-		mNameBuf.append(mBook.getName());
+		StringBuilder mNameBuf = new StringBuilder(mBook.getName());
 		mBoundsF.top += mBoundsF.height() - mTextHeight - mPaint.ascent();
 
 		if (mShouldEllipsize) {
@@ -129,7 +142,6 @@ public class ComplexBookNameView extends View {
 		}
 
 		canvas.drawText(mNameBuf, 0, mNameBuf.length(), mBoundsF.left, mBoundsF.top, mPaint);
-		mNameBuf.setLength(0);
 
 
 		if (mFlagWidth == 0) return;
@@ -150,13 +162,13 @@ public class ComplexBookNameView extends View {
 		mPaint.setTextSize(mFlagTextSize);
 
 		String text = null;
-		if (mIsEnableFinishedState && mBook.isFinished()) {
-			text = getResources().getString(R.string.book_status_tip_finished);
+		if (mSatisficer.isFirstConditionSatisfy(mBook)) {
+			text = getResources().getString(mSatisficer.firstConditionLabel(mBook));
 			canvas.drawText(text, mBoundsF.left, mBoundsF.top + mFlagTextPadding - mPaint.ascent(), mPaint);
 		}
 
-		if (mBook.isBothType()) {
-			if (mIsEnableFinishedState && mBook.isFinished()) {
+		if (mSatisficer.isSecondConditionSatisfy(mBook)) {
+			if (mSatisficer.isFirstConditionSatisfy(mBook)) {
 				mBoundsF.left += mPaint.measureText(text) + mFlagTextPadding + mFlagSplitPadding;
 				canvas.clipRect(mBoundsF);
 
@@ -170,24 +182,9 @@ public class ComplexBookNameView extends View {
 				mBoundsF.left += splitBitmap.getWidth() + mFlagSplitPadding + mFlagTextPadding;
 			}
 
-			text = getResources().getString(R.string.book_status_tip_both_type);
+			text = getResources().getString(mSatisficer.secondConditionLabel(mBook));
 			canvas.drawText(text, mBoundsF.left, mBoundsF.top + mFlagTextPadding - mPaint.ascent(), mPaint);
 		}
-	}
-
-	private void measureOneWord() {
-		String text = getResources().getString(R.string.book_status_tip_finished);
-		mPaint.setTextSize(mFlagTextSize);
-
-		mBoundsF.setEmpty();
-		mBoundsF.bottom = mPaint.descent() - mPaint.ascent();
-		mBoundsF.right = mPaint.measureText(text);
-
-		mMeasureWidth += mBoundsF.width();
-		mMeasureHeight += mBoundsF.height();
-
-		mMeasureWidth += mFlagTextPadding * 2;
-		mMeasureHeight += mFlagTextPadding * 2;
 	}
 
 	// difference between .measureText() and .getTextBounds() : http://stackoverflow.com/a/7579469/1294681
@@ -200,14 +197,20 @@ public class ComplexBookNameView extends View {
 	private Book mBook;
 
 	public void setBook(Book book) {
-		mNameBuf = new StringBuilder(book.getName().length());
 		mBook = book;
 		invalidate();
 	}
 
-	private boolean mIsEnableFinishedState = true;
+	private ConditionSatisficer mSatisficer;
 
-	public void setIsEnableFinishedState(boolean isEnableFinishedState) {
-		mIsEnableFinishedState = isEnableFinishedState;
+	public void setSatisficer(ConditionSatisficer satisficer) {
+		if (mSatisficer == null) mSatisficer = satisficer;
+	}
+
+	public interface ConditionSatisficer {
+		boolean isFirstConditionSatisfy(Book book);
+		int firstConditionLabel(Book book);
+		boolean isSecondConditionSatisfy(Book book);
+		int secondConditionLabel(Book book);
 	}
 }

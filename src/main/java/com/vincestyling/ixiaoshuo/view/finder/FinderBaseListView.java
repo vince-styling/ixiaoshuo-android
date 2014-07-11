@@ -27,7 +27,7 @@ import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
 import java.util.Arrays;
 
 public abstract class FinderBaseListView extends BaseFragment implements
-		OnItemClickListener, PullToLoadPageListView.OnLoadingPageListener {
+		OnItemClickListener, PullToLoadPageListView.OnLoadingPageListener, ComplexBookNameView.ConditionSatisficer {
 
 	protected PaginationAdapter<Book> mAdapter;
 	private PullToLoadPageListView mListView;
@@ -163,8 +163,8 @@ public abstract class FinderBaseListView extends BaseFragment implements
 
 		Book book = mAdapter.getItem(position);
 
-		holder.txvBookName.setIsEnableFinishedState(isEnableFinishedState());
 		holder.txvBookName.setBook(book);
+		holder.txvBookName.setSatisficer(this);
 
 		setBookTips(holder.txvBookTips, book);
 		holder.txvBookSummary.setText(book.getSummary());
@@ -180,6 +180,26 @@ public abstract class FinderBaseListView extends BaseFragment implements
 
 	protected abstract void setBookTips(TextView txvBookTips, Book book);
 	protected boolean isEnableFinishedState() { return true; }
+
+	@Override
+	public boolean isFirstConditionSatisfy(Book book) {
+		return isEnableFinishedState() && book.isFinished();
+	}
+
+	@Override
+	public int firstConditionLabel(Book book) {
+		return R.string.book_status_tip_finished;
+	}
+
+	@Override
+	public boolean isSecondConditionSatisfy(Book book) {
+		return book.isBothType();
+	}
+
+	@Override
+	public int secondConditionLabel(Book book) {
+		return R.string.book_status_tip_both_type;
+	}
 
 	@Override
 	public void onResume() {
