@@ -27,7 +27,7 @@ import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
 import java.util.Arrays;
 
 public abstract class FinderBaseListView extends BaseFragment implements
-		OnItemClickListener, PullToLoadPageListView.OnLoadingPageListener, ComplexBookNameView.ConditionSatisficer {
+		OnItemClickListener, PullToLoadPageListView.OnLoadingPageListener, ComplexBookNameView.ConditionSatisficer<Book> {
 
 	protected PaginationAdapter<Book> mAdapter;
 	private PullToLoadPageListView mListView;
@@ -181,6 +181,11 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	protected abstract void setBookTips(TextView txvBookTips, Book book);
 
 	@Override
+	public String getBookName(Book book) {
+		return book.getName();
+	}
+
+	@Override
 	public boolean isFirstConditionSatisfy(Book book) {
 		return book.isFinished();
 	}
@@ -312,7 +317,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	}
 
 	protected class Holder {
-		ComplexBookNameView txvBookName;
+		ComplexBookNameView<Book> txvBookName;
 		TextView txvBookSummary;
 		TextView txvBookCapacity;
 		TextView txvBookTips;

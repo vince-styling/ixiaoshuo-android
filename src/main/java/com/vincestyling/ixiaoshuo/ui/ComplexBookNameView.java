@@ -6,9 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.pojo.Book;
 
-public class ComplexBookNameView extends View {
+public class ComplexBookNameView<T> extends View {
 
 	public ComplexBookNameView(Context context) {
 		this(context, null);
@@ -99,7 +98,7 @@ public class ComplexBookNameView extends View {
 		mPaint.setTextSize(mTextSize);
 		mBoundsF.setEmpty();
 		mBoundsF.bottom = mPaint.descent() - mPaint.ascent();
-		mBoundsF.right = mPaint.measureText(mBook.getName());
+		mBoundsF.right = mPaint.measureText(mSatisficer.getBookName(mBook));
 
 		mTextWidth = mBoundsF.width();
 		mTextHeight = mBoundsF.height();
@@ -127,7 +126,7 @@ public class ComplexBookNameView extends View {
 
 		mPaint.setColor(mTextColor);
 		mPaint.setTextSize(mTextSize);
-		StringBuilder mNameBuf = new StringBuilder(mBook.getName());
+		StringBuilder mNameBuf = new StringBuilder(mSatisficer.getBookName(mBook));
 		mBoundsF.top += mBoundsF.height() - mTextHeight - mPaint.ascent();
 
 		if (mShouldEllipsize) {
@@ -194,23 +193,24 @@ public class ComplexBookNameView extends View {
 		return mBounds.width();
 	}
 
-	private Book mBook;
+	private T mBook;
 
-	public void setBook(Book book) {
+	public void setBook(T book) {
 		mBook = book;
 		invalidate();
 	}
 
-	private ConditionSatisficer mSatisficer;
+	private ConditionSatisficer<T> mSatisficer;
 
-	public void setSatisficer(ConditionSatisficer satisficer) {
+	public void setSatisficer(ConditionSatisficer<T> satisficer) {
 		if (mSatisficer == null) mSatisficer = satisficer;
 	}
 
-	public interface ConditionSatisficer {
-		boolean isFirstConditionSatisfy(Book book);
-		int firstConditionLabel(Book book);
-		boolean isSecondConditionSatisfy(Book book);
-		int secondConditionLabel(Book book);
+	public interface ConditionSatisficer<T> {
+		String getBookName(T book);
+		boolean isFirstConditionSatisfy(T book);
+		int firstConditionLabel(T book);
+		boolean isSecondConditionSatisfy(T book);
+		int secondConditionLabel(T book);
 	}
 }
