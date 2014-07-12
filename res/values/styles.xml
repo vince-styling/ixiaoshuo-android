@@ -1,12 +1,4 @@
 <resources>
-
-    <style name="AppTheme" parent="android:Theme.Light" />
-
-    <style name="Animation_dropdown" mce_bogus="1" parent="@android:style/Animation.Dialog">
-        <item name="android:windowEnterAnimation">@anim/popup_enter</item>
-        <item name="android:windowExitAnimation">@anim/popup_exit</item>
-    </style>
-
     <style name="top_titlebar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -29,5 +21,4 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@drawable/reading_board_arrow_selector</item>
     </style>
-
 </resources>
