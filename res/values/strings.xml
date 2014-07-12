@@ -36,6 +36,8 @@
     <string name="book_status_tip_newly">新</string>
     <string name="book_status_tip_finished">完</string>
     <string name="book_status_tip_both_type">双</string>
+    <string name="book_status_tip_text_book">字</string>
+    <string name="book_status_tip_voice_book">声</string>
 
     <!-- 搜索 -->
     <string name="title_search_txt">小说搜索</string>

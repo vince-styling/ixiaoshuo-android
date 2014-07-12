@@ -6,6 +6,8 @@ public class BookByLocation {
 	private int updateStatus;
 	private int distance;
 	private int memberId;
+	private boolean isBothType;
+	private boolean isTextBook;
 
 	public int getId() {
 		return id;
@@ -27,6 +29,10 @@ public class BookByLocation {
 		return updateStatus;
 	}
 
+	public boolean isFinished() {
+		return updateStatus == Book.STATUS_FINISHED;
+	}
+
 	public void setUpdateStatus(int updateStatus) {
 		this.updateStatus = updateStatus;
 	}
@@ -45,5 +51,21 @@ public class BookByLocation {
 
 	public void setMemberId(int memberId) {
 		this.memberId = memberId;
+	}
+
+	public boolean isBothType() {
+		return isBothType;
+	}
+
+	public void setBothType(boolean isBothType) {
+		this.isBothType = isBothType;
+	}
+
+	public boolean isTextBook() {
+		return isTextBook;
+	}
+
+	public void setTextBook(boolean isTextBook) {
+		this.isTextBook = isTextBook;
 	}
 }

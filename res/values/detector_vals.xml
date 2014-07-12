@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="detector_result_bg">#f8f8f8</color>
+    <color name="detector_result_item_even_bg">#f1f1f1</color>
+
+    <string name="detector_result_head_left">"附近在看</string>
+    <string name="detector_result_bookcount">周围检索到%d部</string>
+    <string name="detector_result_mock_place">柠溪路182号</string>
+    <string name="detector_result_distance_unit_km">%s公里</string>
+    <string name="detector_result_distance_unit_m">%d米</string>
+    <string name="detector_result_book_membership">珠海书友%d</string>
+
+    <dimen name="detector_result_head_bg_corner_radius">22dp</dimen>
+    <color name="detector_result_head_bg_border">#d8cdbe</color>
+    <dimen name="detector_result_head_bg_border">1.5dp</dimen>
+
+    <style name="detector_result_head">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ac987e</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+</resources>

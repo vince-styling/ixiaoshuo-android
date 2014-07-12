@@ -13,10 +13,7 @@ import com.duowan.mobile.netroid.stack.HurlStack;
 import com.duowan.mobile.netroid.toolbox.BasicNetwork;
 import com.duowan.mobile.netroid.toolbox.ImageLoader;
 import com.vincestyling.ixiaoshuo.net.request.*;
-import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.pojo.Category;
-import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.pojo.Const;
+import com.vincestyling.ixiaoshuo.pojo.*;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.Encoding;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
@@ -138,8 +135,8 @@ public class Netroid {
 		}
 	}
 
-	public static void getBookListByLocation(int pageNo, Listener<PaginationList<Book>> listener) {
-		get().add(new BookListRequest(makeUrl("/list_bylocation/" + pageNo), listener));
+	public static void getBookListByLocation(int pageNo, Listener<PaginationList<BookByLocation>> listener) {
+		get().add(new BookListByLocationRequest(makeUrl("/list_bylocation/" + pageNo), listener));
 	}
 
 	public static void displayImage(String url, ImageView imageView, int defaultImageResId, int errorImageResId) {

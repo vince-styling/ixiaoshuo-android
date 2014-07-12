@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.event.AccelerometerListener;
-import com.vincestyling.ixiaoshuo.reader.DetectorBookListActivity;
+import com.vincestyling.ixiaoshuo.reader.DetectorResultActivity;
 import com.vincestyling.ixiaoshuo.ui.DetectorScanView;
 import com.vincestyling.ixiaoshuo.ui.DetectorUsageStatisticsView;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
@@ -118,7 +118,7 @@ public class DetectorView extends BaseFragment
 					startNextRandomUpdate();
 					break;
 				case MSG_DELAY_TO_SHOW_RESULT:
-					Intent intent = new Intent(getActivity(), DetectorBookListActivity.class);
+					Intent intent = new Intent(getActivity(), DetectorResultActivity.class);
 					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					getActivity().startActivity(intent);
 					break;

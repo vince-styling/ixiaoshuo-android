@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/detector_result_bg">
+
+    <LinearLayout
+        style="@style/top_titlebar"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/detector_result_location_marker"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:text="@string/detector_result_mock_place"/>
+
+        <ImageButton
+            android:id="@+id/imvRelocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingBottom="6dp"
+            android:paddingTop="9dp"
+            android:src="@drawable/detector_result_relocation"
+            android:background="@drawable/detector_result_relocation_bg"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/lotResultHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <TextView
+            style="@style/detector_result_head"
+            android:layout_alignParentLeft="true"
+            android:text="@string/detector_result_head_left"/>
+
+        <TextView
+            android:id="@+id/txvLocation"
+            style="@style/detector_result_head"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+    <com.vincestyling.ixiaoshuo.ui.PullToLoadPageListView
+        android:id="@+id/lsvContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fastScrollEnabled="true"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:listSelector="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"/>
+
+</LinearLayout>
