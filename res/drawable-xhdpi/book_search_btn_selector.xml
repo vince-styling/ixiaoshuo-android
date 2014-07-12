@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/book_search_btn_pressed" android:state_pressed="true" />
-    <item android:drawable="@drawable/book_search_btn" />
+    <item android:state_pressed="true">
+        <layer-list>
+            <item android:drawable="@drawable/search_input_split" />
+            <item>
+                <bitmap
+                    android:src="@drawable/book_search_btn_pressed"
+                    android:gravity="center"/>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item android:drawable="@drawable/search_input_split" />
+            <item>
+                <bitmap
+                    android:src="@drawable/book_search_btn"
+                    android:gravity="center"/>
+            </item>
+        </layer-list>
+    </item>
 </selector>

@@ -13,15 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.ui.ScrollLayout;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 
 public class SearchView extends BaseFragment implements View.OnClickListener, View.OnTouchListener {
 	public static final int PAGER_INDEX = 3;
-
-	private ScrollLayout mlotSearchContent;
-	private SearchListView mSearchListView;
 
 	private View mLotGoSearch;
 	private EditText mEdtSearchKeyword;
@@ -36,15 +32,18 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
 	private View mBtnTypeVoice;
 
 	private int mCurrentType;
-	private final static int URL_VALUE_ALL = 0;    /** 所有书籍类型 */
-	private final static int URL_VALUE_TEXT = 1;   /** 文字书籍类型 */
-	private final static int URL_VALUE_VOICE = 2;  /** 有声书籍类型 */
+	private final static int URL_VALUE_ALL = 0;
+	private final static int URL_VALUE_TEXT = 1;
+	private final static int URL_VALUE_VOICE = 2;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.search, container, false);
+		return inflater.inflate(R.layout.search, container, false);
+	}
 
-		mLotGoSearch = view.findViewById(R.id.lotGoSearch);
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		mLotGoSearch = view.findViewById(R.id.btnGoSearch);
 		mEdtSearchKeyword = (EditText) view.findViewById(R.id.edtSearchKeyword);
 
 		mTxvBookType = (TextView) view.findViewById(R.id.txvBookType);
@@ -52,14 +51,37 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
 		mLotBookType = view.findViewById(R.id.lotBookType);
 		mLotBookType.setOnClickListener(this);
 		mLotGoSearch.setOnClickListener(this);
-		mCurrentType = URL_VALUE_ALL;
 
 		view.setOnTouchListener(this);
+	}
 
-		mlotSearchContent = (ScrollLayout) view.findViewById(R.id.lotSearchContent);
-		mlotSearchContent.setVisibility(View.GONE);
+	@Override
+	public void onResume() {
+		super.onResume();
+		onVisible();
+	}
 
-		return view;
+	@Override
+	public void onPause() {
+		super.onPause();
+		onHidden();
+	}
+
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (isVisibleToUser) {
+			onVisible();
+		} else {
+			onHidden();
+		}
+	}
+
+	private void onVisible() {
+	}
+
+	private void onHidden() {
+		hideSearchTerms(false);
 	}
 
 	@Override
