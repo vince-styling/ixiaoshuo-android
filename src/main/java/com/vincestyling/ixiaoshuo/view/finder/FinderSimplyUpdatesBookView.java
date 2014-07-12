@@ -19,7 +19,7 @@ public class FinderSimplyUpdatesBookView extends FinderBaseListView {
 	}
 
 	@Override
-	protected boolean isEnableFinishedState() {
+	public boolean isFirstConditionSatisfy(Book book) {
 		return false;
 	}
 }

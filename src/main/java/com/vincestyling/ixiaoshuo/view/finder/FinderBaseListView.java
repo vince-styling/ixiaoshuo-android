@@ -179,11 +179,10 @@ public abstract class FinderBaseListView extends BaseFragment implements
 	}
 
 	protected abstract void setBookTips(TextView txvBookTips, Book book);
-	protected boolean isEnableFinishedState() { return true; }
 
 	@Override
 	public boolean isFirstConditionSatisfy(Book book) {
-		return isEnableFinishedState() && book.isFinished();
+		return book.isFinished();
 	}
 
 	@Override

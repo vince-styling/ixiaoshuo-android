@@ -19,7 +19,7 @@ public class FinderAmplyUpdatesBookView extends FinderAmplyBaseBookView {
 	}
 
 	@Override
-	protected boolean isEnableFinishedState() {
+	public boolean isFirstConditionSatisfy(Book book) {
 		return false;
 	}
 }
