@@ -6,14 +6,14 @@ import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class FinderSimplyCategoryBookView extends FinderSimplyHottestBookView {
-	private int mCategoryId;
+    private int mCategoryId;
 
-	public FinderSimplyCategoryBookView(int categoryId) {
-		mCategoryId = categoryId;
-	}
+    public FinderSimplyCategoryBookView(int categoryId) {
+        mCategoryId = categoryId;
+    }
 
-	@Override
-	protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
-		Netroid.getBookListByCategory(mCategoryId, pageNum, listener);
-	}
+    @Override
+    protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
+        Netroid.getBookListByCategory(mCategoryId, pageNum, listener);
+    }
 }

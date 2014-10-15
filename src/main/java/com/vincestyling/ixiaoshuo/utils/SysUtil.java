@@ -11,47 +11,48 @@ import android.view.WindowManager;
 
 public class SysUtil {
 
-	public static void setFullScreen(Activity activity) {
-		activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-	}
+    public static void setFullScreen(Activity activity) {
+        activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
 
-	public static int getVersionCode(Context ctx) {
-		try {
-			PackageInfo pkgInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
-			return pkgInfo.versionCode;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
-		return -1;
-	}
+    public static int getVersionCode(Context ctx) {
+        try {
+            PackageInfo pkgInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
+            return pkgInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 
-	public static String getVersionName(Context ctx) {
-		try {
-			PackageInfo pkgInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
-			return pkgInfo.versionName;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
-		return "";
-	}
+    public static String getVersionName(Context ctx) {
+        try {
+            PackageInfo pkgInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
+            return pkgInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
-	public static void killAppProcess() {
-		android.os.Process.killProcess(android.os.Process.myPid());
-	}
+    public static void killAppProcess() {
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
 
-	public static void threadSleep(long time) {
-		try {
-			Thread.sleep(time);
-		} catch (Exception e) {
-		}
-	}
+    public static void threadSleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (Exception e) {
+        }
+    }
 
     /**
      * 设置当前Activity屏幕亮度，此方法不会影响系统屏幕亮度设置
-     * @param window   Activity当前运行的Window引用
-     * @param brightness  屏幕亮度(0(最暗) -- 255(最亮))
-     * @return  设置屏幕亮度是否成功
+     *
+     * @param window     Activity当前运行的Window引用
+     * @param brightness 屏幕亮度(0(最暗) -- 255(最亮))
+     * @return 设置屏幕亮度是否成功
      */
     public static boolean setBrightness(Window window, int brightness) {
         if (brightness < 0 || brightness > 255) {
@@ -67,19 +68,21 @@ public class SysUtil {
 
     /**
      * 获得当前Activity屏幕亮度
-     * @param window   Activity当前运行的Window引用
-     * @return  当前屏幕亮度(0(最暗) -- 255(最亮))
+     *
+     * @param window Activity当前运行的Window引用
+     * @return 当前屏幕亮度(0(最暗) -- 255(最亮))
      */
     public static int getBrightness(Window window) {
         WindowManager.LayoutParams lp = window.getAttributes();
-		return Math.round(lp.screenBrightness * 255.0f);
+        return Math.round(lp.screenBrightness * 255.0f);
     }
 
     /**
      * 判断MobileData是否处于连接状态
      * 权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-     * @param context  Context
-     * @return  MobileData是否处于已连接状态
+     *
+     * @param context Context
+     * @return MobileData是否处于已连接状态
      */
     public static boolean isMobileDataConnected(Context context) {
         try {

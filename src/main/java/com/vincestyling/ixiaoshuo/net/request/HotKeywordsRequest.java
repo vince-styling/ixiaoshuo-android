@@ -6,15 +6,15 @@ import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
 public class HotKeywordsRequest extends BasicRequest<String[]> {
 
-	public HotKeywordsRequest(String url, Listener<String[]> listener) {
-		super(url, listener);
-	}
+    public HotKeywordsRequest(String url, Listener<String[]> listener) {
+        super(url, listener);
+    }
 
-	@Override
-	protected String[] convert(Respond respond) {
-		String data = respond.convert(String.class);
-		if (StringUtil.isEmpty(data)) return null;
-		return data.split(",");
-	}
+    @Override
+    protected String[] convert(Respond respond) {
+        String data = respond.convert(String.class);
+        if (StringUtil.isEmpty(data)) return null;
+        return data.split(",");
+    }
 
 }

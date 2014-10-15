@@ -18,395 +18,399 @@ import com.vincestyling.ixiaoshuo.pojo.ColorScheme;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 
 public class ReadingBoard extends View implements YYReader.OnDownloadChapterListener {
-	Document mDoc;
+    Document mDoc;
 
-	// added to support full-justification text layout
-	// make it LARGE enough to hold even 2048 GBK chars per line, rarely possible to reach this limit in reality
-	private float mLayoutPositions[] = new float[4096];
+    // added to support full-justification text layout
+    // make it LARGE enough to hold even 2048 GBK chars per line, rarely possible to reach this limit in reality
+    private float mLayoutPositions[] = new float[4096];
 
-	public ReadingBoard(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public ReadingBoard(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public void init(Document doc) throws Exception {
-		mDragPageShadowWidth = (int) getContext().getResources().getDimension(R.dimen.reading_board_page_shadow_width);
-		mDragPageShadow = (NinePatchDrawable) getContext().getResources().getDrawable(R.drawable.reading_board_page_shadow);
+    public void init(Document doc) throws Exception {
+        mDragPageShadowWidth = (int) getContext().getResources().getDimension(R.dimen.reading_board_page_shadow_width);
+        mDragPageShadow = (NinePatchDrawable) getContext().getResources().getDrawable(R.drawable.reading_board_page_shadow);
 
-		mDoc = doc;
-		turnToChapter(YYReader.getCurrentChapter());
+        mDoc = doc;
+        turnToChapter(YYReader.getCurrentChapter());
 
-		setFocusable(true);
-	}
+        setFocusable(true);
+    }
 
-	@Override
-	protected void onDraw(Canvas canvas) {
-		if (mMainPageBitmap == null) resetPageBitmapDrawable(canvas.getWidth(), canvas.getHeight());
-		drawSmoothSlidePage(canvas);
-	}
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (mMainPageBitmap == null) resetPageBitmapDrawable(canvas.getWidth(), canvas.getHeight());
+        drawSmoothSlidePage(canvas);
+    }
 
-	private Bitmap mBackupPageBitmap;
-	private Bitmap mMainPageBitmap;
-	private Canvas mDrawableCanvas;
-	private void resetPageBitmapDrawable(int width, int height) {
-		mBackupPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-		mMainPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-		mDrawableCanvas = new Canvas();
-		drawCurrentPageContent();
-	}
+    private Bitmap mBackupPageBitmap;
+    private Bitmap mMainPageBitmap;
+    private Canvas mDrawableCanvas;
 
-	private Paint.FontMetrics mFontMetrics = new Paint.FontMetrics();
-	private void drawCurrentPageContent() {
-		RenderPaint.get().getFontMetrics(mFontMetrics);
+    private void resetPageBitmapDrawable(int width, int height) {
+        mBackupPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        mMainPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        mDrawableCanvas = new Canvas();
+        drawCurrentPageContent();
+    }
 
-		mDrawableCanvas.setBitmap(mBackupPageBitmap);
-		mDrawableCanvas.drawBitmap(mMainPageBitmap, 0, 0, null);
+    private Paint.FontMetrics mFontMetrics = new Paint.FontMetrics();
 
-		mDrawableCanvas.setBitmap(mMainPageBitmap);
+    private void drawCurrentPageContent() {
+        RenderPaint.get().getFontMetrics(mFontMetrics);
 
-		RenderPaint.get().drawReadingBg(mDrawableCanvas);
+        mDrawableCanvas.setBitmap(mBackupPageBitmap);
+        mDrawableCanvas.drawBitmap(mMainPageBitmap, 0, 0, null);
 
-		mDrawableCanvas.save(Canvas.MATRIX_SAVE_FLAG);
-		mDrawableCanvas.translate(RenderPaint.get().getCanvasPaddingLeft(), RenderPaint.get().getCanvasPaddingTop() - mFontMetrics.ascent);
+        mDrawableCanvas.setBitmap(mMainPageBitmap);
 
-		mDoc.prepareGetLines();
-		StringBuilder sb = new StringBuilder();
-		float contentHeight = 0;
-		byte flags;
-		while (true) {
-			flags = mDoc.getNextLine(sb);
-			if (flags == 0) break;
+        RenderPaint.get().drawReadingBg(mDrawableCanvas);
 
-			if ((flags & Document.GET_NEXT_LINE_FLAG_SHOULD_JUSTIFY) > 0) {
-				LayoutUtil.layoutTextJustified(sb, RenderPaint.get(), 0, contentHeight, mLayoutPositions);
-				mDrawableCanvas.drawPosText(sb.toString(), mLayoutPositions, RenderPaint.get());
-			} else {
-				mDrawableCanvas.drawText(sb, 0, sb.length(), 0, contentHeight, RenderPaint.get());
-			}
-			sb.delete(0, sb.length());
+        mDrawableCanvas.save(Canvas.MATRIX_SAVE_FLAG);
+        mDrawableCanvas.translate(RenderPaint.get().getCanvasPaddingLeft(), RenderPaint.get().getCanvasPaddingTop() - mFontMetrics.ascent);
 
-			contentHeight += RenderPaint.get().getTextHeight();
-			if ((flags & Document.GET_NEXT_LINE_FLAG_PARAGRAPH_ENDS) > 0)
-				contentHeight += RenderPaint.get().getParagraphSpacing();
-			else
-				contentHeight += RenderPaint.get().getLineSpacing();
-		}
+        mDoc.prepareGetLines();
+        StringBuilder sb = new StringBuilder();
+        float contentHeight = 0;
+        byte flags;
+        while (true) {
+            flags = mDoc.getNextLine(sb);
+            if (flags == 0) break;
 
-		mDoc.calculatePagePosition();
-		mDrawableCanvas.restore();
-	}
+            if ((flags & Document.GET_NEXT_LINE_FLAG_SHOULD_JUSTIFY) > 0) {
+                LayoutUtil.layoutTextJustified(sb, RenderPaint.get(), 0, contentHeight, mLayoutPositions);
+                mDrawableCanvas.drawPosText(sb.toString(), mLayoutPositions, RenderPaint.get());
+            } else {
+                mDrawableCanvas.drawText(sb, 0, sb.length(), 0, contentHeight, RenderPaint.get());
+            }
+            sb.delete(0, sb.length());
 
-	public void forceRedraw(boolean applyEffect) {
-		// 这个方法有可能在初始化(onDraw)未完成时就调用
-		if (mDrawableCanvas != null) {
-			if (applyEffect) {
-				resetDraggingBitmapX();
-				mAutoSlide = true;
-			}
-			drawCurrentPageContent();
-		}
-		invalidate();
-	}
+            contentHeight += RenderPaint.get().getTextHeight();
+            if ((flags & Document.GET_NEXT_LINE_FLAG_PARAGRAPH_ENDS) > 0)
+                contentHeight += RenderPaint.get().getParagraphSpacing();
+            else
+                contentHeight += RenderPaint.get().getLineSpacing();
+        }
 
-	// 0: previous page, 1: next page
-	private int mTurningPageDirection;
+        mDoc.calculatePagePosition();
+        mDrawableCanvas.restore();
+    }
 
-	public boolean turnPreviousPage(boolean redraw) {
-		mTurningPageDirection = 0;
-		if (mDoc.turnPreviousPage()) {
-			if (redraw) forceRedraw(true);
-			return true;
-		}
-		return false;
-	}
+    public void forceRedraw(boolean applyEffect) {
+        // 这个方法有可能在初始化(onDraw)未完成时就调用
+        if (mDrawableCanvas != null) {
+            if (applyEffect) {
+                resetDraggingBitmapX();
+                mAutoSlide = true;
+            }
+            drawCurrentPageContent();
+        }
+        invalidate();
+    }
 
-	public boolean turnNextPage(boolean redraw) {
-		mTurningPageDirection = 1;
-		if (mDoc.turnNextPage()) {
-			if (redraw) forceRedraw(true);
-			return true;
-		}
-		return false;
-	}
+    // 0: previous page, 1: next page
+    private int mTurningPageDirection;
 
-	public boolean turnPageByDirection() {
-		if (mTurningPageDirection == 0) return turnPreviousPage(false);
-		return turnNextPage(false);
-	}
+    public boolean turnPreviousPage(boolean redraw) {
+        mTurningPageDirection = 0;
+        if (mDoc.turnPreviousPage()) {
+            if (redraw) forceRedraw(true);
+            return true;
+        }
+        return false;
+    }
 
-	public void setColorScheme(ColorScheme colorScheme) {
-		RenderPaint.get().setColor(colorScheme.getTextColor());
+    public boolean turnNextPage(boolean redraw) {
+        mTurningPageDirection = 1;
+        if (mDoc.turnNextPage()) {
+            if (redraw) forceRedraw(true);
+            return true;
+        }
+        return false;
+    }
 
-		Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		Drawable bgDrawable = colorScheme.getSchemeDrawable(getResources());
-		bgDrawable.setBounds(0, 0, display.getWidth(), display.getHeight());
-		RenderPaint.get().setReadingBg(bgDrawable);
+    public boolean turnPageByDirection() {
+        if (mTurningPageDirection == 0) return turnPreviousPage(false);
+        return turnNextPage(false);
+    }
 
-		forceRedraw(false);
-	}
+    public void setColorScheme(ColorScheme colorScheme) {
+        RenderPaint.get().setColor(colorScheme.getTextColor());
 
-	public void adjustTextSize(int textSize) {
-		RenderPaint.get().setTextSize(textSize);
-		forceRedraw(false);
-	}
+        Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        Drawable bgDrawable = colorScheme.getSchemeDrawable(getResources());
+        bgDrawable.setBounds(0, 0, display.getWidth(), display.getHeight());
+        RenderPaint.get().setReadingBg(bgDrawable);
 
-	private void slideSmoothly(float velocityX) {
-		mDragging = false;
-		mAutoSlide = true;
+        forceRedraw(false);
+    }
 
-		// adjust page direction
-		if (velocityX > 0) {    // fling from left to right
-			mTurningPageDirection = 0;
-		} else if (velocityX < 0) { // fling from right to left
-			mTurningPageDirection = 1;
-		} else {
-			if (mStartDraggingDirection == 1) {
-				mTurningPageDirection = Math.abs(mDraggingBitmapX) > mDrawableCanvas.getWidth() * 0.2 ? 1 : 0;
-			} else {
-				mTurningPageDirection = mDrawableCanvas.getWidth() - Math.abs(mDraggingBitmapX) > mDrawableCanvas.getWidth() * 0.2 ? 0 : 1;
-			}
-		}
+    public void adjustTextSize(int textSize) {
+        RenderPaint.get().setTextSize(textSize);
+        forceRedraw(false);
+    }
 
-		if (mStartDraggingDirection != mTurningPageDirection) {
-			turnPageByDirection();
-			drawCurrentPageContent();
-		}
+    private void slideSmoothly(float velocityX) {
+        mDragging = false;
+        mAutoSlide = true;
 
-		invalidate();
-	}
+        // adjust page direction
+        if (velocityX > 0) {    // fling from left to right
+            mTurningPageDirection = 0;
+        } else if (velocityX < 0) { // fling from right to left
+            mTurningPageDirection = 1;
+        } else {
+            if (mStartDraggingDirection == 1) {
+                mTurningPageDirection = Math.abs(mDraggingBitmapX) > mDrawableCanvas.getWidth() * 0.2 ? 1 : 0;
+            } else {
+                mTurningPageDirection = mDrawableCanvas.getWidth() - Math.abs(mDraggingBitmapX) > mDrawableCanvas.getWidth() * 0.2 ? 0 : 1;
+            }
+        }
 
-	private void drawSmoothSlidePage(Canvas canvas) {
-		if (mAutoSlide) {
-			mAutoSlide = autoSlideDraw(canvas);
-			if (!mAutoSlide) mDraggingBitmapX = 0;
-		} else {
-			staticDragDraw(canvas);
-		}
-	}
+        if (mStartDraggingDirection != mTurningPageDirection) {
+            turnPageByDirection();
+            drawCurrentPageContent();
+        }
 
-	private boolean autoSlideDraw(Canvas canvas) {
-		float DIVIDER = 2f;
-		if (mTurningPageDirection == 1) {
-			float dragDistance = canvas.getWidth() + mDraggingBitmapX;
-			dragDistance /= dragDistance < DIVIDER ? dragDistance / 2 : DIVIDER;
-			mDraggingBitmapX -= dragDistance;
+        invalidate();
+    }
 
-			canvas.drawBitmap(mMainPageBitmap, 0, 0, null);
-			if (mDraggingBitmapX > -canvas.getWidth()) {
-				canvas.drawBitmap(mBackupPageBitmap, mDraggingBitmapX, 0, null);
-				showPageShadow(canvas);
-				invalidate();
-				return true;
-			}
-		} else {
-			float dragDistance = Math.abs(mDraggingBitmapX);
-			dragDistance /= dragDistance < DIVIDER ? dragDistance / 2 : DIVIDER;
-			mDraggingBitmapX += dragDistance;
+    private void drawSmoothSlidePage(Canvas canvas) {
+        if (mAutoSlide) {
+            mAutoSlide = autoSlideDraw(canvas);
+            if (!mAutoSlide) mDraggingBitmapX = 0;
+        } else {
+            staticDragDraw(canvas);
+        }
+    }
 
-			if (mDraggingBitmapX < 0) {
-				canvas.drawBitmap(mBackupPageBitmap, 0, 0, null);
-				canvas.drawBitmap(mMainPageBitmap, mDraggingBitmapX, 0, null);
-				showPageShadow(canvas);
-				invalidate();
-				return true;
-			}
-			canvas.drawBitmap(mMainPageBitmap, 0, 0, null);
-		}
-		return false;
-	}
+    private boolean autoSlideDraw(Canvas canvas) {
+        float DIVIDER = 2f;
+        if (mTurningPageDirection == 1) {
+            float dragDistance = canvas.getWidth() + mDraggingBitmapX;
+            dragDistance /= dragDistance < DIVIDER ? dragDistance / 2 : DIVIDER;
+            mDraggingBitmapX -= dragDistance;
 
-	private void staticDragDraw(Canvas canvas) {
-		//show其他阅读组件时，ReadingBoard的OnDraw会被调用，这里做处理
-		if (mDraggingBitmapX == 0) {
-			canvas.drawBitmap(mDragging ? mBackupPageBitmap : mMainPageBitmap, 0, 0, null);
-			return;
-		}
+            canvas.drawBitmap(mMainPageBitmap, 0, 0, null);
+            if (mDraggingBitmapX > -canvas.getWidth()) {
+                canvas.drawBitmap(mBackupPageBitmap, mDraggingBitmapX, 0, null);
+                showPageShadow(canvas);
+                invalidate();
+                return true;
+            }
+        } else {
+            float dragDistance = Math.abs(mDraggingBitmapX);
+            dragDistance /= dragDistance < DIVIDER ? dragDistance / 2 : DIVIDER;
+            mDraggingBitmapX += dragDistance;
 
-		//用户一开始想向后翻页(下一页)，此时，mainBitmap居底，backupBitmap居顶并滑动，座标从0开始呈递减趋势
-		if (mStartDraggingDirection == 1) {
-			//当用户在滑动过程中改变方向时，backupBitmap的座标最终有可能会复位到0(不会大于，因为上面会判断)
-			//当backupBitmap被完全移入屏幕时，没必要再显示mainBitmap及阴影
-			if (mDraggingBitmapX < 0) {
-				canvas.drawBitmap(mMainPageBitmap, 0, 0, null);
-				showPageShadow(canvas);
-			}
-			canvas.drawBitmap(mBackupPageBitmap, mDraggingBitmapX, 0, null);
-		}
-		//用户一开始想向前翻页(上一页)，此时，backupBitmap居底，mainBitmap居顶并滑动，座标从-canvasWidth开始呈递增趋势
-		else {
-			canvas.drawBitmap(mBackupPageBitmap, 0, 0, null);
-			//当用户在滑动过程中改变方向时，mainBitmap的座标最终有可能会复位到-canvasWidth(不会小于，因为上面会判断)
-			//当mainBitmap被完全移出屏幕时，没必要再显示mainBitmap及阴影
-			if (mDraggingBitmapX > -canvas.getWidth()) {
-				canvas.drawBitmap(mMainPageBitmap, mDraggingBitmapX, 0, null);
-				showPageShadow(canvas);
-			}
-		}
-	}
-	private void showPageShadow(Canvas canvas) {
-		int left = (int) (canvas.getWidth() - Math.abs(mDraggingBitmapX));
-		mDragPageShadow.setBounds(left, 0, left + mDragPageShadowWidth, canvas.getHeight());
-		mDragPageShadow.draw(canvas);
-	}
+            if (mDraggingBitmapX < 0) {
+                canvas.drawBitmap(mBackupPageBitmap, 0, 0, null);
+                canvas.drawBitmap(mMainPageBitmap, mDraggingBitmapX, 0, null);
+                showPageShadow(canvas);
+                invalidate();
+                return true;
+            }
+            canvas.drawBitmap(mMainPageBitmap, 0, 0, null);
+        }
+        return false;
+    }
 
-	private boolean mAutoSlide;
-	private boolean mDragging;
+    private void staticDragDraw(Canvas canvas) {
+        //show其他阅读组件时，ReadingBoard的OnDraw会被调用，这里做处理
+        if (mDraggingBitmapX == 0) {
+            canvas.drawBitmap(mDragging ? mBackupPageBitmap : mMainPageBitmap, 0, 0, null);
+            return;
+        }
 
-	public void changeTurningPageDirection(int pageDirection) {
-		mTurningPageDirection = pageDirection;
-	}
+        //用户一开始想向后翻页(下一页)，此时，mainBitmap居底，backupBitmap居顶并滑动，座标从0开始呈递减趋势
+        if (mStartDraggingDirection == 1) {
+            //当用户在滑动过程中改变方向时，backupBitmap的座标最终有可能会复位到0(不会大于，因为上面会判断)
+            //当backupBitmap被完全移入屏幕时，没必要再显示mainBitmap及阴影
+            if (mDraggingBitmapX < 0) {
+                canvas.drawBitmap(mMainPageBitmap, 0, 0, null);
+                showPageShadow(canvas);
+            }
+            canvas.drawBitmap(mBackupPageBitmap, mDraggingBitmapX, 0, null);
+        }
+        //用户一开始想向前翻页(上一页)，此时，backupBitmap居底，mainBitmap居顶并滑动，座标从-canvasWidth开始呈递增趋势
+        else {
+            canvas.drawBitmap(mBackupPageBitmap, 0, 0, null);
+            //当用户在滑动过程中改变方向时，mainBitmap的座标最终有可能会复位到-canvasWidth(不会小于，因为上面会判断)
+            //当mainBitmap被完全移出屏幕时，没必要再显示mainBitmap及阴影
+            if (mDraggingBitmapX > -canvas.getWidth()) {
+                canvas.drawBitmap(mMainPageBitmap, mDraggingBitmapX, 0, null);
+                showPageShadow(canvas);
+            }
+        }
+    }
 
-	private int mStartDraggingDirection;
-	private float mDraggingBitmapX;
-	private NinePatchDrawable mDragPageShadow;
-	private int mDragPageShadowWidth;
+    private void showPageShadow(Canvas canvas) {
+        int left = (int) (canvas.getWidth() - Math.abs(mDraggingBitmapX));
+        mDragPageShadow.setBounds(left, 0, left + mDragPageShadowWidth, canvas.getHeight());
+        mDragPageShadow.draw(canvas);
+    }
 
-	public void startDragging() {
-		mDragging = true;
-		drawCurrentPageContent();
-		resetDraggingBitmapX();
-		mStartDraggingDirection = mTurningPageDirection;
-	}
+    private boolean mAutoSlide;
+    private boolean mDragging;
 
-	private void resetDraggingBitmapX() {
-		mDraggingBitmapX = mTurningPageDirection == 1 ? 0 : -mDrawableCanvas.getWidth();
-	}
+    public void changeTurningPageDirection(int pageDirection) {
+        mTurningPageDirection = pageDirection;
+    }
 
-	public void dragRedraw(float pixels) {
-		pixels = Math.abs(pixels);
-		if (mTurningPageDirection == 1) {
-			mDraggingBitmapX -= pixels;
-			if (mDraggingBitmapX < -mDrawableCanvas.getWidth()) mDraggingBitmapX = -mDrawableCanvas.getWidth();
-		} else {
-			mDraggingBitmapX += pixels;
-			if (mDraggingBitmapX > 0) mDraggingBitmapX = 0;
-		}
-		invalidate();
-	}
+    private int mStartDraggingDirection;
+    private float mDraggingBitmapX;
+    private NinePatchDrawable mDragPageShadow;
+    private int mDragPageShadowWidth;
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (mGestureDetector == null) mGestureDetector = new GestureDetector(new ReaderGestureListener());
-		if (mGestureDetector.onTouchEvent(event)) return true;
+    public void startDragging() {
+        mDragging = true;
+        drawCurrentPageContent();
+        resetDraggingBitmapX();
+        mStartDraggingDirection = mTurningPageDirection;
+    }
 
-		switch (event.getAction()) {
-			case MotionEvent.ACTION_UP:
-				if (mDragging) slideSmoothly(0f);
-				return true;
-		}
+    private void resetDraggingBitmapX() {
+        mDraggingBitmapX = mTurningPageDirection == 1 ? 0 : -mDrawableCanvas.getWidth();
+    }
 
-		return false;
-	}
+    public void dragRedraw(float pixels) {
+        pixels = Math.abs(pixels);
+        if (mTurningPageDirection == 1) {
+            mDraggingBitmapX -= pixels;
+            if (mDraggingBitmapX < -mDrawableCanvas.getWidth()) mDraggingBitmapX = -mDrawableCanvas.getWidth();
+        } else {
+            mDraggingBitmapX += pixels;
+            if (mDraggingBitmapX > 0) mDraggingBitmapX = 0;
+        }
+        invalidate();
+    }
 
-	private GestureDetector mGestureDetector;
-	class ReaderGestureListener extends GestureDetector.SimpleOnGestureListener {
-		@Override
-		public boolean onSingleTapUp(MotionEvent e) {
-			float x = e.getX();
-			float y = e.getY();
-			float portionWidth = getWidth() / 3;
-			float portionHeight = getHeight() / 3;
-			if (x < portionWidth || (x < portionWidth * 2 && y < portionHeight)) {
-				if (!turnPreviousPage(true) && !mDoc.isDownloading()) {
-					getActivity().showToastMsg("已到达第一页");
-				}
-				getActivity().getReadingMenu().hideMenu();
-			} else if (x > portionWidth * 2 || (x > portionWidth && y > portionHeight * 2)) {
-				if (!turnNextPage(true) && !mDoc.isDownloading()) {
-					getActivity().showToastMsg("已到达最后一页");
-				}
-				getActivity().getReadingMenu().hideMenu();
-			} else {
-				getActivity().getReadingMenu().switchMenu();
-			}
-			return true;
-		}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (mGestureDetector == null) mGestureDetector = new GestureDetector(new ReaderGestureListener());
+        if (mGestureDetector.onTouchEvent(event)) return true;
 
-		@Override
-		public boolean onDown(MotionEvent e) {
-			xScrollSum = 0;
-			return true;
-		}
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_UP:
+                if (mDragging) slideSmoothly(0f);
+                return true;
+        }
 
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			if (mDragging) slideSmoothly(velocityX);
-			return true;
-		}
+        return false;
+    }
 
-		private float xScrollSum;
+    private GestureDetector mGestureDetector;
 
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-			if (mDoc.isDownloading()) {
-				xScrollSum = 0;
-				return false;
-			}
+    class ReaderGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            float x = e.getX();
+            float y = e.getY();
+            float portionWidth = getWidth() / 3;
+            float portionHeight = getHeight() / 3;
+            if (x < portionWidth || (x < portionWidth * 2 && y < portionHeight)) {
+                if (!turnPreviousPage(true) && !mDoc.isDownloading()) {
+                    getActivity().showToastMsg("已到达第一页");
+                }
+                getActivity().getReadingMenu().hideMenu();
+            } else if (x > portionWidth * 2 || (x > portionWidth && y > portionHeight * 2)) {
+                if (!turnNextPage(true) && !mDoc.isDownloading()) {
+                    getActivity().showToastMsg("已到达最后一页");
+                }
+                getActivity().getReadingMenu().hideMenu();
+            } else {
+                getActivity().getReadingMenu().switchMenu();
+            }
+            return true;
+        }
 
-			getActivity().getReadingMenu().hideMenu();
-			xScrollSum += Math.abs(distanceX);
-			if (xScrollSum < 5) return true;
+        @Override
+        public boolean onDown(MotionEvent e) {
+            xScrollSum = 0;
+            return true;
+        }
 
-			if (mDragging) {
-				changeTurningPageDirection(distanceX > 0 ? 1 : 0);
-				dragRedraw(distanceX);
-			} else {
-				if (distanceX > 0) {
-					if (turnNextPage(false)) {
-						startDragging();
-					} else if (!mDoc.isDownloading()) {
-						getActivity().showToastMsg("已到达最后一页");
-					}
-				} else {
-					if (turnPreviousPage(false)) {
-						startDragging();
-					} else if (!mDoc.isDownloading()) {
-						getActivity().showToastMsg("已到达第一页");
-					}
-				}
-			}
-			return true;
-		}
-	}
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (mDragging) slideSmoothly(velocityX);
+            return true;
+        }
 
-	ProgressDialog mLoadingPrgreDialog;
+        private float xScrollSum;
 
-	@Override
-	public void onDownloadStart(Chapter chapter) {
-		mLoadingPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, false);
-		mDoc.onDownloadStart();
-	}
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (mDoc.isDownloading()) {
+                xScrollSum = 0;
+                return false;
+            }
 
-	@Override
-	public void onDownloadComplete(Chapter chapter) {
-		boolean willAdjust = mLoadingPrgreDialog.isShowing();
-		if (willAdjust) mLoadingPrgreDialog.cancel();
-		mLoadingPrgreDialog = null;
+            getActivity().getReadingMenu().hideMenu();
+            xScrollSum += Math.abs(distanceX);
+            if (xScrollSum < 5) return true;
 
-		if (chapter.isNativeChapter()) {
-			mDoc.onDownloadComplete(true, willAdjust);
-			if (willAdjust) turnToChapter(chapter);
-		} else {
-			mDoc.onDownloadComplete(false, willAdjust);
-			if (willAdjust) getActivity().showToastMsg(R.string.without_data);
-		}
-	}
+            if (mDragging) {
+                changeTurningPageDirection(distanceX > 0 ? 1 : 0);
+                dragRedraw(distanceX);
+            } else {
+                if (distanceX > 0) {
+                    if (turnNextPage(false)) {
+                        startDragging();
+                    } else if (!mDoc.isDownloading()) {
+                        getActivity().showToastMsg("已到达最后一页");
+                    }
+                } else {
+                    if (turnPreviousPage(false)) {
+                        startDragging();
+                    } else if (!mDoc.isDownloading()) {
+                        getActivity().showToastMsg("已到达第一页");
+                    }
+                }
+            }
+            return true;
+        }
+    }
 
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		return getActivity().onKeyUp(keyCode, event);
-	}
+    ProgressDialog mLoadingPrgreDialog;
 
-	public void turnToChapter(Chapter chapter) {
-		if (mDoc.turnToChapter(chapter)) forceRedraw(true);
-	}
+    @Override
+    public void onDownloadStart(Chapter chapter) {
+        mLoadingPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, false);
+        mDoc.onDownloadStart();
+    }
+
+    @Override
+    public void onDownloadComplete(Chapter chapter) {
+        boolean willAdjust = mLoadingPrgreDialog.isShowing();
+        if (willAdjust) mLoadingPrgreDialog.cancel();
+        mLoadingPrgreDialog = null;
+
+        if (chapter.isNativeChapter()) {
+            mDoc.onDownloadComplete(true, willAdjust);
+            if (willAdjust) turnToChapter(chapter);
+        } else {
+            mDoc.onDownloadComplete(false, willAdjust);
+            if (willAdjust) getActivity().showToastMsg(R.string.without_data);
+        }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return getActivity().onKeyUp(keyCode, event);
+    }
+
+    public void turnToChapter(Chapter chapter) {
+        if (mDoc.turnToChapter(chapter)) forceRedraw(true);
+    }
 
 //	public float calculateReadingProgress() {
 //		float percentage = mDoc.calculateReadingProgress();
 //		return percentage > 100 ? 100 : percentage;
 //	}
 
-	private ReaderActivity getActivity() {
-		return (ReaderActivity) getContext();
-	}
+    private ReaderActivity getActivity() {
+        return (ReaderActivity) getContext();
+    }
 
 }

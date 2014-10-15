@@ -4,24 +4,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TaskExecutor {
-	private ExecutorService service;
+    private ExecutorService service;
 
-	private static TaskExecutor mInstance;
-	public static TaskExecutor get() {
-		if (mInstance == null) mInstance = new TaskExecutor(6);
-		return mInstance;
-	}
+    private static TaskExecutor mInstance;
 
-	private TaskExecutor(int numThreads) {
-		service = Executors.newFixedThreadPool(numThreads);
-	}
+    public static TaskExecutor get() {
+        if (mInstance == null) mInstance = new TaskExecutor(6);
+        return mInstance;
+    }
 
-	public void execute(TaskRunnable runnable) {
-		service.execute(runnable);
-	}
+    private TaskExecutor(int numThreads) {
+        service = Executors.newFixedThreadPool(numThreads);
+    }
 
-	public void shutdown() {
-		if (service != null) service.shutdown();
-	}
+    public void execute(TaskRunnable runnable) {
+        service.execute(runnable);
+    }
+
+    public void shutdown() {
+        if (service != null) service.shutdown();
+    }
 
 }

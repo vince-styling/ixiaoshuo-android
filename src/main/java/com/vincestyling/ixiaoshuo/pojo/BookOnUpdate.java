@@ -1,37 +1,39 @@
 package com.vincestyling.ixiaoshuo.pojo;
 
 public class BookOnUpdate {
-	int bookId, lastChapterId, type;
+    int bookId, lastChapterId, type;
 
-	public BookOnUpdate() {}
-	public BookOnUpdate(int bookId, int lastChapterId, int type) {
-		this.type = type;
-		this.bookId = bookId;
-		this.lastChapterId = lastChapterId;
-	}
+    public BookOnUpdate() {
+    }
 
-	public int getBookId() {
-		return bookId;
-	}
+    public BookOnUpdate(int bookId, int lastChapterId, int type) {
+        this.type = type;
+        this.bookId = bookId;
+        this.lastChapterId = lastChapterId;
+    }
 
-	public void setBookId(int bookId) {
-		this.bookId = bookId;
-	}
+    public int getBookId() {
+        return bookId;
+    }
 
-	public int getLastChapterId() {
-		return lastChapterId;
-	}
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
 
-	public void setLastChapterId(int lastChapterId) {
-		this.lastChapterId = lastChapterId;
-	}
+    public int getLastChapterId() {
+        return lastChapterId;
+    }
 
-	public int getType() {
-		return type;
-	}
+    public void setLastChapterId(int lastChapterId) {
+        this.lastChapterId = lastChapterId;
+    }
 
-	public void setType(int type) {
-		this.type = type;
-	}
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
 }

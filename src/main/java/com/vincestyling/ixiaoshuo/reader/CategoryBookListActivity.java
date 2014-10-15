@@ -12,31 +12,31 @@ import com.vincestyling.ixiaoshuo.view.finder.FinderSimplyCategoryBookView;
 import com.vincestyling.ixiaoshuo.view.finder.FinderView;
 
 public class CategoryBookListActivity extends BaseActivity {
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		String categoryName = getIntent().getStringExtra(Const.CATEGORY_NAME);
-		int categoryId = getIntent().getIntExtra(Const.CATEGORY_ID, 0);
-		if (categoryId <= 0 || StringUtil.isEmpty(categoryName)) {
-			finish();
-			return;
-		}
+        String categoryName = getIntent().getStringExtra(Const.CATEGORY_NAME);
+        int categoryId = getIntent().getIntExtra(Const.CATEGORY_ID, 0);
+        if (categoryId <= 0 || StringUtil.isEmpty(categoryName)) {
+            finish();
+            return;
+        }
 
-		FinderBaseListView finderView = FinderView.isOnSimplyStyle() ?
-				new FinderSimplyCategoryBookView(categoryId) : new FinderAmplyCategoryBookView(categoryId);
+        FinderBaseListView finderView = FinderView.isOnSimplyStyle() ?
+                new FinderSimplyCategoryBookView(categoryId) : new FinderAmplyCategoryBookView(categoryId);
 
-		setContentView(R.layout.finder_category_booklist);
-		getSupportFragmentManager().beginTransaction().add(R.id.lotContent, finderView).commit();
+        setContentView(R.layout.finder_category_booklist);
+        getSupportFragmentManager().beginTransaction().add(R.id.lotContent, finderView).commit();
 
-		TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
-		txtTitle.setText(categoryName);
+        TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
+        txtTitle.setText(categoryName);
 
-		findViewById(R.id.btnClose).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
-	}
+        findViewById(R.id.btnClose).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
 }

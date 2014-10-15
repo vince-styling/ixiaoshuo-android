@@ -11,43 +11,43 @@ import com.vincestyling.ixiaoshuo.view.finder.FinderView;
 import com.vincestyling.ixiaoshuo.view.search.SearchView;
 
 public class MainMenuGridView extends GridView {
-	private ViewPager mMainContentPager;
+    private ViewPager mMainContentPager;
 
-	public MainMenuGridView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public MainMenuGridView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public void setViewPager(ViewPager mainContentPager) {
-		mMainContentPager = mainContentPager;
-	}
+    public void setViewPager(ViewPager mainContentPager) {
+        mMainContentPager = mainContentPager;
+    }
 
-	@Override
-	protected void initGrid() {
-		putItem(new GridItem(R.drawable.menu_bookshelf_on, R.drawable.menu_bookshelf_off, new OnGridItemClickListener(BookshelfView.PAGER_INDEX) {
-			public void onGridItemClick() {
-				mMainContentPager.setCurrentItem(getGridItemId());
-			}
-		}));
+    @Override
+    protected void initGrid() {
+        putItem(new GridItem(R.drawable.menu_bookshelf_on, R.drawable.menu_bookshelf_off, new OnGridItemClickListener(BookshelfView.PAGER_INDEX) {
+            public void onGridItemClick() {
+                mMainContentPager.setCurrentItem(getGridItemId());
+            }
+        }));
 
-		putItem(new GridItem(R.drawable.menu_finder_on, R.drawable.menu_finder_off, new OnGridItemClickListener(FinderView.PAGER_INDEX) {
-			public void onGridItemClick() {
-				mMainContentPager.setCurrentItem(getGridItemId());
-			}
-		}));
+        putItem(new GridItem(R.drawable.menu_finder_on, R.drawable.menu_finder_off, new OnGridItemClickListener(FinderView.PAGER_INDEX) {
+            public void onGridItemClick() {
+                mMainContentPager.setCurrentItem(getGridItemId());
+            }
+        }));
 
-		putItem(new GridItem(R.drawable.menu_detector_on, R.drawable.menu_detector_off, new OnGridItemClickListener(DetectorView.PAGER_INDEX) {
-			public void onGridItemClick() {
-				mMainContentPager.setCurrentItem(getGridItemId());
-			}
-		}));
+        putItem(new GridItem(R.drawable.menu_detector_on, R.drawable.menu_detector_off, new OnGridItemClickListener(DetectorView.PAGER_INDEX) {
+            public void onGridItemClick() {
+                mMainContentPager.setCurrentItem(getGridItemId());
+            }
+        }));
 
-		putItem(new GridItem(R.drawable.menu_search_on, R.drawable.menu_search_off, new OnGridItemClickListener(SearchView.PAGER_INDEX) {
-			public void onGridItemClick() {
-				mMainContentPager.setCurrentItem(getGridItemId());
-			}
-		}));
+        putItem(new GridItem(R.drawable.menu_search_on, R.drawable.menu_search_off, new OnGridItemClickListener(SearchView.PAGER_INDEX) {
+            public void onGridItemClick() {
+                mMainContentPager.setCurrentItem(getGridItemId());
+            }
+        }));
 
-		mHighlightDrawable = getResources().getDrawable(R.drawable.menu_bg_pressed);
-	}
+        mHighlightDrawable = getResources().getDrawable(R.drawable.menu_bg_pressed);
+    }
 
 }

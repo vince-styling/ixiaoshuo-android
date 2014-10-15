@@ -10,19 +10,19 @@ import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public abstract class ChapterDownloadNetTask extends ChapterDownloadTask {
 
-	public ChapterDownloadNetTask(Context ctx, Book book) {
-		super(ctx, book);
-	}
+    public ChapterDownloadNetTask(Context ctx, Book book) {
+        super(ctx, book);
+    }
 
-	@Override
-	protected void loadNextPage() {
-		Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Listener<PaginationList<Chapter>>() {
-			@Override
-			public void onSuccess(PaginationList<Chapter> chapterList) {
-				mChapterList = AppDAO.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo, 100);
-				execute();
-			}
-		});
-	}
+    @Override
+    protected void loadNextPage() {
+        Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Listener<PaginationList<Chapter>>() {
+            @Override
+            public void onSuccess(PaginationList<Chapter> chapterList) {
+                mChapterList = AppDAO.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo, 100);
+                execute();
+            }
+        });
+    }
 
 }

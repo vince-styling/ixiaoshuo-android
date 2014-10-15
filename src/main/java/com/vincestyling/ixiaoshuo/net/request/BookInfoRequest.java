@@ -6,13 +6,13 @@ import com.vincestyling.ixiaoshuo.pojo.Book;
 
 public class BookInfoRequest extends BasicRequest<Book> {
 
-	public BookInfoRequest(String url, Listener<Book> listener) {
-		super(url, listener);
-	}
+    public BookInfoRequest(String url, Listener<Book> listener) {
+        super(url, listener);
+    }
 
-	@Override
-	protected Book convert(Respond respond) {
-		return respond.convert(Book.class);
-	}
+    @Override
+    protected Book convert(Respond respond) {
+        return respond.convert(Book.class);
+    }
 
 }

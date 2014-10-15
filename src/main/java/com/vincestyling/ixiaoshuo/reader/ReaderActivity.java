@@ -26,218 +26,219 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ReaderActivity extends BaseActivity {
-	private ReadingBoard mReadingBoard;
-	private ReadingMenuView mReadingMenuView;
-	private TextView mTxvCurTime, mTopInfo, mBottomInfo;
-	private BatteryView mBatteryView;
-	private ChapterListView mLsvChapterList;
-	private ReadingPreferences mPreferences;
+    private ReadingBoard mReadingBoard;
+    private ReadingMenuView mReadingMenuView;
+    private TextView mTxvCurTime, mTopInfo, mBottomInfo;
+    private BatteryView mBatteryView;
+    private ChapterListView mLsvChapterList;
+    private ReadingPreferences mPreferences;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		SysUtil.setFullScreen(this);
+        SysUtil.setFullScreen(this);
 
-		// TODO : apply reader orientation setting
+        // TODO : apply reader orientation setting
 //		if (!SettingTable.isReadPortMode(this)) {
 //			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //		}
 
-		int bookId;
-		try {
-			setContentView(R.layout.reading_board);
+        int bookId;
+        try {
+            setContentView(R.layout.reading_board);
 
-			mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
-			initStatusBar();
+            mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
+            initStatusBar();
 
-			OnChangeReadingInfoListener onChangeReadingInfoListener = new OnChangeReadingInfoListener() {
-				@Override
-				public void onChangeTopInfo(String topInfo) {
-					mTopInfo.setText(topInfo);
-				}
-				@Override
-				public void onChangeBottomInfo(String bottomInfo) {
-					mBottomInfo.setText(bottomInfo);
-				}
-			};
+            OnChangeReadingInfoListener onChangeReadingInfoListener = new OnChangeReadingInfoListener() {
+                @Override
+                public void onChangeTopInfo(String topInfo) {
+                    mTopInfo.setText(topInfo);
+                }
 
-			bookId = getIntent().getIntExtra(Const.BOOK_ID, 0);
-			new ReaderSupport().init(bookId);
-			mReadingBoard.init(new OnlineDocument(mReadingBoard, onChangeReadingInfoListener));
+                @Override
+                public void onChangeBottomInfo(String bottomInfo) {
+                    mBottomInfo.setText(bottomInfo);
+                }
+            };
 
-			mReadingMenuView = new ReadingMenuView(this);
+            bookId = getIntent().getIntExtra(Const.BOOK_ID, 0);
+            new ReaderSupport().init(bookId);
+            mReadingBoard.init(new OnlineDocument(mReadingBoard, onChangeReadingInfoListener));
 
-			mPreferences = new ReadingPreferences(this);
+            mReadingMenuView = new ReadingMenuView(this);
 
-			RenderPaint.init(this);
-			RenderPaint.get().setTextSize(mPreferences.getTextSize());
+            mPreferences = new ReadingPreferences(this);
 
-			onChangeColorScheme();
+            RenderPaint.init(this);
+            RenderPaint.get().setTextSize(mPreferences.getTextSize());
 
-			mLsvChapterList = new ChapterListView(this, new ViewBuilder.OnShowListener() {
-				@Override
-				public void onShow() {
-					mReadingMenuView.hideMenu();
-				}
-			});
+            onChangeColorScheme();
 
-		} catch (Exception e) {
-			showToastMsg("初始化失败！");
-			AppLog.e(e);
-			finish();
-		}
-	}
+            mLsvChapterList = new ChapterListView(this, new ViewBuilder.OnShowListener() {
+                @Override
+                public void onShow() {
+                    mReadingMenuView.hideMenu();
+                }
+            });
 
-	private void initStatusBar() {
-		mTxvCurTime = (TextView) findViewById(R.id.txvCurTime);
-		invalidateTime();
+        } catch (Exception e) {
+            showToastMsg("初始化失败！");
+            AppLog.e(e);
+            finish();
+        }
+    }
 
-		mBatteryView = (BatteryView) findViewById(R.id.batteryView);
-		mBottomInfo = (TextView) findViewById(R.id.txvBottomInfo);
-		mTopInfo = (TextView) findViewById(R.id.txvTopInfo);
-	}
+    private void initStatusBar() {
+        mTxvCurTime = (TextView) findViewById(R.id.txvCurTime);
+        invalidateTime();
 
-	private void invalidateTime() {
-		boolean is24Hour = android.text.format.DateFormat.is24HourFormat(this);
-		SimpleDateFormat dfTime = new SimpleDateFormat(is24Hour ? "HH:mm" : "hh:mm");
-		mTxvCurTime.setText(dfTime.format(new Date()));
-	}
+        mBatteryView = (BatteryView) findViewById(R.id.batteryView);
+        mBottomInfo = (TextView) findViewById(R.id.txvBottomInfo);
+        mTopInfo = (TextView) findViewById(R.id.txvTopInfo);
+    }
 
-	public void showChapterListView() {
-		mLsvChapterList.resume();
-	}
+    private void invalidateTime() {
+        boolean is24Hour = android.text.format.DateFormat.is24HourFormat(this);
+        SimpleDateFormat dfTime = new SimpleDateFormat(is24Hour ? "HH:mm" : "hh:mm");
+        mTxvCurTime.setText(dfTime.format(new Date()));
+    }
 
-	public void onChangeColorScheme() {
-		ColorScheme colorScheme = mPreferences.getColorScheme();
-		mReadingBoard.setColorScheme(colorScheme);
+    public void showChapterListView() {
+        mLsvChapterList.resume();
+    }
 
-		mBatteryView.setColor(colorScheme.getTextColor());
-		mTxvCurTime.setTextColor(colorScheme.getTextColor());
-		mTopInfo.setTextColor(colorScheme.getTextColor());
-		mBottomInfo.setTextColor(colorScheme.getTextColor());
-	}
+    public void onChangeColorScheme() {
+        ColorScheme colorScheme = mPreferences.getColorScheme();
+        mReadingBoard.setColorScheme(colorScheme);
 
-	public void increaseTextSize() {
-		if (mPreferences.increaseTextSize()) {
-			mReadingBoard.adjustTextSize(mPreferences.getTextSize());
-		}
-	}
+        mBatteryView.setColor(colorScheme.getTextColor());
+        mTxvCurTime.setTextColor(colorScheme.getTextColor());
+        mTopInfo.setTextColor(colorScheme.getTextColor());
+        mBottomInfo.setTextColor(colorScheme.getTextColor());
+    }
 
-	public void decreaseTextSize() {
-		if (mPreferences.decreaseTextSize()) {
-			mReadingBoard.adjustTextSize(mPreferences.getTextSize());
-		}
-	}
+    public void increaseTextSize() {
+        if (mPreferences.increaseTextSize()) {
+            mReadingBoard.adjustTextSize(mPreferences.getTextSize());
+        }
+    }
 
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-			case KeyEvent.KEYCODE_BACK:
-				if (mLsvChapterList.isInFront()) {
-					mLsvChapterList.pushBack();
-					return false;
-				}
-				if (!mReadingMenuView.hideMenu()) onFinish();
-				break;
-			case KeyEvent.KEYCODE_MENU:
-				mReadingMenuView.switchMenu();
-				break;
-		}
-		return false;
-	}
+    public void decreaseTextSize() {
+        if (mPreferences.decreaseTextSize()) {
+            mReadingBoard.adjustTextSize(mPreferences.getTextSize());
+        }
+    }
 
-	public void onFinish() {
-		if (YYReader.isBookOnShelf()) {
-			finish();
-		} else {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("是否添加到书架？");
-			builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					YYReader.addToBookShelf();
-					dialog.cancel();
-					finish();
-				}
-			});
-			builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					YYReader.removeInBookShelf();
-					dialog.cancel();
-					finish();
-				}
-			});
-			builder.show();
-		}
-	}
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mLsvChapterList.isInFront()) {
+                    mLsvChapterList.pushBack();
+                    return false;
+                }
+                if (!mReadingMenuView.hideMenu()) onFinish();
+                break;
+            case KeyEvent.KEYCODE_MENU:
+                mReadingMenuView.switchMenu();
+                break;
+        }
+        return false;
+    }
 
-	@Override
-	public void finish() {
-		if (isTaskRoot()) {
-			Intent in = new Intent();
-			in.setClass(this, MainActivity.class);
-			in.setAction(String.valueOf(System.currentTimeMillis()));
-			startActivity(in);
-		}
-		super.finish();
-	}
+    public void onFinish() {
+        if (YYReader.isBookOnShelf()) {
+            finish();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("是否添加到书架？");
+            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    YYReader.addToBookShelf();
+                    dialog.cancel();
+                    finish();
+                }
+            });
+            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    YYReader.removeInBookShelf();
+                    dialog.cancel();
+                    finish();
+                }
+            });
+            builder.show();
+        }
+    }
 
-	@Override
-	protected void onResume() {
+    @Override
+    public void finish() {
+        if (isTaskRoot()) {
+            Intent in = new Intent();
+            in.setClass(this, MainActivity.class);
+            in.setAction(String.valueOf(System.currentTimeMillis()));
+            startActivity(in);
+        }
+        super.finish();
+    }
+
+    @Override
+    protected void onResume() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         intentFilter.addAction(Intent.ACTION_TIME_TICK);
-		registerReceiver(mStatusBarReceiver, intentFilter);
+        registerReceiver(mStatusBarReceiver, intentFilter);
 
-		int savedBrightness = mPreferences.getBrightness();
-		if (savedBrightness != -1) {
-			SysUtil.setBrightness(getWindow(), savedBrightness);
-		}
+        int savedBrightness = mPreferences.getBrightness();
+        if (savedBrightness != -1) {
+            SysUtil.setBrightness(getWindow(), savedBrightness);
+        }
 
-		super.onResume();
+        super.onResume();
         invalidateTime();
-	}
+    }
 
-	@Override
-	protected void onPause() {
-		unregisterReceiver(mStatusBarReceiver);
-		super.onPause();
-	}
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mStatusBarReceiver);
+        super.onPause();
+    }
 
-	@Override
-	protected void onDestroy() {
-		YYReader.onCancelRead();
-		RenderPaint.destory();
-		super.onDestroy();
-	}
+    @Override
+    protected void onDestroy() {
+        YYReader.onCancelRead();
+        RenderPaint.destory();
+        super.onDestroy();
+    }
 
-	private StatusBarBroadcastReceiver mStatusBarReceiver = new StatusBarBroadcastReceiver();
-	class StatusBarBroadcastReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
-				invalidateTime();
-			}
-			else if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
-				int level = intent.getIntExtra("level", 0);
-				int scale = intent.getIntExtra("scale", 100);
-				mBatteryView.setBatteryPercentage((float) level / scale);
-			}
-		}
-	}
+    private StatusBarBroadcastReceiver mStatusBarReceiver = new StatusBarBroadcastReceiver();
 
-	public ReadingBoard getReadingBoard() {
-		return mReadingBoard;
-	}
+    class StatusBarBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
+                invalidateTime();
+            } else if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+                int level = intent.getIntExtra("level", 0);
+                int scale = intent.getIntExtra("scale", 100);
+                mBatteryView.setBatteryPercentage((float) level / scale);
+            }
+        }
+    }
 
-	public ReadingMenuView getReadingMenu() {
-		return mReadingMenuView;
-	}
+    public ReadingBoard getReadingBoard() {
+        return mReadingBoard;
+    }
 
-	public ReadingPreferences getPreferences() {
-		return mPreferences;
-	}
+    public ReadingMenuView getReadingMenu() {
+        return mReadingMenuView;
+    }
+
+    public ReadingPreferences getPreferences() {
+        return mPreferences;
+    }
 
 }

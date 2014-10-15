@@ -5,8 +5,8 @@ import com.vincestyling.ixiaoshuo.reader.BaseActivity;
 
 public class BaseFragment extends Fragment {
 
-	protected BaseActivity getBaseActivity() {
-		return (BaseActivity) getActivity();
-	}
+    protected BaseActivity getBaseActivity() {
+        return (BaseActivity) getActivity();
+    }
 
 }

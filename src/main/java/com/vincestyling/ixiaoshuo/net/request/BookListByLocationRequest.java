@@ -7,15 +7,15 @@ import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class BookListByLocationRequest extends BasicRequest<PaginationList<BookByLocation>> {
 
-	public BookListByLocationRequest(String url, Listener<PaginationList<BookByLocation>> listener) {
-		super(url, listener);
-	}
+    public BookListByLocationRequest(String url, Listener<PaginationList<BookByLocation>> listener) {
+        super(url, listener);
+    }
 
-	@Override
-	protected PaginationList<BookByLocation> convert(Respond respond) {
-		PaginationList<BookByLocation> bookList = respond.convertPaginationList(BookByLocation.class);
-		if (bookList == null || bookList.size() == 0) return null;
-		return bookList;
-	}
+    @Override
+    protected PaginationList<BookByLocation> convert(Respond respond) {
+        PaginationList<BookByLocation> bookList = respond.convertPaginationList(BookByLocation.class);
+        if (bookList == null || bookList.size() == 0) return null;
+        return bookList;
+    }
 
 }

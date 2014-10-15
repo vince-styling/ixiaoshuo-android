@@ -22,179 +22,179 @@ import com.vincestyling.ixiaoshuo.utils.StringUtil;
 import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
 
 public class DetectorResultActivity extends BaseActivity implements PullToLoadPageListView.OnLoadingPageListener,
-		AdapterView.OnItemClickListener, ComplexBookNameView.ConditionSatisficer<BookByLocation> {
+        AdapterView.OnItemClickListener, ComplexBookNameView.ConditionSatisficer<BookByLocation> {
 
-	private PaginationAdapter<BookByLocation> mAdapter;
-	private PullToLoadPageListView mLsvContent;
+    private PaginationAdapter<BookByLocation> mAdapter;
+    private PullToLoadPageListView mLsvContent;
 
-	private boolean mHasNextPage = true;
-	private int mPageNum;
+    private boolean mHasNextPage = true;
+    private int mPageNum;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.detector_result);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.detector_result);
 
-		TextView txvLocation = (TextView) findViewById(R.id.txvLocation);
-		txvLocation.setText(String.format(getResources().getString(R.string.detector_result_bookcount), StringUtil.nextRandInt(30, 200)));
+        TextView txvLocation = (TextView) findViewById(R.id.txvLocation);
+        txvLocation.setText(String.format(getResources().getString(R.string.detector_result_bookcount), StringUtil.nextRandInt(30, 200)));
 
-		RoundedRepeatBackgroundDrawable drawable = new RoundedRepeatBackgroundDrawable();
-		drawable.setBackgroundDrawable(getResources().getDrawable(R.drawable.book_shelf_deep_bg));
-		drawable.setCornerRadius(getResources().getDimension(R.dimen.detector_result_head_bg_corner_radius));
-		drawable.setBorderWidth(getResources().getDimension(R.dimen.detector_result_head_bg_border));
-		drawable.setBorderColor(getResources().getColor(R.color.detector_result_head_bg_border));
-		findViewById(R.id.lotResultHeader).setBackgroundDrawable(drawable);
+        RoundedRepeatBackgroundDrawable drawable = new RoundedRepeatBackgroundDrawable();
+        drawable.setBackgroundDrawable(getResources().getDrawable(R.drawable.book_shelf_deep_bg));
+        drawable.setCornerRadius(getResources().getDimension(R.dimen.detector_result_head_bg_corner_radius));
+        drawable.setBorderWidth(getResources().getDimension(R.dimen.detector_result_head_bg_border));
+        drawable.setBorderColor(getResources().getColor(R.color.detector_result_head_bg_border));
+        findViewById(R.id.lotResultHeader).setBackgroundDrawable(drawable);
 
-		findViewById(R.id.imvRelocation).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
-
-
-		mLsvContent = (PullToLoadPageListView) findViewById(R.id.lsvContent);
-
-		View rootView = getLayoutInflater().inflate(R.layout.finder_list_pull_to_load, null);
-		mLsvContent.setPullToLoadNextPageView(new PullToLoadPage(R.string.pull_to_load_next_page, rootView) {
-			@Override
-			public int takePageNum() {
-				return mPageNum;
-			}
-		});
-
-		mLsvContent.setOnLoadingPageListener(this);
-
-		mAdapter = new PaginationAdapter<BookByLocation>() {
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				return adapterGetView(position, convertView);
-			}
-		};
-
-		mLsvContent.setAdapter(mAdapter);
-		mLsvContent.setOnItemClickListener(this);
-	}
-
-	private View adapterGetView(int position, View convertView) {
-		if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.detector_result_item, null);
-
-		ComplexBookNameView<BookByLocation> txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
-		TextView txvMemberInfo = (TextView) convertView.findViewById(R.id.txvMemberInfo);
-		TextView txvDistance = (TextView) convertView.findViewById(R.id.txvDistance);
-
-		BookByLocation book = mAdapter.getItem(position);
-
-		txvBookName.setBook(book);
-		txvBookName.setSatisficer(this);
+        findViewById(R.id.imvRelocation).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 
-		if (book.getDistance() >= 1000) {
-			String distance = StringUtil.ONE_DECIMAL_POINT_DF.format(book.getDistance() / 1000f);
-			txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_km), distance));
-		} else {
-			txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_m), book.getDistance()));
-		}
+        mLsvContent = (PullToLoadPageListView) findViewById(R.id.lsvContent);
+
+        View rootView = getLayoutInflater().inflate(R.layout.finder_list_pull_to_load, null);
+        mLsvContent.setPullToLoadNextPageView(new PullToLoadPage(R.string.pull_to_load_next_page, rootView) {
+            @Override
+            public int takePageNum() {
+                return mPageNum;
+            }
+        });
+
+        mLsvContent.setOnLoadingPageListener(this);
+
+        mAdapter = new PaginationAdapter<BookByLocation>() {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                return adapterGetView(position, convertView);
+            }
+        };
+
+        mLsvContent.setAdapter(mAdapter);
+        mLsvContent.setOnItemClickListener(this);
+    }
+
+    private View adapterGetView(int position, View convertView) {
+        if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.detector_result_item, null);
+
+        ComplexBookNameView<BookByLocation> txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
+        TextView txvMemberInfo = (TextView) convertView.findViewById(R.id.txvMemberInfo);
+        TextView txvDistance = (TextView) convertView.findViewById(R.id.txvDistance);
+
+        BookByLocation book = mAdapter.getItem(position);
+
+        txvBookName.setBook(book);
+        txvBookName.setSatisficer(this);
 
 
-		txvMemberInfo.setText(String.format(
-				getResources().getString(R.string.detector_result_book_membership), book.getMemberId()));
+        if (book.getDistance() >= 1000) {
+            String distance = StringUtil.ONE_DECIMAL_POINT_DF.format(book.getDistance() / 1000f);
+            txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_km), distance));
+        } else {
+            txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_m), book.getDistance()));
+        }
 
 
-		StateListDrawable states = new StateListDrawable();
-		convertView.setBackgroundDrawable(states);
-		if (position % 2 == 0) {
-			states.addState(new int[] {android.R.attr.state_pressed}, getResources().getDrawable(R.color.finder_booklist_bg_pressed));
-			states.addState(new int[] {android.R.attr.state_enabled}, getResources().getDrawable(R.color.detector_result_bg));
-		} else {
-			states.addState(new int[] {android.R.attr.state_pressed}, getResources().getDrawable(R.color.finder_booklist_bg_pressed));
-			states.addState(new int[] {android.R.attr.state_enabled}, getResources().getDrawable(R.color.detector_result_item_even_bg));
-		}
+        txvMemberInfo.setText(String.format(
+                getResources().getString(R.string.detector_result_book_membership), book.getMemberId()));
 
-		return convertView;
-	}
 
-	@Override
-	public String getBookName(BookByLocation book) {
-		return book.getName();
-	}
+        StateListDrawable states = new StateListDrawable();
+        convertView.setBackgroundDrawable(states);
+        if (position % 2 == 0) {
+            states.addState(new int[]{android.R.attr.state_pressed}, getResources().getDrawable(R.color.finder_booklist_bg_pressed));
+            states.addState(new int[]{android.R.attr.state_enabled}, getResources().getDrawable(R.color.detector_result_bg));
+        } else {
+            states.addState(new int[]{android.R.attr.state_pressed}, getResources().getDrawable(R.color.finder_booklist_bg_pressed));
+            states.addState(new int[]{android.R.attr.state_enabled}, getResources().getDrawable(R.color.detector_result_item_even_bg));
+        }
 
-	@Override
-	public boolean isFirstConditionSatisfy(BookByLocation book) {
-		return book.isFinished();
-	}
+        return convertView;
+    }
 
-	@Override
-	public int firstConditionLabel(BookByLocation book) {
-		return R.string.book_status_tip_finished;
-	}
+    @Override
+    public String getBookName(BookByLocation book) {
+        return book.getName();
+    }
 
-	@Override
-	public boolean isSecondConditionSatisfy(BookByLocation book) {
-		return true;
-	}
+    @Override
+    public boolean isFirstConditionSatisfy(BookByLocation book) {
+        return book.isFinished();
+    }
 
-	@Override
-	public int secondConditionLabel(BookByLocation book) {
-		if (book.isBothType()) return R.string.book_status_tip_both_type;
-		return book.isTextBook() ? R.string.book_status_tip_text_book : R.string.book_status_tip_voice_book;
-	}
+    @Override
+    public int firstConditionLabel(BookByLocation book) {
+        return R.string.book_status_tip_finished;
+    }
 
-	@Override
-	public void onResume() {
-		if (mAdapter.getItemCount() == 0) mLsvContent.triggerLoadNextPage();
-		super.onResume();
-	}
+    @Override
+    public boolean isSecondConditionSatisfy(BookByLocation book) {
+        return true;
+    }
 
-	@Override
-	public boolean onLoadNextPage() {
-		if (mHasNextPage) {
-			Netroid.getBookListByLocation(++mPageNum, new Listener<PaginationList<BookByLocation>>() {
-				@Override
-				public void onFinish() {
-					mLsvContent.finishLoadNextPage();
-				}
+    @Override
+    public int secondConditionLabel(BookByLocation book) {
+        if (book.isBothType()) return R.string.book_status_tip_both_type;
+        return book.isTextBook() ? R.string.book_status_tip_text_book : R.string.book_status_tip_voice_book;
+    }
 
-				@Override
-				public void onSuccess(PaginationList<BookByLocation> bookList) {
-					mHasNextPage = bookList.hasNextPage();
-					mAdapter.addLast(bookList);
-				}
+    @Override
+    public void onResume() {
+        if (mAdapter.getItemCount() == 0) mLsvContent.triggerLoadNextPage();
+        super.onResume();
+    }
 
-				@Override
-				public void onError(NetroidError error) {
-					showToastMsg(R.string.without_data);
-					mPageNum--;
-				}
-			});
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean onLoadNextPage() {
+        if (mHasNextPage) {
+            Netroid.getBookListByLocation(++mPageNum, new Listener<PaginationList<BookByLocation>>() {
+                @Override
+                public void onFinish() {
+                    mLsvContent.finishLoadNextPage();
+                }
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		BookByLocation book = (BookByLocation) parent.getItemAtPosition(position);
-		if (book != null) {
-			Intent intent = new Intent(this, BookInfoActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.putExtra(Const.BOOK_ID, book.getId());
-			startActivity(intent);
-		}
-	}
+                @Override
+                public void onSuccess(PaginationList<BookByLocation> bookList) {
+                    mHasNextPage = bookList.hasNextPage();
+                    mAdapter.addLast(bookList);
+                }
 
-	@Override
-	public boolean onLoadPrevPage() {
-		return false;
-	}
+                @Override
+                public void onError(NetroidError error) {
+                    showToastMsg(R.string.without_data);
+                    mPageNum--;
+                }
+            });
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public boolean hasPrevPage() {
-		return false;
-	}
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        BookByLocation book = (BookByLocation) parent.getItemAtPosition(position);
+        if (book != null) {
+            Intent intent = new Intent(this, BookInfoActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(Const.BOOK_ID, book.getId());
+            startActivity(intent);
+        }
+    }
 
-	@Override
-	public boolean hasNextPage() {
-		return mHasNextPage;
-	}
+    @Override
+    public boolean onLoadPrevPage() {
+        return false;
+    }
+
+    @Override
+    public boolean hasPrevPage() {
+        return false;
+    }
+
+    @Override
+    public boolean hasNextPage() {
+        return mHasNextPage;
+    }
 }

@@ -11,25 +11,25 @@ import com.vincestyling.ixiaoshuo.utils.SysUtil;
 
 public class BrightnessSetting extends ReaderViewBuilder implements SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
     private SeekBar mSeekBright;
-	private Button mBtnDark, mBtnLight;
+    private Button mBtnDark, mBtnLight;
 
-	public BrightnessSetting(ReaderActivity activity, OnShowListener showListener) {
-		super(activity, R.id.lotBrightnessSetting, showListener);
-	}
+    public BrightnessSetting(ReaderActivity activity, OnShowListener showListener) {
+        super(activity, R.id.lotBrightnessSetting, showListener);
+    }
 
-	@Override
-	protected void build() {
-		mView = getActivity().getLayoutInflater().inflate(R.layout.reading_board_brightness_setting, null);
+    @Override
+    protected void build() {
+        mView = getActivity().getLayoutInflater().inflate(R.layout.reading_board_brightness_setting, null);
 
-		mSeekBright = (SeekBar) mView.findViewById(R.id.seekBright);
+        mSeekBright = (SeekBar) mView.findViewById(R.id.seekBright);
 
-		mBtnDark = (Button) mView.findViewById(R.id.buttonDark);
-		mBtnDark.setOnTouchListener(this);
-		mBtnLight = (Button) mView.findViewById(R.id.buttonLight);
-		mBtnLight.setOnTouchListener(this);
+        mBtnDark = (Button) mView.findViewById(R.id.buttonDark);
+        mBtnDark.setOnTouchListener(this);
+        mBtnLight = (Button) mView.findViewById(R.id.buttonLight);
+        mBtnLight.setOnTouchListener(this);
 
         mSeekBright.setOnSeekBarChangeListener(this);
-	}
+    }
 
     @Override
     public void resume() {
@@ -47,33 +47,33 @@ public class BrightnessSetting extends ReaderViewBuilder implements SeekBar.OnSe
             mSeekBright.setProgress(progress);
         }
 
-		if (getActivity().getPreferences().isDarkMode()) {
-			mBtnDark.setPressed(true);
-		} else {
-			mBtnLight.setPressed(true);
-		}
+        if (getActivity().getPreferences().isDarkMode()) {
+            mBtnDark.setPressed(true);
+        } else {
+            mBtnLight.setPressed(true);
+        }
     }
 
-	@Override
-	public boolean onTouch(View view, MotionEvent event) {
-		if (event.getAction() == MotionEvent.ACTION_DOWN) return true;
-		if (event.getAction() != MotionEvent.ACTION_UP) return false;
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) return true;
+        if (event.getAction() != MotionEvent.ACTION_UP) return false;
 
-		if (view == mBtnDark) {
-			if (getActivity().getPreferences().isDarkMode()) return true;
-			getActivity().getPreferences().setIsDarkMode(true);
-			mBtnDark.setPressed(true);
-			mBtnLight.setPressed(false);
-		} else {
-			if (!getActivity().getPreferences().isDarkMode()) return true;
-			getActivity().getPreferences().setIsDarkMode(false);
-			mBtnLight.setPressed(true);
-			mBtnDark.setPressed(false);
-		}
+        if (view == mBtnDark) {
+            if (getActivity().getPreferences().isDarkMode()) return true;
+            getActivity().getPreferences().setIsDarkMode(true);
+            mBtnDark.setPressed(true);
+            mBtnLight.setPressed(false);
+        } else {
+            if (!getActivity().getPreferences().isDarkMode()) return true;
+            getActivity().getPreferences().setIsDarkMode(false);
+            mBtnLight.setPressed(true);
+            mBtnDark.setPressed(false);
+        }
 //		getActivity().setColorScheme(getActivity().getPreferences().getColorScheme());
 
-		return true;
-	}
+        return true;
+    }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -88,7 +88,7 @@ public class BrightnessSetting extends ReaderViewBuilder implements SeekBar.OnSe
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         int brightness = SysUtil.getBrightness(getActivity().getWindow());
-		getActivity().getPreferences().setBrightness(brightness);
+        getActivity().getPreferences().setBrightness(brightness);
     }
 
     private int seekBarProgressToBright(int progress) {

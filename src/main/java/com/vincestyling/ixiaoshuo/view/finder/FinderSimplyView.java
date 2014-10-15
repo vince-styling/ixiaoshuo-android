@@ -13,46 +13,46 @@ import com.vincestyling.ixiaoshuo.view.FragmentCreator;
 import com.vincestyling.ixiaoshuo.view.PageIndicator;
 
 public class FinderSimplyView extends BaseFragment {
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.finder_content, null);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.finder_content, null);
+    }
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		buildMenus();
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        buildMenus();
 
-		ViewPager finderPager = (ViewPager) view.findViewById(R.id.finderPager);
-		finderPager.setAdapter(new MyAdapter());
+        ViewPager finderPager = (ViewPager) view.findViewById(R.id.finderPager);
+        finderPager.setAdapter(new MyAdapter());
 
-		PageIndicator indicator = (PageIndicator) view.findViewById(R.id.multilistIndicator);
-		indicator.setViewPager(finderPager);
-	}
+        PageIndicator indicator = (PageIndicator) view.findViewById(R.id.multilistIndicator);
+        indicator.setViewPager(finderPager);
+    }
 
-	protected FragmentCreator[] mMenus;
+    protected FragmentCreator[] mMenus;
 
-	protected void buildMenus() {
-		mMenus = new FragmentCreator[]{
-				new FragmentCreator(FinderSimplyNewlyBookView.class),
-				new FragmentCreator(FinderSimplyHottestBookView.class),
-				new FragmentCreator(FinderSimplyUpdatesBookView.class),
-				new FragmentCreator(FinderCategoriesView.class),
-		};
-	}
+    protected void buildMenus() {
+        mMenus = new FragmentCreator[]{
+                new FragmentCreator(FinderSimplyNewlyBookView.class),
+                new FragmentCreator(FinderSimplyHottestBookView.class),
+                new FragmentCreator(FinderSimplyUpdatesBookView.class),
+                new FragmentCreator(FinderCategoriesView.class),
+        };
+    }
 
-	private class MyAdapter extends FragmentStatePagerAdapter {
-		public MyAdapter() {
-			super(getChildFragmentManager());
-		}
+    private class MyAdapter extends FragmentStatePagerAdapter {
+        public MyAdapter() {
+            super(getChildFragmentManager());
+        }
 
-		@Override
-		public int getCount() {
-			return mMenus.length;
-		}
+        @Override
+        public int getCount() {
+            return mMenus.length;
+        }
 
-		@Override
-		public Fragment getItem(int position) {
-			return mMenus[position].newInstance();
-		}
-	}
+        @Override
+        public Fragment getItem(int position) {
+            return mMenus[position].newInstance();
+        }
+    }
 }

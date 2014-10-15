@@ -9,15 +9,16 @@ import java.util.List;
 
 public class CategoriesRequest extends BasicRequest<List<Category>> {
 
-	public CategoriesRequest(String url, Listener<List<Category>> listener) {
-		super(url, listener);
-	}
+    public CategoriesRequest(String url, Listener<List<Category>> listener) {
+        super(url, listener);
+    }
 
-	@Override
-	protected List<Category> convert(Respond respond) {
-		List<Category> categoryList = respond.convert(new TypeReference<List<Category>>(){});
-		if (categoryList == null || categoryList.size() == 0) return null;
-		return categoryList;
-	}
+    @Override
+    protected List<Category> convert(Respond respond) {
+        List<Category> categoryList = respond.convert(new TypeReference<List<Category>>() {
+        });
+        if (categoryList == null || categoryList.size() == 0) return null;
+        return categoryList;
+    }
 
 }

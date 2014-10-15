@@ -8,89 +8,91 @@ import java.util.List;
 import java.util.Map;
 
 public class PaginationList<T> extends ArrayList<T> {
-	private int totalPageCount;
-	private int totalItemCount;
-	private int pageItemCount;
-	private int curPageNo;
+    private int totalPageCount;
+    private int totalItemCount;
+    private int pageItemCount;
+    private int curPageNo;
 
-	public PaginationList() {
-		super(0);
-	}
+    public PaginationList() {
+        super(0);
+    }
 
-	public PaginationList(List<T> ts, int pageNo, int pageItemCount, int totalItemCount) {
-		setPagination(pageNo, pageItemCount, totalItemCount);
-		addAll(ts);
-	}
+    public PaginationList(List<T> ts, int pageNo, int pageItemCount, int totalItemCount) {
+        setPagination(pageNo, pageItemCount, totalItemCount);
+        addAll(ts);
+    }
 
-	public void setPagination(int pageNo, int pageItemCount, int totalItemCount) {
-		this.curPageNo = pageNo;
-		this.pageItemCount = pageItemCount;
-		this.totalItemCount = totalItemCount;
-		this.totalPageCount = (totalItemCount - 1) / pageItemCount + 1;
-	}
+    public void setPagination(int pageNo, int pageItemCount, int totalItemCount) {
+        this.curPageNo = pageNo;
+        this.pageItemCount = pageItemCount;
+        this.totalItemCount = totalItemCount;
+        this.totalPageCount = (totalItemCount - 1) / pageItemCount + 1;
+    }
 
-	public int getTotalPageCount() {
-		return totalPageCount;
-	}
+    public int getTotalPageCount() {
+        return totalPageCount;
+    }
 
-	public void setTotalPageCount(int totalPageCount) {
-		this.totalPageCount = totalPageCount;
-	}
+    public void setTotalPageCount(int totalPageCount) {
+        this.totalPageCount = totalPageCount;
+    }
 
-	public int getTotalItemCount() {
-		return totalItemCount;
-	}
+    public int getTotalItemCount() {
+        return totalItemCount;
+    }
 
-	public void setTotalItemCount(int totalItemCount) {
-		this.totalItemCount = totalItemCount;
-	}
+    public void setTotalItemCount(int totalItemCount) {
+        this.totalItemCount = totalItemCount;
+    }
 
-	public int getPageItemCount() {
-		return pageItemCount;
-	}
+    public int getPageItemCount() {
+        return pageItemCount;
+    }
 
-	public void setPageItemCount(int pageItemCount) {
-		this.pageItemCount = pageItemCount;
-	}
+    public void setPageItemCount(int pageItemCount) {
+        this.pageItemCount = pageItemCount;
+    }
 
-	public int getCurPageNo() {
-		return curPageNo;
-	}
+    public int getCurPageNo() {
+        return curPageNo;
+    }
 
-	public void setCurPageNo(int curPageNo) {
-		this.curPageNo = curPageNo;
-	}
+    public void setCurPageNo(int curPageNo) {
+        this.curPageNo = curPageNo;
+    }
 
-	public boolean hasNextPage() {
-		return curPageNo < totalPageCount;
-	}
+    public boolean hasNextPage() {
+        return curPageNo < totalPageCount;
+    }
 
-	private static final String methodPrefix = "set";
-	public static <T> PaginationList<T> convert(Map<String, Object> dataMap, Class<T> clazz) {
-		try {
-			PaginationList<T> list = new PaginationList<T>();
+    private static final String methodPrefix = "set";
 
-			for (String key : dataMap.keySet()) {
-				Object value = dataMap.get(key);
-				if (value instanceof List) {
-					List datas = (List) value;
-					list.ensureCapacity(datas.size());
-					for (Object item : datas) {
-						list.add(GObjectMapper.get().convertValue(item, clazz));
-					}
-				} else {
-					for (Method method : PaginationList.class.getMethods()) {
-						if (method.getName().equalsIgnoreCase(methodPrefix + key)) {
-							method.invoke(list, Integer.parseInt(dataMap.get(key).toString()));
-							break;
-						}
-					}
-				}
-			}
+    public static <T> PaginationList<T> convert(Map<String, Object> dataMap, Class<T> clazz) {
+        try {
+            PaginationList<T> list = new PaginationList<T>();
 
-			return list;
-		} catch (Exception ex) {}
-		return null;
-	}
+            for (String key : dataMap.keySet()) {
+                Object value = dataMap.get(key);
+                if (value instanceof List) {
+                    List datas = (List) value;
+                    list.ensureCapacity(datas.size());
+                    for (Object item : datas) {
+                        list.add(GObjectMapper.get().convertValue(item, clazz));
+                    }
+                } else {
+                    for (Method method : PaginationList.class.getMethods()) {
+                        if (method.getName().equalsIgnoreCase(methodPrefix + key)) {
+                            method.invoke(list, Integer.parseInt(dataMap.get(key).toString()));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return list;
+        } catch (Exception ex) {
+        }
+        return null;
+    }
 
 }

@@ -1,31 +1,31 @@
 package com.vincestyling.ixiaoshuo.pojo;
 
 public class Category {
-	int id;
-	String name;
-	int bookCount;
+    int id;
+    String name;
+    int bookCount;
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public int getBookCount() {
-		return bookCount;
-	}
+    public int getBookCount() {
+        return bookCount;
+    }
 
-	public void setBookCount(int bookCount) {
-		this.bookCount = bookCount;
-	}
+    public void setBookCount(int bookCount) {
+        this.bookCount = bookCount;
+    }
 }

@@ -8,18 +8,18 @@ import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class FinderSimplyUpdatesBookView extends FinderBaseListView {
 
-	@Override
-	protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
-		Netroid.getBookListByUpdateStatus(Book.STATUS_FINISHED, pageNum, listener);
-	}
+    @Override
+    protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
+        Netroid.getBookListByUpdateStatus(Book.STATUS_FINISHED, pageNum, listener);
+    }
 
-	@Override
-	protected void setBookTips(TextView txvBookTips, Book book) {
-		txvBookTips.setText(book.getCatName());
-	}
+    @Override
+    protected void setBookTips(TextView txvBookTips, Book book) {
+        txvBookTips.setText(book.getCatName());
+    }
 
-	@Override
-	public boolean isFirstConditionSatisfy(Book book) {
-		return false;
-	}
+    @Override
+    public boolean isFirstConditionSatisfy(Book book) {
+        return false;
+    }
 }

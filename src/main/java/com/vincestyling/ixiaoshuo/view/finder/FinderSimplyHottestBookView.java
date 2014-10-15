@@ -9,15 +9,15 @@ import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class FinderSimplyHottestBookView extends FinderBaseListView {
 
-	@Override
-	protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
-		Netroid.getHottestBookList(pageNum, listener);
-	}
+    @Override
+    protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
+        Netroid.getHottestBookList(pageNum, listener);
+    }
 
-	@Override
-	protected void setBookTips(TextView txvBookTips, Book book) {
-		txvBookTips.setText(String.format(
-				getResources().getString(R.string.finder_booklist_hottest), book.getReaderCount()));
-	}
+    @Override
+    protected void setBookTips(TextView txvBookTips, Book book) {
+        txvBookTips.setText(String.format(
+                getResources().getString(R.string.finder_booklist_hottest), book.getReaderCount()));
+    }
 
 }

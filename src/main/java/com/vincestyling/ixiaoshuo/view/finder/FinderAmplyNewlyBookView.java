@@ -9,13 +9,13 @@ import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
 public class FinderAmplyNewlyBookView extends FinderAmplyBaseBookView {
 
-	@Override
-	protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
-		Netroid.getNewlyBookList(pageNum, listener);
-	}
+    @Override
+    protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
+        Netroid.getNewlyBookList(pageNum, listener);
+    }
 
-	@Override
-	protected void setBookTips(TextView txvBookTips, Book book) {
-		txvBookTips.setText(StringUtil.getDiffWithNow(book.getLastUpdateTime()));
-	}
+    @Override
+    protected void setBookTips(TextView txvBookTips, Book book) {
+        txvBookTips.setText(StringUtil.getDiffWithNow(book.getLastUpdateTime()));
+    }
 }

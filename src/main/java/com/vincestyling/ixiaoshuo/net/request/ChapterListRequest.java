@@ -7,15 +7,15 @@ import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class ChapterListRequest extends BasicRequest<PaginationList<Chapter>> {
 
-	public ChapterListRequest(String url, Listener<PaginationList<Chapter>> listener) {
-		super(url, listener);
-	}
+    public ChapterListRequest(String url, Listener<PaginationList<Chapter>> listener) {
+        super(url, listener);
+    }
 
-	@Override
-	protected PaginationList<Chapter> convert(Respond respond) {
-		PaginationList<Chapter> chapterList = respond.convertPaginationList(Chapter.class);
-		if (chapterList == null || chapterList.size() == 0) return null;
-		return chapterList;
-	}
+    @Override
+    protected PaginationList<Chapter> convert(Respond respond) {
+        PaginationList<Chapter> chapterList = respond.convertPaginationList(Chapter.class);
+        if (chapterList == null || chapterList.size() == 0) return null;
+        return chapterList;
+    }
 
 }
