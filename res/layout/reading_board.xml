@@ -62,13 +62,6 @@
                 android:background="@drawable/reading_board_arrow_selector"
                 android:layout_alignParentLeft="true" />
 
-        <Button android:id="@+id/btnGotoVoiceBook"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/reading_board_headset_selector"
-                android:visibility="gone"
-                android:layout_alignParentRight="true" />
-
     </RelativeLayout>
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"

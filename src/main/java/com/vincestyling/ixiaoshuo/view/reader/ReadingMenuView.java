@@ -26,18 +26,6 @@ public class ReadingMenuView implements Animation.AnimationListener {
             }
         });
 
-        View btnGotoVoiceBook = mActivity.findViewById(R.id.btnGotoVoiceBook);
-//		boolean isBothType = true;
-//		if (isBothType) {
-        btnGotoVoiceBook.setVisibility(View.VISIBLE);
-        btnGotoVoiceBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.showToastMsg("正在跳转到有声书籍，敬请期待！");
-            }
-        });
-//		}
-
         mHeadOutAnim = AnimationUtils.loadAnimation(mActivity, R.anim.slide_top_out);
         mHeadOutAnim.setAnimationListener(this);
         mHeadInAnim = AnimationUtils.loadAnimation(mActivity, R.anim.slide_top_in);

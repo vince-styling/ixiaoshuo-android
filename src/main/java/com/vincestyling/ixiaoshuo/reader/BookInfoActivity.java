@@ -60,7 +60,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
     private TextView mTextBookAuthor;
     private TextView mTextBookCategory;
     private TextView mTextBookCapacity;
-    private Button mButtonAnotherType;
     private Button mButtonGotoRead;
     private Button mButtonDownload;
 
@@ -93,7 +92,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         mTextBookAuthor = (TextView) findViewById(R.id.txvBookAuthor);
         mTextBookCategory = (TextView) findViewById(R.id.txvBookCategory);
         mTextBookCapacity = (TextView) findViewById(R.id.txvBookCapacity);
-        mButtonAnotherType = (Button) findViewById(R.id.imvBookAnotherType);
         mButtonGotoRead = (Button) findViewById(R.id.btnGotoRead);
         mButtonDownload = (Button) findViewById(R.id.btnDownloadAll);
         mTxvUpdateTime = (TextView) findViewById(R.id.txvUpdateTime);
@@ -262,10 +260,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         mBookSummary.setText(String.format(getString(R.string.book_detail_summary_prefix), mBook.getSummary()));
 
         mTxvUpdateTime.setText(mBook.getLastUpdateTime());
-
-        if (mBook.isBothType()) {
-            mButtonAnotherType.setVisibility(View.VISIBLE);
-        }
 
         mListMain.setAdapter(mAdapter);
         mListMain.setOnScrollListener(this);
