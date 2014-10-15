@@ -15,13 +15,11 @@ import com.duowan.mobile.netroid.toolbox.ImageLoader;
 import com.vincestyling.ixiaoshuo.net.request.*;
 import com.vincestyling.ixiaoshuo.pojo.*;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
-import com.vincestyling.ixiaoshuo.utils.Encoding;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import org.apache.http.protocol.HTTP;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.math.BigInteger;
 import java.util.List;
 
 public class Netroid {
@@ -100,15 +98,16 @@ public class Netroid {
     }
 
     public static void downloadChapterContent(int bookId, int chapterId, Listener<Void> listener) {
-        get().add(new ChapterDownloadRequest(bookId, chapterId, makeUrl("/chapter/content/" + bookId + "/" + chapterId), listener));
+        get().add(new ChapterDownloadRequest(bookId, chapterId,
+                makeUrl(String.format("/chapter/content/%d/%d", bookId, chapterId)), listener));
     }
 
     public static void getBookChapterList(int bookId, int pageNo, Listener<PaginationList<Chapter>> listener) {
-        get().add(new ChapterListRequest(makeUrl("/chapter/list/" + bookId + "/" + pageNo), listener));
+        get().add(new ChapterListRequest(makeUrl(String.format("/chapter/list/%d/%d", bookId, pageNo)), listener));
     }
 
     public static void getBookDetail(int bookId, Listener<Book> listener) {
-        get().add(new BookInfoRequest(makeUrl("/detail/" + bookId), listener));
+        get().add(new BookInfoRequest(makeUrl(String.format("/detail/%d", bookId)), listener));
     }
 
     public static void getCategories(Listener<List<Category>> listener) {
@@ -116,19 +115,19 @@ public class Netroid {
     }
 
     public static void getBookListByUpdateStatus(int updateStatus, int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl("/list_bystatus/" + updateStatus + "/" + pageNo), listener));
+        get().add(new BookListRequest(makeUrl(String.format("/list_bystatus/%d/%d", updateStatus, pageNo)), listener));
     }
 
     public static void getBookListByCategory(int catId, int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl("/list_bycategory/" + catId + "/" + pageNo), listener));
+        get().add(new BookListRequest(makeUrl(String.format("/list_bycategory/%d/%d", catId, pageNo)), listener));
     }
 
     public static void getHottestBookList(int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl("/list_byhottest/" + pageNo), listener));
+        get().add(new BookListRequest(makeUrl(String.format("/list_byhottest/%d", pageNo)), listener));
     }
 
     public static void getNewlyBookList(int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl("/list_bynewly/" + pageNo), listener));
+        get().add(new BookListRequest(makeUrl(String.format("/list_bynewly/%d", pageNo)), listener));
     }
 
     public static void getHotKeywords(Listener<String[]> listener) {
@@ -136,16 +135,12 @@ public class Netroid {
     }
 
     public static void getBookListByKeyword(String keyword, int pageNo, Listener<PaginationList<Book>> listener) {
-        try {
-            get().add(new BookListRequest(
-                    makeUrl("/search/" + URLEncoder.encode(keyword, Encoding.UTF8.getName()) + "/" + pageNo), listener));
-        } catch (UnsupportedEncodingException e) {
-            AppLog.e(e);
-        }
+        get().add(new BookListRequest(makeUrl(
+                String.format("/search/%d/%d", Math.abs(new BigInteger(keyword.getBytes()).longValue()), pageNo)), listener));
     }
 
     public static void getBookListByLocation(int pageNo, Listener<PaginationList<BookByLocation>> listener) {
-        get().add(new BookListByLocationRequest(makeUrl("/list_bylocation/" + pageNo), listener));
+        get().add(new BookListByLocationRequest(makeUrl(String.format("/list_bylocation/%d", pageNo)), listener));
     }
 
     public static void displayImage(String url, ImageView imageView, int defaultImageResId, int errorImageResId) {

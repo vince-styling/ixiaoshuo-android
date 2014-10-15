@@ -1,5 +1,6 @@
 package com.vincestyling.ixiaoshuo.view.search;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,9 +13,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.R;
+import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.reader.SearchListActivity;
+import com.vincestyling.ixiaoshuo.ui.KeywordsFlow;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
+
+import java.util.*;
 
 public class SearchView extends BaseFragment implements View.OnClickListener, View.OnTouchListener {
     public static final int PAGER_INDEX = 3;
@@ -36,6 +43,12 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
     private final static int URL_VALUE_TEXT = 1;
     private final static int URL_VALUE_VOICE = 2;
 
+    private KeywordsFlow mKeywordsFlow;
+    private String[] mKeyWords;
+    private Timer mTimer;
+    private final static int REFRESH_TIME = 5000;
+    private final static int ANIMATION_TIME = 800;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.search, container, false);
@@ -52,7 +65,81 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
         mLotBookType.setOnClickListener(this);
         mLotGoSearch.setOnClickListener(this);
 
+        mKeywordsFlow = (KeywordsFlow) view.findViewById(R.id.keywordsflow);
+        mKeywordsFlow.setDuration(ANIMATION_TIME);
+        mKeywordsFlow.setFocusable(true);
+        mKeywordsFlow.setClickable(true);
+        mKeywordsFlow.setOnItemClickListener(this);
+        getHotKeyWords();
+
         view.setOnTouchListener(this);
+    }
+
+    private void getHotKeyWords() {
+        Netroid.getHotKeywords(new Listener<String[]>() {
+            @Override
+            public void onSuccess(String[] response) {
+                mKeyWords = response;
+                startKeywordsRefresh();
+            }
+        });
+    }
+
+    private void feedKeywordsFlow() {
+        if (mKeyWords == null || mKeyWords.length == 0) return;
+        mKeywordsFlow.rubKeywords();
+
+        Random random = new Random(System.currentTimeMillis());
+        if (mKeyWords.length < KeywordsFlow.MAX) {
+            for (String anArr : mKeyWords) {
+                mKeywordsFlow.feedKeyword(anArr);
+            }
+
+            for (int i = 0; i < KeywordsFlow.MAX - mKeyWords.length; i++) {
+                int ran = random.nextInt(mKeyWords.length);
+                mKeywordsFlow.feedKeyword(mKeyWords[ran]);
+            }
+
+        } else if (mKeyWords.length == KeywordsFlow.MAX) {
+            for (int i = 0; i < KeywordsFlow.MAX; i++) {
+                mKeywordsFlow.feedKeyword(mKeyWords[i]);
+            }
+
+        } else {
+            Set<Integer> setIndex = new HashSet<Integer>();
+            while (true) {
+                int ran = random.nextInt(mKeyWords.length);
+                setIndex.add(ran);
+                if (setIndex.size() == KeywordsFlow.MAX) {
+                    break;
+                }
+            }
+
+            for (int index : setIndex) {
+                mKeywordsFlow.feedKeyword(mKeyWords[index]);
+            }
+        }
+    }
+
+    private void startKeywordsRefresh() {
+        stopKeywordsRefresh();
+        mTimer = new Timer();
+        mTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        feedKeywordsFlow();
+                        mKeywordsFlow.go2Show(KeywordsFlow.ANIMATION_IN);
+                    }
+                });
+            }
+        }, 0, REFRESH_TIME);
+    }
+
+    private void stopKeywordsRefresh() {
+        if (mTimer != null) mTimer.cancel();
     }
 
     @Override
@@ -78,10 +165,12 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
     }
 
     private void onVisible() {
+        startKeywordsRefresh();
     }
 
     private void onHidden() {
         hideSearchTerms(false);
+        stopKeywordsRefresh();
     }
 
     @Override
@@ -90,7 +179,13 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
             String word = mEdtSearchKeyword.getText().toString();
             if (StringUtil.isBlank(word)) {
                 getBaseActivity().showToastMsg(R.string.please_input_key_word);
+                return;
             }
+
+            Intent intent = new Intent(getActivity(), SearchListActivity.class);
+            intent.putExtra(SearchListActivity.KEYWORD, word);
+            startActivity(intent);
+
         } else if (view.equals(mLotBookType)) {
             if (mSearchTermsPopWin == null) {
                 View lotSearchTerms = getActivity().getLayoutInflater().inflate(R.layout.search_terms_popup, null);
@@ -117,6 +212,10 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
             mTxvBookType.setText(R.string.search_type_voice);
             mCurrentType = URL_VALUE_VOICE;
             hideSearchTerms(true);
+        } else if (view instanceof TextView) { // keyword TextView
+            String word = ((TextView) view).getText().toString();
+            mEdtSearchKeyword.setText(word);
+            mLotGoSearch.performClick();
         }
     }
 

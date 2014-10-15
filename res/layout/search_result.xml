@@ -19,4 +19,15 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/txvSearchResultInfo"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="12dp"
+        android:textSize="15sp"
+        android:textColor="#d88104"
+        android:visibility="gone"
+        android:background="@drawable/search_result_headline_bg"/>
+
 </LinearLayout>

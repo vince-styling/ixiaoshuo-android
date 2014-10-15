@@ -76,4 +76,12 @@
 
     </LinearLayout>
 
+    <com.vincestyling.ixiaoshuo.ui.KeywordsFlow
+        android:id="@+id/keywordsflow"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true" />
+
 </LinearLayout>

@@ -3,13 +3,14 @@ package com.vincestyling.ixiaoshuo.reader;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.R;
+import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
+import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
-import com.vincestyling.ixiaoshuo.view.finder.FinderAmplyCategoryBookView;
-import com.vincestyling.ixiaoshuo.view.finder.FinderBaseListView;
-import com.vincestyling.ixiaoshuo.view.finder.FinderSimplyCategoryBookView;
-import com.vincestyling.ixiaoshuo.view.finder.FinderView;
+import com.vincestyling.ixiaoshuo.view.finder.*;
 
 public class CategoryBookListActivity extends BaseActivity {
     @Override
@@ -24,12 +25,12 @@ public class CategoryBookListActivity extends BaseActivity {
         }
 
         FinderBaseListView finderView = FinderView.isOnSimplyStyle() ?
-                new FinderSimplyCategoryBookView(categoryId) : new FinderAmplyCategoryBookView(categoryId);
+                new SimplyCategoryBookView(categoryId) : new AmplyCategoryBookView(categoryId);
 
         setContentView(R.layout.finder_category_booklist);
         getSupportFragmentManager().beginTransaction().add(R.id.lotContent, finderView).commit();
 
-        TextView txtTitle = (TextView) findViewById(R.id.txtTitle);
+        TextView txtTitle = (TextView) findViewById(R.id.txvTitle);
         txtTitle.setText(categoryName);
 
         findViewById(R.id.btnClose).setOnClickListener(new View.OnClickListener() {
@@ -38,5 +39,31 @@ public class CategoryBookListActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    private class SimplyCategoryBookView extends FinderSimplyHottestBookView {
+        private int mCategoryId;
+
+        public SimplyCategoryBookView(int categoryId) {
+            mCategoryId = categoryId;
+        }
+
+        @Override
+        protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
+            Netroid.getBookListByCategory(mCategoryId, pageNum, listener);
+        }
+    }
+
+    private class AmplyCategoryBookView extends FinderAmplyHottestBookView {
+        private int mCategoryId;
+
+        public AmplyCategoryBookView(int categoryId) {
+            mCategoryId = categoryId;
+        }
+
+        @Override
+        protected void loadData(int pageNum, Listener<PaginationList<Book>> listener) {
+            Netroid.getBookListByCategory(mCategoryId, pageNum, listener);
+        }
     }
 }

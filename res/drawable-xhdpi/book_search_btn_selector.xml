@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <layer-list>
-            <item android:drawable="@drawable/search_input_split" />
+            <item android:drawable="@drawable/search_input_split"/>
             <item>
                 <bitmap
                     android:src="@drawable/book_search_btn_pressed"
@@ -12,7 +12,7 @@
     </item>
     <item>
         <layer-list>
-            <item android:drawable="@drawable/search_input_split" />
+            <item android:drawable="@drawable/search_input_split"/>
             <item>
                 <bitmap
                     android:src="@drawable/book_search_btn"
