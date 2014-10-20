@@ -37,8 +37,7 @@ public abstract class BasicRequest<T> extends Request<T> {
 
     protected abstract T convert(Respond respond);
 
-    public void execute() {
+    public void deploy() {
         Netroid.get().add(this);
     }
-
 }

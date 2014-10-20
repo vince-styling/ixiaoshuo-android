@@ -14,7 +14,6 @@ import com.duowan.mobile.netroid.toolbox.BasicNetwork;
 import com.duowan.mobile.netroid.toolbox.ImageLoader;
 import com.vincestyling.ixiaoshuo.net.request.*;
 import com.vincestyling.ixiaoshuo.pojo.*;
-import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import org.apache.http.protocol.HTTP;
 
@@ -23,31 +22,18 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class Netroid {
-
-    /**
-     * The queue. :-)
-     */
-    private static RequestQueue mRequestQueue;
-
-    /**
-     * The image loader. :-)
-     */
-    private static ImageLoader mImageLoader;
-
-    /**
-     * The server api prefix.
-     */
     private static final String API = "http://ixiaoshuo.vincestyling.com/";
 
-    /**
-     * Nothing to see here.
-     */
-    private Netroid() {
-    }
+    private static RequestQueue mRequestQueue;
+
+    private static ImageLoader mImageLoader;
+
+    private Netroid() {}
 
     public static void init(Context ctx) {
         if (mRequestQueue == null) {
             Network network = new BasicNetwork(new HurlStack(API, null), HTTP.UTF_8);
+            // path usually would being /data/data/com.vincestyling.ixiaoshuo/netroid
             File cacheDir = new File(ctx.getCacheDir(), Const.HTTP_DISK_CACHE_DIR_NAME);
             mRequestQueue = new RequestQueue(network, 6, new DiskCache(cacheDir, Const.HTTP_DISK_CACHE_SIZE));
 
@@ -75,72 +61,69 @@ public class Netroid {
         }
     }
 
-    private static String makeUrl(String pageName, String params) {
+    private static String buildUrl(String pageName, String params) {
         String url = API + pageName;
         if (TextUtils.isEmpty(params)) {
-            AppLog.d("request : " + url);
             return url;
         }
 
         if (params.charAt(0) == '&') {
             url = url + '?' + params.substring(1, params.length());
-            AppLog.d("request : " + url);
             return url;
         }
 
         url = url + '?' + params;
-        AppLog.d("request : " + url);
         return url;
     }
 
-    private static String makeUrl(String pageName) {
-        return makeUrl(pageName, null);
+    private static String buildUrl(String pageName) {
+        return buildUrl(pageName, null);
     }
 
     public static void downloadChapterContent(int bookId, int chapterId, Listener<Void> listener) {
         get().add(new ChapterDownloadRequest(bookId, chapterId,
-                makeUrl(String.format("/chapter/content/%d/%d", bookId, chapterId)), listener));
+                buildUrl(String.format("/chapter/content/%d/%d", bookId, chapterId)), listener));
     }
 
     public static void getBookChapterList(int bookId, int pageNo, Listener<PaginationList<Chapter>> listener) {
-        get().add(new ChapterListRequest(makeUrl(String.format("/chapter/list/%d/%d", bookId, pageNo)), listener));
+        new ChapterListRequest(buildUrl(String.format("/chapter/list/%d/%d", bookId, pageNo)), listener).deploy();
     }
 
     public static void getBookDetail(int bookId, Listener<Book> listener) {
-        get().add(new BookInfoRequest(makeUrl(String.format("/detail/%d", bookId)), listener));
+        new BookInfoRequest(buildUrl(String.format("/detail/%d", bookId)), listener).deploy();
     }
 
     public static void getCategories(Listener<List<Category>> listener) {
-        get().add(new CategoriesRequest(makeUrl("/categories"), listener));
+        new CategoriesRequest(buildUrl("/categories"), listener).deploy();
     }
 
     public static void getBookListByUpdateStatus(int updateStatus, int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl(String.format("/list_bystatus/%d/%d", updateStatus, pageNo)), listener));
+        new BookListRequest(buildUrl(String.format("/list_bystatus/%d/%d", updateStatus, pageNo)), listener).deploy();
     }
 
     public static void getBookListByCategory(int catId, int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl(String.format("/list_bycategory/%d/%d", catId, pageNo)), listener));
+        new BookListRequest(buildUrl(String.format("/list_bycategory/%d/%d", catId, pageNo)), listener).deploy();
     }
 
     public static void getHottestBookList(int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl(String.format("/list_byhottest/%d", pageNo)), listener));
+        new BookListRequest(buildUrl(String.format("/list_byhottest/%d", pageNo)), listener).deploy();
     }
 
     public static void getNewlyBookList(int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl(String.format("/list_bynewly/%d", pageNo)), listener));
+        new BookListRequest(buildUrl(String.format("/list_bynewly/%d", pageNo)), listener).deploy();
     }
 
     public static void getHotKeywords(Listener<String[]> listener) {
-        get().add(new HotKeywordsRequest(makeUrl("/hot_keywords"), listener));
+        new HotKeywordsRequest(buildUrl("/hot_keywords"), listener).deploy();
     }
 
     public static void getBookListByKeyword(String keyword, int pageNo, Listener<PaginationList<Book>> listener) {
-        get().add(new BookListRequest(makeUrl(
-                String.format("/search/%d/%d", Math.abs(new BigInteger(keyword.getBytes()).longValue()), pageNo)), listener));
+        new BookListRequest(buildUrl(String.format("/search/%d/%d",
+                Math.abs(new BigInteger(keyword.getBytes()).longValue()), pageNo)), listener).deploy();
     }
 
     public static void getBookListByLocation(int pageNo, Listener<PaginationList<BookByLocation>> listener) {
-        get().add(new BookListByLocationRequest(makeUrl(String.format("/list_bylocation/%d", pageNo)), listener));
+        new BookListByLocationRequest(buildUrl(String.format("/list_bylocation/%d", pageNo)), listener).deploy();
     }
 
     public static void displayImage(String url, ImageView imageView, int defaultImageResId, int errorImageResId) {
