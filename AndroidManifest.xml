@@ -34,12 +34,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".event.ChapterDownloadNotificationBroadcastReceiver">
-            <intent-filter>
-                <action android:name="detail"/>
-                <action android:name="cancelled"/>
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".event.ChapterDownloadNotificationBroadcastReceiver"/>
 
         <activity
             android:name=".reader.ReaderActivity"
@@ -49,13 +44,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".reader.BookInfoActivity"
-            android:launchMode="singleInstance">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
-        </activity>
+        <activity android:name=".reader.BookInfoActivity"/>
 
         <activity android:name=".reader.CategoryBookListActivity"/>
 

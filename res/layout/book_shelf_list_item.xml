@@ -12,7 +12,7 @@
                       android:layout_marginTop="4dp" android:layout_marginRight="6dp"
                       android:background="@drawable/book_cover_frame">
 
-            <ImageView
+            <com.duowan.mobile.netroid.image.NetworkImageView
                 android:id="@+id/imvBookCover"
                 android:layout_width="76dp"
                 android:layout_height="89dp"

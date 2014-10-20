@@ -75,7 +75,7 @@ public class AppDAO extends BaseDAO {
             return executeUpdate(sql);
         }
 
-        return result;
+        return false;
     }
 
     public boolean addToBookShelf(int bookId) {

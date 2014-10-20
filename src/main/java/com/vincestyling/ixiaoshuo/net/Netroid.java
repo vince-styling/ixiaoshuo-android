@@ -37,7 +37,7 @@ public class Netroid {
     /**
      * The server api prefix.
      */
-    public static final String API = "http://ixiaoshuo.vincestyling.com/";
+    private static final String API = "http://ixiaoshuo.vincestyling.com/";
 
     /**
      * Nothing to see here.
@@ -146,6 +146,10 @@ public class Netroid {
     public static void displayImage(String url, ImageView imageView, int defaultImageResId, int errorImageResId) {
         ImageLoader.ImageListener listener = ImageLoader.getImageListener(imageView, defaultImageResId, errorImageResId);
         getImageLoader().get(url, listener, 0, 0);
+    }
+
+    public static void displayImage(String url, ImageView imageView) {
+        displayImage(url, imageView, 0, 0);
     }
 
     public static void displayImage(String url, NetworkImageView imageView, int defaultImageResId, int errorImageResId) {

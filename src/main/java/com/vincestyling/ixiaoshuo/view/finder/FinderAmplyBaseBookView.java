@@ -33,7 +33,7 @@ public abstract class FinderAmplyBaseBookView extends FinderBaseListView {
         Book book = mAdapter.getItem(position);
 
         Netroid.displayImage(book.getCoverUrl(), holder.imvBookCover,
-                R.drawable.book_cover_default, R.drawable.book_cover_load_fail);
+                R.drawable.book_cover_default, R.drawable.book_cover_default);
 
         holder.txvBookName.setSatisficer(this);
         holder.txvBookName.setBook(book);

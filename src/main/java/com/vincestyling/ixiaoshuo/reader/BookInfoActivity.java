@@ -1,13 +1,9 @@
 package com.vincestyling.ixiaoshuo.reader;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.Display;
 import android.view.View;
 import android.widget.*;
@@ -22,9 +18,9 @@ import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.ui.EllipseEndTextView;
+import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
-import com.vincestyling.ixiaoshuo.utils.SysUtil;
 import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
 
 import java.io.File;
@@ -32,42 +28,27 @@ import java.io.File;
 public class BookInfoActivity extends BaseActivity implements View.OnClickListener,
         AbsListView.OnScrollListener, ChapterDownloader.OnDownLoadListener {
 
-    private static final int STATUS_DOWNLOAD_ALL = 0;
-    private static final int STATUS_DOWNLOAD_PAUSE = 1;
-    private static final int STATUS_DOWNLOAD_GOON = 2;
-
-    private static final int AM_NOTIFY_LIST_CHANGE = 0;
-
-    private class Holder {
-        TextView txvChapterTitle;
-        Button btnChapterOperation;
-    }
+    private static final int STATUS_DOWNLOAD_COMPLETED = 0;
+    private static final int STATUS_DOWNLOAD_ALL       = 1;
+    private static final int STATUS_DOWNLOAD_PAUSE     = 2;
+    private static final int STATUS_DOWNLOAD_GOON      = 3;
 
     private String mBookDirectoryPath;
     private int mBookId;
-    private int mDownloadButtonStatus;
+    private int mBatchDownloadStatus;
     private boolean mHasNextPage = true;
     private int mPageNo = 1;
     private int mTotalChapterCount;
 
     private Book mBook;
-    private InnerHandler mHandler;
 
     private ListView mListMain;
-    private ImageView mImageBookCover;
-    private TextView mTextBookName;
-    private TextView mTextBookStatus;
-    private TextView mTextBookAuthor;
-    private TextView mTextBookCategory;
-    private TextView mTextBookCapacity;
-    private Button mButtonGotoRead;
-    private Button mButtonDownload;
+    private Button mBtnGotoRead;
+    private Button mBtnBatchDownload;
 
     private EllipseEndTextView mBookSummary;
     private View mLotBookSummary;
     private TextView mBtnSummaryExpand;
-
-    private TextView mTxvUpdateTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,43 +61,15 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        mHandler = new InnerHandler();
-        mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBookId);
-
-        mListMain = (ListView) findViewById(R.id.lsvBookInfoChapterList);
-        initHeaderView();
-
-        mImageBookCover = (ImageView) findViewById(R.id.imvBookCover);
-        mTextBookName = (TextView) findViewById(R.id.txvBookName);
-        mTextBookStatus = (TextView) findViewById(R.id.txvBookStatus);
-        mTextBookAuthor = (TextView) findViewById(R.id.txvBookAuthor);
-        mTextBookCategory = (TextView) findViewById(R.id.txvBookCategory);
-        mTextBookCapacity = (TextView) findViewById(R.id.txvBookCapacity);
-        mButtonGotoRead = (Button) findViewById(R.id.btnGotoRead);
-        mButtonDownload = (Button) findViewById(R.id.btnDownloadAll);
-        mTxvUpdateTime = (TextView) findViewById(R.id.txvUpdateTime);
-
-        mBookSummary = (EllipseEndTextView) findViewById(R.id.txvBookSummary);
-        mBtnSummaryExpand = (TextView) findViewById(R.id.btnSummaryExpand);
-        mLotBookSummary = findViewById(R.id.lotBookSummary);
-
-        mButtonGotoRead.setOnClickListener(this);
-        mButtonDownload.setOnClickListener(this);
-
         requestBookInfo();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onClick(View view) {
-        if (view.equals(mButtonGotoRead)) {
+        if (view.equals(mBtnGotoRead)) {
             processReadBook();
-        } else if (view.equals(mButtonDownload)) {
-            processDownloadAll();
+        } else if (view.equals(mBtnBatchDownload)) {
+            processBatchDownload();
         } else if (view.equals(mLotBookSummary)) {
             mBookSummary.setOnMeasureDoneListener(new EllipseEndTextView.OnMeasureDoneListener() {
                 @Override
@@ -131,28 +84,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        mListMain.setVerticalScrollBarEnabled(firstVisibleItem > 0);
-        if (mAdapter.shouldRequestNextPage(firstVisibleItem, visibleItemCount, totalItemCount)) {
-            loadNextPage();
-        }
-    }
-
-    @Override
-    public void onChapterComplete(int bookId, int chapterId) {
-        mHandler.sendEmptyMessage(AM_NOTIFY_LIST_CHANGE);
-    }
-
-    @Override
-    public void onDownloadComplete(int bookId) {
-        updateDownloadStatus();
-    }
-
     private void initHeaderView() {
         View mHeadView = getLayoutInflater().inflate(R.layout.book_info_head, null);
         Display display = getWindowManager().getDefaultDisplay();
@@ -162,44 +93,51 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 
     private void updateDownloadStatus() {
         if (ChapterDownloader.get().taskIsStarted(mBookId)) {
-            mDownloadButtonStatus = STATUS_DOWNLOAD_PAUSE;
+            mBatchDownloadStatus = STATUS_DOWNLOAD_PAUSE;
 
         } else {
             File file = new File(mBookDirectoryPath);
             if (file.exists()) {
                 String[] files = file.list();
-                if (files.length == 0) {
-                    // 书籍完全没有下载
-                    mDownloadButtonStatus = STATUS_DOWNLOAD_ALL;
+                if (files.length == mTotalChapterCount) {
+                    // 书籍下载完整
+                    mBatchDownloadStatus = STATUS_DOWNLOAD_COMPLETED;
 
-                } else if (files.length < mTotalChapterCount) {
-                    // 书籍下载到一半
-                    mDownloadButtonStatus = STATUS_DOWNLOAD_GOON;
+                } else if (files.length == 0) {
+                    // 书籍完全没有下载
+                    mBatchDownloadStatus = STATUS_DOWNLOAD_ALL;
+
+                } else {
+                    // 书籍未完全下载
+                    mBatchDownloadStatus = STATUS_DOWNLOAD_GOON;
 
                 }
             } else {
                 // 书籍文件夹不存在
-                mDownloadButtonStatus = STATUS_DOWNLOAD_ALL;
+                mBatchDownloadStatus = STATUS_DOWNLOAD_ALL;
             }
         }
+        updateDownloadButtonStatus();
     }
 
     private void updateDownloadButtonStatus() {
         Resources resources = getResources();
-        switch (mDownloadButtonStatus) {
-            case STATUS_DOWNLOAD_ALL:
-                mButtonDownload.setText(resources.getString(R.string.download_all));
+        switch (mBatchDownloadStatus) {
+            case STATUS_DOWNLOAD_COMPLETED:
+                mBtnBatchDownload.setBackgroundResource(R.drawable.book_info_btn_red_pressed);
+                mBtnBatchDownload.setText(resources.getString(R.string.download_completed));
                 break;
 
             case STATUS_DOWNLOAD_PAUSE:
-                mButtonDownload.setText(resources.getString(R.string.download_pause));
+                mBtnBatchDownload.setText(resources.getString(R.string.download_pause));
                 break;
 
             case STATUS_DOWNLOAD_GOON:
-                mButtonDownload.setText(resources.getString(R.string.download_goon));
+                mBtnBatchDownload.setText(resources.getString(R.string.download_goon));
                 break;
 
-            default:
+            case STATUS_DOWNLOAD_ALL:
+                mBtnBatchDownload.setText(resources.getString(R.string.download_all));
                 break;
         }
     }
@@ -209,13 +147,13 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             ProgressDialog mProgressDialog;
 
             @Override
-            public void onPreExecute() {
-                mProgressDialog = ProgressDialog.show(BookInfoActivity.this, null, getString(R.string.loading_tip_msg), false, true);
+            public void onNetworking() {
+                mProgressDialog = ProgressDialog.show(BookInfoActivity.this, null, getString(R.string.loading_tip_msg), true, false);
             }
 
             @Override
             public void onFinish() {
-                mProgressDialog.cancel();
+                if (mProgressDialog != null) mProgressDialog.cancel();
             }
 
             @Override
@@ -226,25 +164,43 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onError(NetroidError error) {
-                getReaderApplication().showToastMsg(R.string.without_data);
+                showToastMsg(R.string.book_detail_loading_failed);
+                finish();
             }
         });
     }
 
     private void updateUIWithBookInfo() {
-        Netroid.displayImage(mBook.getCoverUrl(), mImageBookCover, 0, 0);
+        mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBookId);
 
-        mTextBookName.setText(mBook.getName());
-        mTextBookStatus.setText(mBook.getUpdateStatusStr());
+        mListMain = (ListView) findViewById(R.id.lsvBookInfo);
+        initHeaderView();
 
-        String author = getString(R.string.book_author) + mBook.getAuthor();
-        mTextBookAuthor.setText(author);
+        mBtnBatchDownload = (Button) findViewById(R.id.btnBatchDownload);
+        mBtnGotoRead = (Button) findViewById(R.id.btnGotoRead);
 
-        String category = getString(R.string.book_category) + mBook.getCatName();
-        mTextBookCategory.setText(category);
+        mBookSummary = (EllipseEndTextView) findViewById(R.id.txvBookSummary);
+        mBtnSummaryExpand = (TextView) findViewById(R.id.btnSummaryExpand);
+        mLotBookSummary = findViewById(R.id.lotBookSummary);
 
-        String capacity = getString(R.string.book_capacity) + mBook.getCapacityStr();
-        mTextBookCapacity.setText(capacity);
+        mBtnGotoRead.setOnClickListener(this);
+        mBtnBatchDownload.setOnClickListener(this);
+
+        Netroid.displayImage(mBook.getCoverUrl(),
+                (ImageView) findViewById(R.id.imvBookCover),
+                R.drawable.book_cover_default, R.drawable.book_cover_default);
+
+        ((TextView) findViewById(R.id.txvBookStatus)).setText(mBook.getUpdateStatusStr());
+        ((TextView) findViewById(R.id.txvBookName)).setText(mBook.getName());
+
+        ((TextView) findViewById(R.id.txvBookCategory)).setText(
+                String.format(getString(R.string.book_category), mBook.getCatName()));
+
+        ((TextView) findViewById(R.id.txvBookAuthor)).setText(
+                String.format(getString(R.string.book_author), mBook.getAuthor()));
+
+        ((TextView) findViewById(R.id.txvBookCapacity)).setText(
+                String.format(getString(R.string.book_capacity), mBook.getCapacityStr()));
 
         mBookSummary.setOnMeasureDoneListener(new EllipseEndTextView.OnMeasureDoneListener() {
             @Override
@@ -257,24 +213,20 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                 mBookSummary.setOnMeasureDoneListener(null);
             }
         });
-        mBookSummary.setText(String.format(getString(R.string.book_detail_summary_prefix), mBook.getSummary()));
+        mBookSummary.setText(String.format(getString(R.string.book_detail_summary), mBook.getSummary()));
 
-        mTxvUpdateTime.setText(mBook.getLastUpdateTime());
+        ((TextView) findViewById(R.id.txvUpdateTime)).setText(mBook.getLastUpdateTime());
 
-        mListMain.setAdapter(mAdapter);
         mListMain.setOnScrollListener(this);
+        mListMain.setAdapter(mAdapter);
         loadNextPage();
     }
 
-    private void loadNextPage() {
-        if (!mHasNextPage) return;
+    private synchronized void loadNextPage() {
+        if (!mHasNextPage || mAdapter.isLoadingData()) return;
 
+        mAdapter.setIsLoadingData(true);
         Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Listener<PaginationList<Chapter>>() {
-            @Override
-            public void onPreExecute() {
-                mAdapter.setIsLoadingData(true);
-            }
-
             @Override
             public void onFinish() {
                 mAdapter.setIsLoadingData(false);
@@ -288,8 +240,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                 mPageNo++;
 
                 updateDownloadStatus();
-                updateDownloadButtonStatus();
-                mButtonDownload.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -331,103 +281,45 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         });
     }
 
-    private void downloadAllChapter() {
-        if (ChapterDownloader.get().schedule(BookInfoActivity.this, mBook, true, BookInfoActivity.this)) {
-            mDownloadButtonStatus = STATUS_DOWNLOAD_PAUSE;
-            updateDownloadButtonStatus();
-
-            int bid = AppDAO.get().addBook(mBook, false);
-            if (bid > 0) {
-                AppDAO.get().saveBookChapters(bid, mAdapter.getData());
-                getReaderApplication().getMainHandler().sendMessage(Notifier.NOTIFIER_BOOKSHELF_REFRESH);
-
-                String format = getString(R.string.added_to_bookshelf);
-                String prompt = String.format(format, mBook.getName());
-                showToastMsg(prompt);
-            }
-        } else {
-            showToastMsg(R.string.chapter_downloader_limit_msg);
-        }
-    }
-
-    private void processDownloadAll() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.network_download_prompt);
-
-        switch (mDownloadButtonStatus) {
+    private void processBatchDownload() {
+        switch (mBatchDownloadStatus) {
             case STATUS_DOWNLOAD_ALL:
-                if (SysUtil.isMobileDataConnected(this)) {
-                    builder.setNegativeButton(R.string.goon, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            downloadAllChapter();
-                        }
-                    });
-                    builder.setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
+                if (ChapterDownloader.get().schedule(BookInfoActivity.this, mBook, true, BookInfoActivity.this)) {
+                    mBatchDownloadStatus = STATUS_DOWNLOAD_PAUSE;
+                    updateDownloadButtonStatus();
 
+                    int bid = AppDAO.get().addBook(mBook, false);
+                    if (bid > 0) {
+                        AppDAO.get().saveBookChapters(bid, mAdapter.getData());
+                        getReaderApplication().getMainHandler().sendMessage(Notifier.NOTIFIER_BOOKSHELF_REFRESH);
+
+                        showToastMsg(R.string.added_to_bookshelf, mBook.getName());
+                    }
                 } else {
-                    downloadAllChapter();
+                    showToastMsg(R.string.chapter_downloader_limit_msg);
                 }
                 break;
 
             case STATUS_DOWNLOAD_PAUSE:
                 ChapterDownloader.get().cancel(mBookId);
-                mDownloadButtonStatus = STATUS_DOWNLOAD_GOON;
+                mBatchDownloadStatus = STATUS_DOWNLOAD_GOON;
                 updateDownloadButtonStatus();
                 break;
 
             case STATUS_DOWNLOAD_GOON:
-                if (SysUtil.isMobileDataConnected(this)) {
-                    builder.setNegativeButton(R.string.goon, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mDownloadButtonStatus = STATUS_DOWNLOAD_PAUSE;
-                            updateDownloadButtonStatus();
-                            dialog.cancel();
-
-                            if (ChapterDownloader.get().schedule(BookInfoActivity.this, mBook, true, BookInfoActivity.this)) {
-                                mDownloadButtonStatus = STATUS_DOWNLOAD_PAUSE;
-                                updateDownloadButtonStatus();
-
-                            } else {
-                                showToastMsg(R.string.chapter_downloader_limit_msg);
-                            }
-                        }
-                    });
-                    builder.setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-
+                if (ChapterDownloader.get().schedule(BookInfoActivity.this, mBook, true, BookInfoActivity.this)) {
+                    mBatchDownloadStatus = STATUS_DOWNLOAD_PAUSE;
+                    updateDownloadButtonStatus();
                 } else {
-                    if (ChapterDownloader.get().schedule(BookInfoActivity.this, mBook, true, BookInfoActivity.this)) {
-                        mDownloadButtonStatus = STATUS_DOWNLOAD_PAUSE;
-                        updateDownloadButtonStatus();
-
-                    } else {
-                        showToastMsg(R.string.chapter_downloader_limit_msg);
-                    }
+                    showToastMsg(R.string.chapter_downloader_limit_msg);
                 }
-                break;
-
-            default:
                 break;
         }
     }
 
     private void gotoReader() {
         if (!mAdapter.hasItems()) {
-            showToastMsg("无可读章节！");
+            showToastMsg(R.string.havent_enough_chapters);
             return;
         }
 
@@ -438,49 +330,45 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             intent.putExtra(Const.BOOK_ID, bookId);
             startActivity(intent);
         } else {
-            showToastMsg("抱歉，无法添加书籍！");
+            showToastMsg(R.string.failed_to_append_abook_toshelf);
         }
     }
 
     private EndlessListAdapter<Chapter> mAdapter = new EndlessListAdapter<Chapter>() {
         @Override
         protected View getView(int position, View convertView) {
-            Holder holder;
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.book_info_chapter_list_item, null);
-                holder = new Holder();
-                holder.txvChapterTitle = (TextView) convertView.findViewById(R.id.txvChapterTitle);
-                holder.btnChapterOperation = (Button) convertView.findViewById(R.id.btnChapterOperation);
-                convertView.setTag(holder);
                 convertView.setLayoutParams(new AbsListView.LayoutParams(
                         mListMain.getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
-            } else {
-                holder = (Holder) convertView.getTag();
             }
 
+            TextView txvChapterTitle = (TextView) convertView.findViewById(R.id.txvChapterTitle);
+            Button btnChapterOperation = (Button) convertView.findViewById(R.id.btnChapterOperation);
+
             final Chapter chapter = getItem(position);
-            holder.txvChapterTitle.setText(chapter.getTitle());
+            txvChapterTitle.setText(chapter.getTitle());
             View.OnClickListener clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onItemClick(chapter);
                 }
             };
-            holder.txvChapterTitle.setOnClickListener(clickListener);
+            txvChapterTitle.setOnClickListener(clickListener);
 
             File chapterFile = new File(mBookDirectoryPath + chapter.getChapterId());
             if (chapterFile.exists()) {
-                holder.btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_goto_read_selector);
-                holder.btnChapterOperation.setOnClickListener(clickListener);
+                btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_goto_read_selector);
+                btnChapterOperation.setOnClickListener(clickListener);
             } else {
-                holder.btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_download_selector);
-                holder.btnChapterOperation.setOnClickListener(new View.OnClickListener() {
+                btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_download_selector);
+                btnChapterOperation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
                             @Override
                             public void onPreExecute() {
-                                showToastMsg("正在下载：" + chapter.getTitle());
+                                showToastMsg(R.string.goingto_download_chapter, chapter.getTitle());
                             }
 
                             @Override
@@ -505,6 +393,33 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         }
     };
 
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        mListMain.setVerticalScrollBarEnabled(firstVisibleItem > 0);
+        if (mHasNextPage && mAdapter.shouldRequestNextPage(firstVisibleItem, visibleItemCount, totalItemCount)) {
+            loadNextPage();
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    }
+
+    @Override
+    public void onChapterComplete(int bookId, int chapterId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onDownloadComplete(int bookId) {
+        updateDownloadStatus();
+    }
+
     public void onItemClick(Chapter chapter) {
         for (Chapter chapt : mAdapter.getData()) {
             chapt.setReadStatus(Chapter.READSTATUS_UNREAD);
@@ -514,19 +429,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         processReadBook();
     }
 
-    private class InnerHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            switch (msg.what) {
-                case AM_NOTIFY_LIST_CHANGE:
-                    mAdapter.notifyDataSetChanged();
-                    break;
-
-                default:
-                    break;
-            }
-        }
+    public int getBookId() {
+        return mBookId;
     }
 }

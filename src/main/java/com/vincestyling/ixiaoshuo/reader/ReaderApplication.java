@@ -1,5 +1,6 @@
 package com.vincestyling.ixiaoshuo.reader;
 
+import android.app.Activity;
 import android.app.Application;
 import android.widget.Toast;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
@@ -34,6 +35,16 @@ public class ReaderApplication extends Application {
 
     public MainHandler getMainHandler() {
         return mMainHandler;
+    }
+
+    private Activity mCurrentActivity;
+
+    public Activity getCurrentActivity() {
+        return mCurrentActivity;
+    }
+
+    public void setCurrentActivity(Activity currentActivity) {
+        this.mCurrentActivity = currentActivity;
     }
 
 }

@@ -192,25 +192,6 @@ public class StringUtil {
         return m.matches();
     }
 
-    public static String trimAsPlainText(String content) {
-        if (content == null) return content;
-        content = content.replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "");
-        content = content.replaceAll(" ", "").replaceAll("　", "").replaceAll(" ", "");
-        return content;
-    }
-
-    public static String trimAsFormattedText(String content) {
-        content = content.replaceAll(" ", "").replaceAll("　", "").replaceAll(" ", "");
-        content = content.replaceAll("\t", "").replaceAll("\r", "\n");
-
-        String text = NEW_LINE_STR + NEW_LINE_STR;
-        while (content.contains(text)) {
-            content = content.replaceAll(text, NEW_LINE_STR);
-        }
-
-        return content;
-    }
-
     private static final Random GLOBAL_RANDOM = new Random();
 
     public static int nextRandInt(int max) {

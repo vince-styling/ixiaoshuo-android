@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import com.duowan.mobile.netroid.image.NetworkImageView;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
@@ -103,7 +104,7 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
         if (convertView == null) {
             convertView = getActivity().getLayoutInflater().inflate(R.layout.book_shelf_list_item, null);
             holder = new Holder();
-            holder.imvBookCover = (ImageView) convertView.findViewById(R.id.imvBookCover);
+            holder.imvBookCover = (NetworkImageView) convertView.findViewById(R.id.imvBookCover);
             holder.txvBookName = (TextView) convertView.findViewById(R.id.txvBookName);
             holder.txvBookDesc1 = (TextView) convertView.findViewById(R.id.txvBookDesc1);
             holder.txvBookDesc2 = (TextView) convertView.findViewById(R.id.txvBookDesc2);
@@ -118,7 +119,8 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
         }
 
         Book book = mBookList.get(position);
-        Netroid.displayImage(book.getCoverUrl(), holder.imvBookCover, 0, 0);
+        Netroid.displayImage(book.getCoverUrl(), holder.imvBookCover,
+                R.drawable.book_cover_default, R.drawable.book_cover_default);
 
         holder.txvBookName.setText(book.getName());
         holder.txvBookLabel.setVisibility(book.hasNewChapter() ? View.GONE : View.VISIBLE);
@@ -157,7 +159,7 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
     }
 
     class Holder {
-        ImageView imvBookCover;
+        NetworkImageView imvBookCover;
         TextView txvBookName;
         TextView txvBookDesc1;
         TextView txvBookDesc2;

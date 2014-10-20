@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:ixiaoshuo="http://schemas.android.com/apk/res/com.vincestyling.ixiaoshuo"
-              android:id="@+id/linear_detail_header"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:background="#ffffff">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ixiaoshuo="http://schemas.android.com/apk/res/com.vincestyling.ixiaoshuo"
+    android:id="@+id/linear_detail_header"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
                         android:id="@+id/imvBookCover"
                         android:layout_width="70dp"
                         android:layout_height="100dp"
-                        android:scaleType="centerCrop" />
+                        android:scaleType="centerCrop"/>
 
                 </LinearLayout>
 
@@ -61,7 +61,7 @@
                             android:textSize="18sp"
                             android:textColor="#4d4d4d"
                             android:singleLine="true"
-                            android:ellipsize="middle" />
+                            android:ellipsize="middle"/>
 
                         <TextView
                             android:id="@+id/txvBookStatus"
@@ -71,7 +71,7 @@
                             android:layout_marginLeft="2dp"
                             android:textSize="10sp"
                             android:textColor="#ffffff"
-                            android:singleLine="true" />
+                            android:singleLine="true"/>
 
                     </LinearLayout>
 
@@ -128,17 +128,16 @@
                     android:text="@string/read_book"
                     android:textSize="18sp"
                     android:textColor="#ffffff"
-                    android:background="@drawable/book_info_btn_green" />
+                    android:background="@drawable/book_info_btn_green"/>
 
                 <Button
-                    android:id="@+id/btnDownloadAll"
+                    android:id="@+id/btnBatchDownload"
                     android:layout_width="148dp"
                     android:layout_height="36dp"
                     android:layout_marginLeft="20dp"
-                    android:text="@string/download_all"
                     android:textSize="18sp"
                     android:textColor="#ffffff"
-                    android:background="@drawable/book_info_btn_red" />
+                    android:background="@drawable/book_info_btn_red"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -146,7 +145,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/finder_booklist_divider_layer" />
+            android:background="@drawable/finder_booklist_divider_layer"/>
 
     </LinearLayout>
 
@@ -203,7 +202,7 @@
             android:paddingRight="6dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:background="@drawable/book_info_chapter_btn_directory_selector" />
+            android:background="@drawable/book_info_chapter_btn_directory_selector"/>
 
         <TextView
             android:layout_width="0dp"
@@ -212,7 +211,7 @@
             android:gravity="right"
             android:textColor="#724e2b"
             android:textSize="14sp"
-            android:text="@string/last_update_time" />
+            android:text="@string/last_update_time"/>
 
         <TextView
             android:id="@+id/txvUpdateTime"

@@ -48,8 +48,7 @@ public abstract class ChapterDownloadTask {
         mBuilder.setSmallIcon(R.drawable.icon);
 
         Intent intent = new Intent(mCtx, ChapterDownloadNotificationBroadcastReceiver.class);
-        intent.setAction("detail");
-        intent.putExtra("BookId", book.getBookId());
+        intent.putExtra(Const.BOOK_ID, book.getBookId());
         PendingIntent pIntent = PendingIntent.getBroadcast(mCtx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pIntent);
     }
@@ -111,8 +110,8 @@ public abstract class ChapterDownloadTask {
     protected void onStart() {
         mIsStarted = true;
         mBuilder.setTicker(buildBookName());
-        String info = mCtx.getResources().getString(R.string.download_notify_start);
-        mBuilder.setContentText(info);
+        String format = mCtx.getResources().getString(R.string.download_notify);
+        mBuilder.setContentText(String.format(format, 0f));
         getNotificationManager().notify(mNotiId, mBuilder.build());
     }
 
@@ -146,7 +145,8 @@ public abstract class ChapterDownloadTask {
     public abstract void onDone(int bookId);
 
     private String buildBookName() {
-        return '《' + mBook.getName() + '》';
+        String format = mCtx.getResources().getString(R.string.book_with_quote);
+        return String.format(format, mBook.getName());
     }
 
     public boolean isCancelled() {

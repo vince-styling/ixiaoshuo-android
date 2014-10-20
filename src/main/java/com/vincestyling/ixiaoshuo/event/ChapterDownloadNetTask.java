@@ -2,7 +2,6 @@ package com.vincestyling.ixiaoshuo.event;
 
 import android.content.Context;
 import com.duowan.mobile.netroid.Listener;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
@@ -19,7 +18,7 @@ public abstract class ChapterDownloadNetTask extends ChapterDownloadTask {
         Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Listener<PaginationList<Chapter>>() {
             @Override
             public void onSuccess(PaginationList<Chapter> chapterList) {
-                mChapterList = AppDAO.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo, 100);
+                mChapterList = chapterList;
                 execute();
             }
         });
