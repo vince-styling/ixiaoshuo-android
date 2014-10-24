@@ -337,32 +337,36 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
     private EndlessListAdapter<Chapter> mAdapter = new EndlessListAdapter<Chapter>() {
         @Override
         protected View getView(int position, View convertView) {
+            Holder holder;
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.book_info_chapter_list_item, null);
                 convertView.setLayoutParams(new AbsListView.LayoutParams(
                         mListMain.getWidth(), AbsListView.LayoutParams.WRAP_CONTENT));
+                holder = new Holder();
+                holder.txvChapterTitle = (TextView) convertView.findViewById(R.id.txvChapterTitle);
+                holder.btnChapterOperation = (Button) convertView.findViewById(R.id.btnChapterOperation);
+                convertView.setTag(holder);
+            } else {
+                holder = (Holder) convertView.getTag();
             }
 
-            TextView txvChapterTitle = (TextView) convertView.findViewById(R.id.txvChapterTitle);
-            Button btnChapterOperation = (Button) convertView.findViewById(R.id.btnChapterOperation);
-
             final Chapter chapter = getItem(position);
-            txvChapterTitle.setText(chapter.getTitle());
+            holder.txvChapterTitle.setText(chapter.getTitle());
             View.OnClickListener clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onItemClick(chapter);
                 }
             };
-            txvChapterTitle.setOnClickListener(clickListener);
+            holder.txvChapterTitle.setOnClickListener(clickListener);
 
             File chapterFile = new File(mBookDirectoryPath + chapter.getChapterId());
             if (chapterFile.exists()) {
-                btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_goto_read_selector);
-                btnChapterOperation.setOnClickListener(clickListener);
+                holder.btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_goto_read_selector);
+                holder.btnChapterOperation.setOnClickListener(clickListener);
             } else {
-                btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_download_selector);
-                btnChapterOperation.setOnClickListener(new View.OnClickListener() {
+                holder.btnChapterOperation.setBackgroundResource(R.drawable.book_info_chapter_btn_download_selector);
+                holder.btnChapterOperation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
@@ -382,6 +386,11 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             }
 
             return convertView;
+        }
+
+        class Holder {
+            TextView txvChapterTitle;
+            Button btnChapterOperation;
         }
 
         @Override

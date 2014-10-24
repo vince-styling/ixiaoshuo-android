@@ -37,20 +37,28 @@ public class FinderCategoriesView extends BaseFragment implements AdapterView.On
         mAdapter = new EndlessListAdapter<Category>() {
             @Override
             protected View getView(int position, View convertView) {
-                TextView txvCategoryName, txvCategoryBookCount;
+                Holder holder;
                 if (convertView == null) {
                     convertView = getActivity().getLayoutInflater().inflate(R.layout.finder_book_category_item, null);
+                    holder = new Holder();
+                    holder.txvCategoryName = (TextView) convertView.findViewById(R.id.txvCategoryName);
+                    holder.txvCategoryBookCount = (TextView) convertView.findViewById(R.id.txvCategoryBookCount);
+                    convertView.setTag(holder);
+                } else {
+                    holder = (Holder) convertView.getTag();
                 }
 
-                txvCategoryName = (TextView) convertView.findViewById(R.id.txvCategoryName);
-                txvCategoryBookCount = (TextView) convertView.findViewById(R.id.txvCategoryBookCount);
-
                 Category category = getItem(position);
-                txvCategoryName.setText(category.getName());
-                txvCategoryBookCount.setText(String.format(
+                holder.txvCategoryName.setText(category.getName());
+                holder.txvCategoryBookCount.setText(String.format(
                         getResources().getString(R.string.finder_categories_amount), category.getBookCount()));
 
                 return convertView;
+            }
+
+            class Holder {
+                TextView txvCategoryName,
+                        txvCategoryBookCount;
             }
 
             @Override

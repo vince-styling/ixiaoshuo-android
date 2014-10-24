@@ -52,13 +52,17 @@ public class ChapterListView extends ViewBuilder implements AdapterView.OnItemCl
         mAdapter = new EndlessListAdapter<Chapter>() {
             @Override
             protected View getView(int position, View convertView) {
+                TextView txvChapterTitle;
                 if (convertView == null) {
                     convertView = getActivity().getLayoutInflater().inflate(R.layout.reader_chapter_list_item, null);
+                    txvChapterTitle = (TextView) convertView.findViewById(R.id.txvChapterTitle);
+                    convertView.setTag(txvChapterTitle);
+                } else {
+                    txvChapterTitle = (TextView) convertView.getTag();
                 }
 
                 Chapter chapter = getItem(position);
 
-                TextView txvChapterTitle = (TextView) convertView.findViewById(R.id.txvChapterTitle);
                 txvChapterTitle.setText(chapter.getTitle());
                 txvChapterTitle.setTextColor(
                         getActivity().getResources().getColor(

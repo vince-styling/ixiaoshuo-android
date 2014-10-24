@@ -77,27 +77,33 @@ public class DetectorResultActivity extends BaseActivity implements PullToLoadPa
     }
 
     private View adapterGetView(int position, View convertView) {
-        if (convertView == null) convertView = getLayoutInflater().inflate(R.layout.detector_result_item, null);
-
-        ComplexBookNameView<BookByLocation> txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
-        TextView txvMemberInfo = (TextView) convertView.findViewById(R.id.txvMemberInfo);
-        TextView txvDistance = (TextView) convertView.findViewById(R.id.txvDistance);
+        Holder holder;
+        if (convertView == null) {
+            convertView = getLayoutInflater().inflate(R.layout.detector_result_item, null);
+            holder = new Holder();
+            holder.txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
+            holder.txvMemberInfo = (TextView) convertView.findViewById(R.id.txvMemberInfo);
+            holder.txvDistance = (TextView) convertView.findViewById(R.id.txvDistance);
+            convertView.setTag(holder);
+        } else {
+            holder = (Holder) convertView.getTag();
+        }
 
         BookByLocation book = mAdapter.getItem(position);
 
-        txvBookName.setBook(book);
-        txvBookName.setSatisficer(this);
+        holder.txvBookName.setBook(book);
+        holder.txvBookName.setSatisficer(this);
 
 
         if (book.getDistance() >= 1000) {
             String distance = StringUtil.ONE_DECIMAL_POINT_DF.format(book.getDistance() / 1000f);
-            txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_km), distance));
+            holder.txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_km), distance));
         } else {
-            txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_m), book.getDistance()));
+            holder.txvDistance.setText(String.format(getString(R.string.detector_result_distance_unit_m), book.getDistance()));
         }
 
 
-        txvMemberInfo.setText(String.format(
+        holder.txvMemberInfo.setText(String.format(
                 getResources().getString(R.string.detector_result_book_membership), book.getMemberId()));
 
 
@@ -138,6 +144,11 @@ public class DetectorResultActivity extends BaseActivity implements PullToLoadPa
     public int secondConditionLabel(BookByLocation book) {
         if (book.isBothType()) return R.string.book_status_tip_both_type;
         return book.isTextBook() ? R.string.book_status_tip_text_book : R.string.book_status_tip_voice_book;
+    }
+
+    class Holder {
+        ComplexBookNameView<BookByLocation> txvBookName;
+        TextView txvMemberInfo, txvDistance;
     }
 
     @Override
