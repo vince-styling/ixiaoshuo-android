@@ -1,6 +1,8 @@
 package com.vincestyling.ixiaoshuo.reader;
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 
 public abstract class BaseActivity extends FragmentActivity {
@@ -23,6 +25,20 @@ public abstract class BaseActivity extends FragmentActivity {
 
     public void showToastMsg(int resId, Object... args) {
         getReaderApplication().showToastMsg(String.format(getString(resId), args));
+    }
+
+    private static final boolean DEVELOPER_MODE = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        if (DEVELOPER_MODE) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .penaltyLog()
+                    .build());
+        }
+        super.onCreate(savedInstanceState);
     }
 
     protected void onResume() {
