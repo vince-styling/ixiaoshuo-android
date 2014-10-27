@@ -1,59 +1,75 @@
 package com.vincestyling.ixiaoshuo.db;
 
 public class Tables {
-
-    private static final String DROP_STATMENT = "drop table if exists ";
     private static final String CREATE_STATMENT = "create table if not exists ";
+    private static final String DROP_STATMENT = "drop table if exists ";
 
     public static final class Book {
-        public static final String NAME = "book";
+        public static final String TABLE_NAME = "book";
+        public static final String BOOK_ID = "book_id";
+        public static final String NAME = "name";
+        public static final String AUTHOR = "author";
+        public static final String COVER_URL = "cover_url";
+        public static final String SUMMARY = "summary";
+        public static final String UPDATE_STATUS = "update_status";
+        public static final String BOOK_TYPE = "book_type";
+        public static final String WAS_BOTH_TYPE = "was_both_type";
+        public static final String CAT_ID = "cat_id";
+        public static final String CAT_NAME = "cat_name";
+        public static final String CAPACITY = "capacity";
+        public static final String TEMPORARY_FLAG = "temporary_flag";
+        public static final String LAST_READ_TIME = "last_read_time";
+        public static final String CREATE_TIME = "create_time";
 
         public static String getDropStatment() {
-            return DROP_STATMENT + NAME;
+            return DROP_STATMENT + TABLE_NAME;
         }
 
         public static String getCreateStatment() {
-            return CREATE_STATMENT + NAME + "(" +
-                    "book_id integer primary key, " +
-                    "source_book_id integer, " +
-                    "name varchar(200), " +
-                    "author varchar(200), " +
-                    "cover_url varchar(200), " +
-                    "summary text, " +
-                    "update_status int, " +
-                    "book_type tinyint(1), " +
-                    "was_both_type tinyint(1), " +
-                    "cat_id int, " +
-                    "cat_name varchar(20), " +
-                    "capacity integer, " +
-                    "temporary_flag tinyint(1), " +
-                    "has_new_chapter tinyint(1), " +
-                    "remote_last_chapter_id int, " +
-                    "last_read_time datetime, " +
-                    "create_time datetime default (datetime('now','localtime'))" +
+            return CREATE_STATMENT + TABLE_NAME + "(" +
+                    BOOK_ID + " integer primary key, " +
+                    NAME + " varchar(200), " +
+                    AUTHOR + " varchar(200), " +
+                    COVER_URL + " varchar(200), " +
+                    SUMMARY + " text, " +
+                    UPDATE_STATUS + " int, " +
+                    BOOK_TYPE + " tinyint(1), " +
+                    WAS_BOTH_TYPE + " tinyint(1), " +
+                    CAT_ID + " int, " +
+                    CAT_NAME + " varchar(20), " +
+                    CAPACITY + " integer, " +
+                    TEMPORARY_FLAG + " tinyint(1), " +
+                    LAST_READ_TIME + " datetime, " +
+                    CREATE_TIME + " datetime default (datetime('now','localtime'))" +
                     ")";
         }
     }
 
     public static final class Chapter {
-        public static final String NAME = "book_chapter";
+        public static final String TABLE_NAME = "book_chapter";
+        public static final String BOOK_ID = "book_id";
+        public static final String CHAPTER_ID = "chapter_id";
+        public static final String TITLE = "title";
+        public static final String READ_STATUS = "read_status";
+        public static final String CAPACITY = "capacity";
+        public static final String READ_POSITION = "read_position";
+        public static final String CREATE_TIME = "create_time";
 
         public static String getDropStatment() {
-            return DROP_STATMENT + NAME;
+            return DROP_STATMENT + TABLE_NAME;
         }
 
         public static String getCreateStatment() {
-            return CREATE_STATMENT + NAME + "(" +
-                    "book_id integer, " +
-                    "chapter_id integer, " +
-                    "title varchar(200), " +
-                    "read_status int, " +
-                    "capacity int, " +
-                    "read_position int, " +
-                    "create_time datetime default (datetime('now','localtime')), " +
-                    "primary key(book_id, chapter_id)" +
+            return CREATE_STATMENT + TABLE_NAME + "(" +
+                    BOOK_ID + " integer, " +
+                    CHAPTER_ID + " integer, " +
+                    TITLE + " varchar(200), " +
+                    READ_STATUS + " int, " +
+                    CAPACITY + " int, " +
+                    READ_POSITION + " int, " +
+                    CREATE_TIME + " datetime default (datetime('now','localtime')), " +
+                    "primary key(" + BOOK_ID + ", " + CHAPTER_ID + ")" +
                     ")";
         }
     }
-
 }

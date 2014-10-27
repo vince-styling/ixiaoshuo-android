@@ -3,8 +3,9 @@ package com.vincestyling.ixiaoshuo.db;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import com.vincestyling.ixiaoshuo.db.statment.QueryStatment;
+import com.vincestyling.ixiaoshuo.db.statment.Statment;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
-import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,15 +20,15 @@ public class BaseDAO {
     protected DBHelper mDBHelper;
     protected static final String TAG = "AppDAO";
 
-    protected final int getIntValue(String sql) {
+    protected final int getIntValue(Object sql) {
         return getIntValue(sql, 0);
     }
 
-    protected final int getIntValue(String sql, int defValue) {
+    protected final int getIntValue(Object sql, int defValue) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) return cursor.getInt(0);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -39,18 +40,18 @@ public class BaseDAO {
 
     // 'select last_insert_rowid()' may do that same
     protected final int getLastInsertRowId(String tableName) {
-        return getIntValue("select seq from sqlite_sequence where name='" + tableName + "'");
+        return getIntValue(QueryStatment.build("seq").from("sqlite_sequence").where("name").eq(tableName));
     }
 
-    protected final long getLongValue(String sql) {
+    protected final long getLongValue(Object sql) {
         return getLongValue(sql, 0);
     }
 
-    protected final long getLongValue(String sql, long defValue) {
+    protected final long getLongValue(Object sql, long defValue) {
         Cursor cursor = null;
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) return cursor.getLong(0);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -60,15 +61,15 @@ public class BaseDAO {
         return defValue;
     }
 
-    protected final String getStringValue(String sql) {
+    protected final String getStringValue(Object sql) {
         return getStringValue(sql, null);
     }
 
-    protected final String getStringValue(String sql, String defValue) {
+    protected final String getStringValue(Object sql, String defValue) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) return cursor.getString(0);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -78,11 +79,11 @@ public class BaseDAO {
         return defValue;
     }
 
-    protected final int[] getAmountIntValue(String sql, int columnAmount) {
+    protected final int[] getAmountIntValue(Object sql, int columnAmount) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) {
                 int[] result = new int[columnAmount];
                 for (int i = 0; i < columnAmount; i++) {
@@ -98,11 +99,11 @@ public class BaseDAO {
         return null;
     }
 
-    protected final String[] getAmountStringValue(String sql, int columnAmount) {
+    protected final String[] getAmountStringValue(Object sql, int columnAmount) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) {
                 String[] result = new String[columnAmount];
                 for (int i = 0; i < columnAmount; i++) {
@@ -118,11 +119,11 @@ public class BaseDAO {
         return null;
     }
 
-    protected final boolean checkExists(String sql) {
+    protected final boolean checkExists(Object sql) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             return cursor.moveToFirst();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -132,10 +133,10 @@ public class BaseDAO {
         return false;
     }
 
-    protected final boolean executeUpdate(String sql) {
+    protected final boolean executeUpdate(Object sql) {
         SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
         try {
-            dataBase.execSQL(sql);
+            dataBase.execSQL(sql.toString());
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -151,7 +152,8 @@ public class BaseDAO {
     protected final <T> boolean executeBatchUpdate(T[] array, DBOperator<T> operator) {
         SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
         try {
-            for (T entity : array) dataBase.execSQL(operator.build(entity));
+            for (T entity : array)
+                dataBase.execSQL(operator.build(entity).toString());
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -167,7 +169,8 @@ public class BaseDAO {
     protected final <T> boolean executeBatchUpdate(List<T> list, DBOperator<T> operator) {
         SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
         try {
-            for (T entity : list) dataBase.execSQL(operator.build(entity));
+            for (T entity : list)
+                dataBase.execSQL(operator.build(entity).toString());
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -177,11 +180,11 @@ public class BaseDAO {
         return false;
     }
 
-    protected final <T> T getEntity(String sql, DBFetcher<T> fetcher) {
+    protected final <T> T getEntity(Object sql, DBFetcher<T> fetcher) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) return fetcher.fetch(cursor);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -191,11 +194,11 @@ public class BaseDAO {
         return null;
     }
 
-    protected final <T> T getEntity(String sql, Class<T> clazz) {
+    protected final <T> T getEntity(Object sql, Class<T> clazz) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) return getEntity(cursor, clazz);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -205,11 +208,11 @@ public class BaseDAO {
         return null;
     }
 
-    protected final <T> void getFetcherList(String sql, List<T> list, DBFetcher<T> fetcher) {
+    protected final <T> void getFetcherList(Object sql, List<T> list, DBFetcher<T> fetcher) {
         SQLiteDatabase dataBase = mDBHelper.getReadableDatabase();
         Cursor cursor = null;
         try {
-            cursor = dataBase.rawQuery(sql, null);
+            cursor = dataBase.rawQuery(sql.toString(), null);
             if (cursor.moveToFirst()) {
                 do {
                     list.add(fetcher.fetch(cursor));
@@ -222,13 +225,13 @@ public class BaseDAO {
         }
     }
 
-    protected final <T> List<T> getFetcherList(String sql, DBFetcher<T> fetcher) {
+    protected final <T> List<T> getFetcherList(Object sql, DBFetcher<T> fetcher) {
         List<T> list = new ArrayList<T>();
         getFetcherList(sql, list, fetcher);
         return list;
     }
 
-    protected final <T> List<T> getFetcherList(String sql, final Class<T> clazz) {
+    protected final <T> List<T> getFetcherList(Object sql, final Class<T> clazz) {
         return getFetcherList(sql, new DBFetcher<T>() {
             public T fetch(Cursor cursor) {
                 return getEntity(cursor, clazz);
@@ -236,7 +239,7 @@ public class BaseDAO {
         });
     }
 
-    protected final <T> PaginationList<T> getPaginationList(String sql, final Class<T> clazz) {
+    protected final <T> PaginationList<T> getPaginationList(Object sql, final Class<T> clazz) {
         PaginationList<T> list = new PaginationList<T>();
         getFetcherList(sql, list, new DBFetcher<T>() {
             public T fetch(Cursor cursor) {
@@ -246,23 +249,14 @@ public class BaseDAO {
         return list;
     }
 
-    protected final <T> PaginationList<T> getPaginationList(String sql, int pageNo, int pageItemCount, final Class<T> clazz) {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append(" select count(*) from (").append(sql).append(" ) A ");
-        int totalItemCount = getIntValue(sqlBuilder.toString());
-        sqlBuilder.delete(0, sqlBuilder.length());
-
-        if (totalItemCount <= 0) {
-            return new PaginationList<T>(new ArrayList<T>(0), pageNo, pageItemCount, totalItemCount);
-        } else {
-            sqlBuilder.append(sql);
-            int startIndex = (pageNo - 1) * pageItemCount;
-            sqlBuilder.append(" limit ").append(startIndex).append(',').append(pageItemCount);
-
-            PaginationList<T> records = getPaginationList(sqlBuilder.toString(), clazz);
-            records.setPagination(pageNo, pageItemCount, totalItemCount);
-            return records;
+    protected final <T> PaginationList<T> getPaginationList(Statment sql, int pageNo, int pageItemCount, final Class<T> clazz) {
+        int totalItemCount = getIntValue(new StringBuilder("select count(*) from (").append(sql).append(") A"));
+        if (totalItemCount > 0) {
+            sql.offset((pageNo - 1) * pageItemCount, pageItemCount);
+            PaginationList<T> records = getPaginationList(sql, clazz);
+            return records.setPagination(pageNo, pageItemCount, totalItemCount);
         }
+        return new PaginationList<T>(new ArrayList<T>(0), pageNo, pageItemCount, totalItemCount);
     }
 
     protected final <T> boolean executeTranUpdate(T[] array, DBOperator<T> operator) {
@@ -270,7 +264,8 @@ public class BaseDAO {
         SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
         try {
             dataBase.beginTransaction();
-            for (T entity : array) dataBase.execSQL(operator.build(entity));
+            for (T entity : array)
+                dataBase.execSQL(operator.build(entity).toString());
             dataBase.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
@@ -287,7 +282,8 @@ public class BaseDAO {
         SQLiteDatabase dataBase = mDBHelper.getWritableDatabase();
         try {
             dataBase.beginTransaction();
-            for (T entity : list) dataBase.execSQL(operator.build(entity));
+            for (T entity : list)
+                dataBase.execSQL(operator.build(entity).toString());
             dataBase.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
@@ -325,8 +321,7 @@ public class BaseDAO {
                 }
             }
             return entity;
-        } catch (Exception ex) {
-        }
+        } catch (Exception ex) {}
         return null;
     }
 
@@ -355,19 +350,11 @@ public class BaseDAO {
         return nameBuffer.toString();
     }
 
-    protected static String escape(String str) {
-        if (StringUtil.isEmpty(str)) return "";
-        str = str.replaceAll("'", "''");
-        str = str.replaceAll("\\\\", "\\\\\\\\");
-        return str;
-    }
-
     protected interface DBFetcher<T> {
         T fetch(Cursor cursor);
     }
 
     protected interface DBOperator<T> {
-        String build(T entity);
+        Object build(T entity);
     }
-
 }

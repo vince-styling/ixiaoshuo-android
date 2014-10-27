@@ -1,6 +1,10 @@
 package com.vincestyling.ixiaoshuo.db;
 
 import android.content.Context;
+import com.vincestyling.ixiaoshuo.db.statment.CreateStatment;
+import com.vincestyling.ixiaoshuo.db.statment.DeleteStatment;
+import com.vincestyling.ixiaoshuo.db.statment.QueryStatment;
+import com.vincestyling.ixiaoshuo.db.statment.UpdateStatment;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.utils.IOUtil;
@@ -15,7 +19,7 @@ public class AppDAO extends BaseDAO {
 
     private static AppDAO mInstance;
 
-    public synchronized static AppDAO get() {
+    public static AppDAO get() {
         return mInstance;
     }
 
@@ -24,8 +28,8 @@ public class AppDAO extends BaseDAO {
     }
 
     public int checkIfBookExists(int bookId) {
-        String sql = "select book_id from " + Tables.Book.NAME + " where book_id = " + bookId;
-        return getIntValue(sql);
+        return getIntValue(QueryStatment.build(Tables.Book.BOOK_ID).from(Tables.Book.TABLE_NAME)
+                        .where(Tables.Book.BOOK_ID).eq(bookId));
     }
 
     /**
@@ -34,146 +38,145 @@ public class AppDAO extends BaseDAO {
     public int addBook(Book book, boolean temporaryFlag) {
         int bookId = checkIfBookExists(book.getBookId());
         if (bookId > 0) return bookId;
-
-        String sql = "insert or ignore into " + Tables.Book.NAME + "(book_id, name, author, cover_url, summary, update_status, book_type, was_both_type, cat_id, cat_name, capacity, temporary_flag) values(" +
-                "'" + book.getBookId() + "', " +
-                "'" + escape(book.getName()) + "', " +
-                "'" + escape(book.getAuthor()) + "', " +
-                "'" + escape(book.getCoverUrl()) + "', " +
-                "'" + escape(book.getSummary()) + "', " +
-                "'" + book.getUpdateStatus() + "', " +
-                "'" + book.getBookType() + "', " +
-                "'" + book.getIntBothType() + "', " +
-                "'" + book.getCatId() + "', " +
-                "'" + escape(book.getCatName()) + "', " +
-                "'" + book.getCapacity() + "', " +
-                "'" + (temporaryFlag ? 1 : 0) + "'" +
-                ")";
-        return executeUpdate(sql) ? book.getBookId() : 0;
+        return executeUpdate(
+                CreateStatment.build(Tables.Book.TABLE_NAME)
+                .put(Tables.Book.BOOK_ID, book.getBookId())
+                .put(Tables.Book.NAME, book.getName())
+                .put(Tables.Book.AUTHOR, book.getAuthor())
+                .put(Tables.Book.COVER_URL, book.getCoverUrl())
+                .put(Tables.Book.SUMMARY, book.getSummary())
+                .put(Tables.Book.UPDATE_STATUS, book.getUpdateStatus())
+                .put(Tables.Book.BOOK_TYPE, book.getBookType())
+                .put(Tables.Book.WAS_BOTH_TYPE, book.getIntBothType())
+                .put(Tables.Book.CAT_ID, book.getCatId())
+                .put(Tables.Book.CAT_NAME, book.getCatName())
+                .put(Tables.Book.CAPACITY, book.getCapacity())
+                .put(Tables.Book.TEMPORARY_FLAG, temporaryFlag ? 1 : 0)
+        ) ? book.getBookId() : 0;
     }
 
     public boolean saveBookChapters(final int bookId, List<Chapter> list) {
-        String sql = "delete from " + Tables.Chapter.NAME + " where book_id = " + bookId;
-        executeUpdate(sql);
-        boolean result = executeTranUpdate(list, new DBOperator<Chapter>() {
+        executeUpdate(DeleteStatment.build(Tables.Chapter.TABLE_NAME).where(Tables.Chapter.BOOK_ID).eq(bookId));
+        return executeTranUpdate(list, new DBOperator<Chapter>() {
             @Override
-            public String build(Chapter chapter) {
-                return "insert or ignore into " + Tables.Chapter.NAME + "(book_id, chapter_id, title, read_status, capacity, read_position) values(" +
-                        "'" + bookId + "'," +
-                        "'" + chapter.getChapterId() + "'," +
-                        "'" + escape(chapter.getTitle()) + "'," +
-                        "'" + chapter.getReadStatus() + "'," +
-                        "'" + chapter.getCapacity() + "'," +
-                        "'" + chapter.getReadPosition() + "'" +
-                        ")";
+            public Object build(Chapter chapter) {
+                return CreateStatment.build(Tables.Chapter.TABLE_NAME)
+                        .put(Tables.Chapter.BOOK_ID, bookId)
+                        .put(Tables.Chapter.CHAPTER_ID, chapter.getChapterId())
+                        .put(Tables.Chapter.TITLE, chapter.getTitle())
+                        .put(Tables.Chapter.READ_STATUS, chapter.getReadStatus())
+                        .put(Tables.Chapter.CAPACITY, chapter.getCapacity())
+                        .put(Tables.Chapter.READ_POSITION, chapter.getReadPosition());
             }
         });
-
-        if (result) {
-            int remoteLastChapterId = list.get(list.size() - 1).getChapterId();
-            sql = "update " + Tables.Book.NAME + " set remote_last_chapter_id = " + remoteLastChapterId + " where book_id = " + bookId;
-            return executeUpdate(sql);
-        }
-
-        return false;
     }
 
     public boolean addToBookShelf(int bookId) {
-        String sql = "update " + Tables.Book.NAME + " set temporary_flag = 0 where book_id = " + bookId;
-        return executeUpdate(sql);
+        return executeUpdate(UpdateStatment.build(Tables.Book.TABLE_NAME)
+                .set(Tables.Book.TEMPORARY_FLAG, 0).where(Tables.Book.BOOK_ID).eq(bookId));
     }
 
     public List<Book> getBookListOnBookShelf(int bookType) {
-        String sql = "select book_id, source_book_id, name, cover_url, book_type, was_both_type, update_status from " + Tables.Book.NAME + " where book_type = '" + bookType + "' and temporary_flag = 0 order by last_read_time desc";
-        return getFetcherList(sql, Book.class);
+        return getFetcherList(QueryStatment.build(
+                Tables.Book.BOOK_ID, Tables.Book.NAME, Tables.Book.COVER_URL, Tables.Book.BOOK_TYPE,
+                Tables.Book.WAS_BOTH_TYPE, Tables.Book.UPDATE_STATUS).from(Tables.Book.TABLE_NAME)
+                .where(Tables.Book.BOOK_TYPE).eq(bookType).and(Tables.Book.TEMPORARY_FLAG).eq(0)
+                .orderby(Tables.Book.LAST_READ_TIME).desc(), Book.class);
     }
 
     public Book getBookOnReading(int bookId) {
         if (bookId <= 0) return null;
-        String sql = "select book_id, source_book_id, name, book_type, update_status from " + Tables.Book.NAME + " where book_id = " + bookId;
-        Book book = getEntity(sql, Book.class);
+        Book book = getEntity(QueryStatment.build(
+                Tables.Book.BOOK_ID, Tables.Book.NAME, Tables.Book.BOOK_TYPE, Tables.Book.UPDATE_STATUS)
+                .from(Tables.Book.TABLE_NAME).where(Tables.Book.BOOK_ID).eq(bookId), Book.class);
         if (book != null) {
-            sql = "update " + Tables.Book.NAME + " set last_read_time = datetime('now', 'localtime') where book_id = " + bookId;
-            executeUpdate(sql);
+            executeUpdate(UpdateStatment.build(Tables.Book.TABLE_NAME)
+                    .set(Tables.Book.LAST_READ_TIME, "datetime('now', 'localtime')").where(Tables.Book.BOOK_ID).eq(bookId));
         }
         return book;
     }
 
     public boolean isBookOnShelf(int bookId) {
-        String sql = "select temporary_flag from " + Tables.Book.NAME + " where book_id = " + bookId;
-        return getIntValue(sql) == 0;
+        return getIntValue(QueryStatment.build(Tables.Book.TEMPORARY_FLAG)
+                .from(Tables.Book.TABLE_NAME).where(Tables.Book.BOOK_ID).eq(bookId)) == 0;
     }
 
     public Chapter getReadingChapter(int bookId) {
-        String sql = "select chapter_id, title, read_position from " + Tables.Chapter.NAME + " where book_id = " + bookId + " and read_status = " + Chapter.READSTATUS_READING;
-        Chapter chapter = getEntity(sql, Chapter.class);
+        Chapter chapter = getEntity(QueryStatment.build(
+                Tables.Chapter.CHAPTER_ID, Tables.Chapter.TITLE, Tables.Chapter.READ_POSITION)
+                .from(Tables.Chapter.TABLE_NAME).where(Tables.Chapter.BOOK_ID).eq(bookId)
+                .and(Tables.Chapter.READ_STATUS).eq(Chapter.READSTATUS_READING), Chapter.class);
         if (chapter == null) {
-            sql = "select chapter_id, title from " + Tables.Chapter.NAME + " where book_id = " + bookId + " order by chapter_id limit 1";
-            chapter = getEntity(sql, Chapter.class);
+            chapter = getEntity(QueryStatment.build(Tables.Chapter.CHAPTER_ID, Tables.Chapter.TITLE)
+                    .from(Tables.Chapter.TABLE_NAME).where(Tables.Chapter.BOOK_ID).eq(bookId)
+                    .orderby(Tables.Chapter.CHAPTER_ID).limit(1), Chapter.class);
             updateBookChapterReadStatus(bookId, chapter.getChapterId(), Chapter.READSTATUS_READING);
         }
         return chapter;
     }
 
     public void makeReadingChapter(int bookId, Chapter chapter) {
-        String sql = "update " + Tables.Chapter.NAME + " set read_status = " + Chapter.READSTATUS_READED + ", read_position = 0 where book_id = " + bookId + " and read_status = " + Chapter.READSTATUS_READING;
-        executeUpdate(sql);
-        sql = "update " + Tables.Chapter.NAME + " set read_status = " + Chapter.READSTATUS_READING + ", read_position = " + chapter.getReadPosition() + " where book_id = " + bookId + " and chapter_id = " + chapter.getChapterId();
-        executeUpdate(sql);
+        executeUpdate(UpdateStatment.build(Tables.Chapter.TABLE_NAME)
+                .set(Tables.Chapter.READ_STATUS, Chapter.READSTATUS_READED)
+                .set(Tables.Chapter.READ_POSITION, 0).where(Tables.Chapter.BOOK_ID)
+                .eq(bookId).and(Tables.Chapter.READ_STATUS).eq(Chapter.READSTATUS_READING));
+        executeUpdate(UpdateStatment.build(Tables.Chapter.TABLE_NAME)
+                .set(Tables.Chapter.READ_STATUS, Chapter.READSTATUS_READING)
+                .set(Tables.Chapter.READ_POSITION, chapter.getReadPosition())
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.CHAPTER_ID).eq(chapter.getChapterId()));
     }
 
     public int getBookChapterCount(int bookId) {
-        String sql = "select count(*) from " + Tables.Chapter.NAME + " where book_id = " + bookId;
-        return getIntValue(sql);
+        return getIntValue(QueryStatment.rowcount()
+                .from(Tables.Chapter.TABLE_NAME).where(Tables.Chapter.BOOK_ID).eq(bookId));
     }
 
     public int getBookChapterIndex(int bookId, int chapterId) {
-        String sql = "select count(*) from " + Tables.Chapter.NAME + " where book_id = " + bookId + " and chapter_id < " + chapterId;
-        return getIntValue(sql);
+        return getIntValue(QueryStatment.rowcount().from(Tables.Chapter.TABLE_NAME)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.BOOK_ID).lt(chapterId));
     }
 
     public Chapter getPreviousChapter(int bookId, int chapterId) {
-        String sql = "select chapter_id, title from " + Tables.Chapter.NAME + " where book_id = " + bookId + " and chapter_id < " + chapterId + " order by chapter_id desc limit 1";
-        return getEntity(sql, Chapter.class);
+        return getEntity(QueryStatment.build(Tables.Chapter.CHAPTER_ID, Tables.Chapter.TITLE).from(Tables.Chapter.TABLE_NAME)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.CHAPTER_ID).lt(chapterId)
+                .orderby(Tables.Chapter.CHAPTER_ID).desc().limit(1), Chapter.class);
     }
 
     public Chapter getNextChapter(int bookId, int chapterId) {
-        String sql = "select chapter_id, title from " + Tables.Chapter.NAME + " where book_id = " + bookId + " and chapter_id > " + chapterId + " order by chapter_id limit 1";
-        return getEntity(sql, Chapter.class);
+        return getEntity(QueryStatment.build(Tables.Chapter.CHAPTER_ID, Tables.Chapter.TITLE).from(Tables.Chapter.TABLE_NAME)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.CHAPTER_ID).gt(chapterId)
+                .orderby(Tables.Chapter.CHAPTER_ID).limit(1), Chapter.class);
     }
 
     public void updateBookChapterReadStatus(int bookId, int chapterId, int readStatus) {
-        String sql = "update " + Tables.Chapter.NAME + " set read_status = " + readStatus + " where book_id = " + bookId + " and chapter_id = " + chapterId;
-        executeUpdate(sql);
+        executeUpdate(UpdateStatment.build(Tables.Chapter.TABLE_NAME).set(Tables.Chapter.READ_STATUS, readStatus)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.CHAPTER_ID).eq(chapterId));
     }
 
     public List<Chapter> getBookChapters(int bookId) {
-        if (bookId <= 0) return null;
-        String sql = "select chapter_id, title, read_status from " + Tables.Chapter.NAME + " where book_id = " + bookId + " order by chapter_id";
-        return getFetcherList(sql, Chapter.class);
+        return getFetcherList(QueryStatment.build(Tables.Chapter.CHAPTER_ID, Tables.Chapter.TITLE, Tables.Chapter.READ_STATUS)
+                .from(Tables.Chapter.TABLE_NAME).where(Tables.Chapter.BOOK_ID)
+                .eq(bookId).orderby(Tables.Chapter.CHAPTER_ID), Chapter.class);
     }
 
-    public PaginationList<Chapter> getSimpleBookChapterList(int bookId, int pageNo, int pageItemCount) {
-        if (bookId <= 0) return null;
-        String sql = "select chapter_id from " + Tables.Chapter.NAME + " where book_id = " + bookId + " order by chapter_id";
-        return getPaginationList(sql, pageNo, pageItemCount, Chapter.class);
+    public PaginationList<Chapter> getSimpleBookChapters(int bookId, int pageNo, int pageItemCount) {
+        return getPaginationList(QueryStatment.build(Tables.Chapter.CHAPTER_ID).from(Tables.Chapter.TABLE_NAME)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).orderby(Tables.Chapter.CHAPTER_ID), pageNo, pageItemCount, Chapter.class);
     }
 
     public int getBookUnreadChapterCount(int bookId) {
-        if (bookId <= 0) return 0;
         // TODO : 修正问题：先查当前阅读到的章节，然后调用getBookChapterCount、getBookChapterIndex来计算出结果
-        String sql = "select count(*) from " + Tables.Chapter.NAME + " where book_id = " + bookId + " and read_status = " + Chapter.READSTATUS_UNREAD;
-        return getIntValue(sql);
+        return getIntValue(QueryStatment.rowcount().from(Tables.Chapter.TABLE_NAME)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.READ_STATUS).eq(Chapter.READSTATUS_UNREAD));
     }
 
     public Chapter getBookLastChapter(int bookId) {
-        if (bookId <= 0) return null;
-        String sql = "select chapter_id, title from " + Tables.Chapter.NAME + " where book_id = " + bookId + " order by chapter_id desc limit 1";
-        return getEntity(sql, Chapter.class);
+        return getEntity(QueryStatment.build(Tables.Chapter.CHAPTER_ID, Tables.Chapter.TITLE).from(Tables.Chapter.TABLE_NAME)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).orderby(Tables.Chapter.CHAPTER_ID).desc().limit(1), Chapter.class);
     }
 
     public boolean deleteBook(Book book) {
-        if (executeUpdate("delete from " + Tables.Book.NAME + " where book_id = " + book.getBookId())) {
+        if (executeUpdate(DeleteStatment.build(Tables.Book.TABLE_NAME).where(Tables.Book.BOOK_ID).eq(book.getBookId()))) {
             saveBookChapters(book.getBookId(), null);
             IOUtil.deleteBookCache(book);
             return true;

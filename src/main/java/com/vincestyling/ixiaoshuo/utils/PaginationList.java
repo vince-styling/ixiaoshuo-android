@@ -22,11 +22,12 @@ public class PaginationList<T> extends ArrayList<T> {
         addAll(ts);
     }
 
-    public void setPagination(int pageNo, int pageItemCount, int totalItemCount) {
+    public PaginationList<T> setPagination(int pageNo, int pageItemCount, int totalItemCount) {
         this.curPageNo = pageNo;
         this.pageItemCount = pageItemCount;
         this.totalItemCount = totalItemCount;
         this.totalPageCount = (totalItemCount - 1) / pageItemCount + 1;
+        return this;
     }
 
     public int getTotalPageCount() {
@@ -90,8 +91,7 @@ public class PaginationList<T> extends ArrayList<T> {
             }
 
             return list;
-        } catch (Exception ex) {
-        }
+        } catch (Exception ex) {}
         return null;
     }
 

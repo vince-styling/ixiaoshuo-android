@@ -29,8 +29,7 @@ public class Book {
     public static final int TYPE_VOICE = 2; // 有声书籍
     public static final int TYPE_LOCAL = 3; // 本地书籍
 
-    private boolean hasNewChapter;
-    private int remoteLastChapterId;
+    private boolean hasNewChapter = StringUtil.nextRandInt(100) % 2 == 0;
     private String lastUpdateTime;
 
     public String getLocalCoverPath() {
@@ -172,24 +171,8 @@ public class Book {
         this.catName = catName;
     }
 
-    public int getRemoteLastChapterId() {
-        return remoteLastChapterId;
-    }
-
-    public void setRemoteLastChapterId(int remoteLastChapterId) {
-        this.remoteLastChapterId = remoteLastChapterId;
-    }
-
     public boolean hasNewChapter() {
         return hasNewChapter;
-    }
-
-    public void setHasNewChapter(int hasNewChapter) {
-        this.hasNewChapter = hasNewChapter == 1;
-    }
-
-    public int getIntHasNewChapter() {
-        return hasNewChapter ? 1 : 0;
     }
 
     public String getLastUpdateTime() {

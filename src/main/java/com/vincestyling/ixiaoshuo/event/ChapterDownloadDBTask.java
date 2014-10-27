@@ -12,7 +12,7 @@ public abstract class ChapterDownloadDBTask extends ChapterDownloadTask {
 
     @Override
     protected void loadNextPage() {
-        mChapterList = AppDAO.get().getSimpleBookChapterList(mBook.getBookId(), mPageNo, 100);
+        mChapterList = AppDAO.get().getSimpleBookChapters(mBook.getBookId(), mPageNo, 100);
         execute();
     }
 

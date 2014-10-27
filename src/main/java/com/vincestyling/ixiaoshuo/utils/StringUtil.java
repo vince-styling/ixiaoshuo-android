@@ -1,5 +1,7 @@
 package com.vincestyling.ixiaoshuo.utils;
 
+import android.text.TextUtils;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -48,7 +50,7 @@ public class StringUtil {
      * Whether the given string is null or zero-length
      */
     public static boolean isEmpty(String text) {
-        return text == null || text.length() == 0;
+        return TextUtils.isEmpty(text);
     }
 
     public static boolean isNotEmpty(String text) {
