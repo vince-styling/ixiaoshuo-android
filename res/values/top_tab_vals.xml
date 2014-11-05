@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <color name="top_tab_text_on">#fefffc</color>
     <color name="top_tab_text_off">#b1d596</color>
 
@@ -12,5 +11,4 @@
         <attr name="btnWidth" format="dimension"/>
         <attr name="btnSpacing" format="dimension"/>
     </declare-styleable>
-
 </resources>

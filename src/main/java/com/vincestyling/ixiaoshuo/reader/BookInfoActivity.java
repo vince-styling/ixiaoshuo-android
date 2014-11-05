@@ -18,7 +18,6 @@ import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.ui.EllipseEndTextView;
-import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
@@ -74,7 +73,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             mBookSummary.setOnMeasureDoneListener(new EllipseEndTextView.OnMeasureDoneListener() {
                 @Override
                 public void onMeasureDone(View v) {
-                    int resId = mBookSummary.isExpanded() ? R.string.book_detail_summary_collapse : R.string.book_detail_summary_expand;
+                    int resId = mBookSummary.isExpanded() ? R.string.summary_collapse : R.string.summary_expand;
                     mBtnSummaryExpand.setText(resId);
                     resId = mBookSummary.isExpanded() ? R.drawable.book_detail_arrow_up : R.drawable.book_detail_arrow_down;
                     mBtnSummaryExpand.setCompoundDrawablesWithIntrinsicBounds(0, 0, resId, 0);

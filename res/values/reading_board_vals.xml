@@ -5,6 +5,9 @@
     <dimen name="reading_board_line_spacing">15dp</dimen>
     <dimen name="reading_board_paragraph_spacing">15dp</dimen>
 
+    <string name="reading_txt_current_progress">当前阅读进度 %1$d%%</string>
+    <string name="reading_btn_revert_progress">恢复跳转</string>
+
     <dimen name="reading_board_default_text_size">10sp</dimen>
     <dimen name="reading_board_min_text_size">10sp</dimen>
     <dimen name="reading_board_max_text_size">30sp</dimen>
@@ -19,4 +22,14 @@
     <string name="reading_menu_scheme_green1">护眼绿</string>
     <string name="reading_menu_scheme_green">清妍绿</string>
     <string name="reading_menu_scheme_blue">天际蓝</string>
+
+    <color name="reading_board_chapter_list_bg">#f4efe6</color>
+    <color name="reading_board_chapter_list_bg_pressed">#fdfbf6</color>
+    <color name="reading_board_chapter_list_item">#626262</color>
+    <color name="reading_board_chapter_list_item_reading">#76ac1c</color>
+    <color name="reading_board_btn_text_on">#7bb114</color>
+    <color name="reading_board_btn_text_off">#d5d5d5</color>
+
+    <string name="light_mode">日间模式</string>
+    <string name="dark_mode">夜间模式</string>
 </resources>

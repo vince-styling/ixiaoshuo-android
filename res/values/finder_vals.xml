@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <dimen name="finder_listview_header_container_height">64dp</dimen>
     <dimen name="finder_listview_header_content_height">38dp</dimen>
 
@@ -66,4 +65,7 @@
 
     <string name="finder_categories_amount">共%d部</string>
 
+    <color name="finder_booklist_bg">#fffbf7</color>
+    <color name="finder_booklist_bg_pressed">#fff4e5</color>
+    <color name="finder_category_list_divier">#faf1e7</color>
 </resources>

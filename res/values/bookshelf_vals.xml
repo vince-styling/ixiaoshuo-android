@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="type_txt">文字</string>
+    <string name="type_voice">有声</string>
+    <string name="type_local">本地</string>
+
+    <color name="bookshelf_listview_bg_pressed">#fff5e0</color>
+</resources>

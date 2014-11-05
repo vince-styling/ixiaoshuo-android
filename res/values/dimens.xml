@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="globalMenuPadding">6dp</dimen>
-
-    <dimen name="search_title_txt_size">21dp</dimen>
-    <dimen name="search_type_size">20dp</dimen>
-</resources>

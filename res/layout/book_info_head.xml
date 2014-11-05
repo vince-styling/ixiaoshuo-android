@@ -172,7 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/txvBookSummary"
-            android:text="@string/book_detail_summary_expand"
+            android:text="@string/summary_expand"
             android:textSize="14sp"
             android:textColor="#909090"
             android:drawableRight="@drawable/book_detail_arrow_down"

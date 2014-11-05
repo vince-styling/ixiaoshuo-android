@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="book_direcotry">目录</string>
+    <string name="summary_collapse">收起</string>
+    <string name="summary_expand">展开</string>
+    <string name="read_book">阅读</string>
+
+    <string name="download_all">下载全部</string>
+    <string name="download_pause">暂停下载</string>
+    <string name="download_goon">继续下载</string>
+    <string name="download_completed">已下载</string>
+    <string name="chapter_downloader_limit_msg">下载任务已达上限</string>
+    <string name="goingto_download_chapter">正在下载：%s</string>
+    <string name="download_notify">正在下载：%.1f%%</string>
+
+    <string name="book_author">作者：%s</string>
+    <string name="book_category">分类：%s</string>
+    <string name="book_capacity">字数：%s</string>
+    <string name="book_detail_summary">简介：\n%s</string>
+    <string name="book_with_quote">《%s》</string>
+    <string name="added_to_bookshelf">《%s》 已加入书架</string>
+
+    <string name="failed_to_append_abook_toshelf">抱歉，无法添加书籍！</string>
+    <string name="havent_enough_chapters">无可读章节！</string>
+    <string name="last_update_time">最近更新：</string>
+
+    <string name="loading_all_chapters_msg">正在加载全部章节列表……</string>
+    <string name="book_detail_loading_failed">抱歉，书籍不存在或网络未连通！</string>
+
+    <color name="book_info_chapter_list_divier">#f9ede1</color>
+
+    <declare-styleable name="EllipseEndTextView">
+        <attr name="maxLines" format="integer" />
+        <attr name="textColor" format="color" />
+        <attr name="textSize" format="dimension" />
+        <attr name="lineSpacing" format="dimension" />
+        <attr name="lastLineCutWordCount" format="integer" />
+    </declare-styleable>
+</resources>

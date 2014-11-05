@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">爱小说阅读器</string>
+    <string name="loading_tip_msg">正在努力地加载中……</string>
+
+    <string name="without_data">抱歉，暂无更新数据！</string>
+
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
+
+    <item name="btnClose" type="id"/>
+
+    <string name="book_status_tip_newly">新</string>
+    <string name="book_status_tip_finished">完</string>
+    <string name="book_status_tip_both_type">双</string>
+    <string name="book_status_tip_text_book">字</string>
+    <string name="book_status_tip_voice_book">声</string>
+
+    <declare-styleable name="GridView">
+        <attr name="columnCount" format="integer" />
+    </declare-styleable>
+
+    <style name="top_titlebar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/title_bg_layer</item>
+    </style>
+
+    <style name="top_titlebar_txv">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="top_titlebar_btn_close">
+        <item name="android:id">@id/btnClose</item>
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/reading_board_arrow_selector</item>
+    </style>
+
+    <style name="GlobalPendingTransitionAnimation.Activity" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
+    </style>
+
+    <style name="AppsTheme" parent="android:Theme.Translucent.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/GlobalPendingTransitionAnimation.Activity</item>
+    </style>
+</resources>
