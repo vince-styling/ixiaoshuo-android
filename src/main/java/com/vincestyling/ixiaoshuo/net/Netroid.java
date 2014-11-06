@@ -81,49 +81,49 @@ public class Netroid {
     }
 
     public static void downloadChapterContent(int bookId, int chapterId, Listener<Void> listener) {
-        get().add(new ChapterDownloadRequest(bookId, chapterId,
-                buildUrl(String.format("/chapter/content/%d/%d", bookId, chapterId)), listener));
+        new ChapterDownloadRequest(bookId, chapterId,
+                buildUrl(String.format("/chapter/content/%d/%d", bookId, chapterId)), listener);
     }
 
     public static void getBookChapterList(int bookId, int pageNo, Listener<PaginationList<Chapter>> listener) {
-        new ChapterListRequest(buildUrl(String.format("/chapter/list/%d/%d", bookId, pageNo)), listener).deploy();
+        new ChapterListRequest(buildUrl(String.format("/chapter/list/%d/%d", bookId, pageNo)), listener);
     }
 
     public static void getBookDetail(int bookId, Listener<Book> listener) {
-        new BookInfoRequest(buildUrl(String.format("/detail/%d", bookId)), listener).deploy();
+        new BookInfoRequest(buildUrl(String.format("/detail/%d", bookId)), listener);
     }
 
     public static void getCategories(Listener<List<Category>> listener) {
-        new CategoriesRequest(buildUrl("/categories"), listener).deploy();
+        new CategoriesRequest(buildUrl("/categories"), listener);
     }
 
     public static void getBookListByUpdateStatus(int updateStatus, int pageNo, Listener<PaginationList<Book>> listener) {
-        new BookListRequest(buildUrl(String.format("/list_bystatus/%d/%d", updateStatus, pageNo)), listener).deploy();
+        new BookListRequest(buildUrl(String.format("/list_bystatus/%d/%d", updateStatus, pageNo)), listener);
     }
 
     public static void getBookListByCategory(int catId, int pageNo, Listener<PaginationList<Book>> listener) {
-        new BookListRequest(buildUrl(String.format("/list_bycategory/%d/%d", catId, pageNo)), listener).deploy();
+        new BookListRequest(buildUrl(String.format("/list_bycategory/%d/%d", catId, pageNo)), listener);
     }
 
     public static void getHottestBookList(int pageNo, Listener<PaginationList<Book>> listener) {
-        new BookListRequest(buildUrl(String.format("/list_byhottest/%d", pageNo)), listener).deploy();
+        new BookListRequest(buildUrl(String.format("/list_byhottest/%d", pageNo)), listener);
     }
 
     public static void getNewlyBookList(int pageNo, Listener<PaginationList<Book>> listener) {
-        new BookListRequest(buildUrl(String.format("/list_bynewly/%d", pageNo)), listener).deploy();
+        new BookListRequest(buildUrl(String.format("/list_bynewly/%d", pageNo)), listener);
     }
 
     public static void getHotKeywords(Listener<String[]> listener) {
-        new HotKeywordsRequest(buildUrl("/hot_keywords"), listener).deploy();
+        new HotKeywordsRequest(buildUrl("/hot_keywords"), listener);
     }
 
     public static void getBookListByKeyword(String keyword, int pageNo, Listener<PaginationList<Book>> listener) {
         new BookListRequest(buildUrl(String.format("/search/%d/%d",
-                Math.abs(new BigInteger(keyword.getBytes()).longValue()), pageNo)), listener).deploy();
+                Math.abs(new BigInteger(keyword.getBytes()).longValue()), pageNo)), listener);
     }
 
     public static void getBookListByLocation(int pageNo, Listener<PaginationList<BookByLocation>> listener) {
-        new BookListByLocationRequest(buildUrl(String.format("/list_bylocation/%d", pageNo)), listener).deploy();
+        new BookListByLocationRequest(buildUrl(String.format("/list_bylocation/%d", pageNo)), listener);
     }
 
     public static void displayImage(String url, ImageView imageView, int defaultImageResId, int errorImageResId) {

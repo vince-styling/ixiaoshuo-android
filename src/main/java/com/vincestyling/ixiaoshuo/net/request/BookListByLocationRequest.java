@@ -5,7 +5,7 @@ import com.vincestyling.ixiaoshuo.net.Respond;
 import com.vincestyling.ixiaoshuo.pojo.BookByLocation;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
-public class BookListByLocationRequest extends BasicRequest<PaginationList<BookByLocation>> {
+public class BookListByLocationRequest extends NetworkRequest<PaginationList<BookByLocation>> {
 
     public BookListByLocationRequest(String url, Listener<PaginationList<BookByLocation>> listener) {
         super(url, listener);

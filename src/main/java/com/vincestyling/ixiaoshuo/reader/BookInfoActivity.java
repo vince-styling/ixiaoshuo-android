@@ -124,7 +124,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         switch (mBatchDownloadStatus) {
             case STATUS_DOWNLOAD_COMPLETED:
                 mBtnBatchDownload.setBackgroundResource(R.drawable.book_info_btn_red_pressed);
-                mBtnBatchDownload.setText(resources.getString(R.string.download_completed));
+                mBtnBatchDownload.setText(resources.getString(R.string.already_downloaded));
                 break;
 
             case STATUS_DOWNLOAD_PAUSE:
@@ -225,7 +225,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
         if (!mHasNextPage || mAdapter.isLoadingData()) return;
 
         mAdapter.setIsLoadingData(true);
-        Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Listener<PaginationList<Chapter>>() {
+        Netroid.getBookChapterList(mBook.getId(), mPageNo, new Listener<PaginationList<Chapter>>() {
             @Override
             public void onFinish() {
                 mAdapter.setIsLoadingData(false);
@@ -254,7 +254,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        Netroid.getBookChapterList(mBook.getBookId(), mPageNo, new Listener<PaginationList<Chapter>>() {
+        Netroid.getBookChapterList(mBook.getId(), mPageNo, new Listener<PaginationList<Chapter>>() {
             ProgressDialog mProgressDialog;
 
             @Override
@@ -368,7 +368,7 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                 holder.btnChapterOperation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
+                        Netroid.downloadChapterContent(mBook.getId(), chapter.getChapterId(), new Listener<Void>() {
                             @Override
                             public void onPreExecute() {
                                 showToastMsg(R.string.goingto_download_chapter, chapter.getTitle());

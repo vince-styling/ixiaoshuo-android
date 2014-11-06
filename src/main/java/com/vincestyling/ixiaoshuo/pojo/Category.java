@@ -1,9 +1,9 @@
 package com.vincestyling.ixiaoshuo.pojo;
 
 public class Category {
-    int id;
-    String name;
-    int bookCount;
+    private int id;
+    private String name;
+    private int bookCount;
 
     public int getId() {
         return id;

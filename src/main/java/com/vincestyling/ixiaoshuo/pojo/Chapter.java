@@ -1,6 +1,5 @@
 package com.vincestyling.ixiaoshuo.pojo;
 
-
 import com.vincestyling.ixiaoshuo.utils.Paths;
 
 import java.io.File;
@@ -23,8 +22,7 @@ public class Chapter {
 
     private String filePath;
 
-    public Chapter() {
-    }
+    public Chapter() {}
 
     public Chapter(int chapterId, String title) {
         this.chapterId = chapterId;
@@ -103,5 +101,4 @@ public class Chapter {
     public String getFilePath() {
         return filePath;
     }
-
 }

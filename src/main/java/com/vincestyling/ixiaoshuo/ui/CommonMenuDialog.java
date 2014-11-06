@@ -8,7 +8,11 @@ import com.vincestyling.ixiaoshuo.R;
 
 public class CommonMenuDialog extends AbsDialog {
     public CommonMenuDialog(Context context) {
-        this(context, "提示");
+        this(context, R.string.common_dialog_title);
+    }
+
+    public CommonMenuDialog(Context context, int titleResId) {
+        this(context, context.getResources().getString(titleResId));
     }
 
     public CommonMenuDialog(Context context, String title) {
@@ -22,33 +26,25 @@ public class CommonMenuDialog extends AbsDialog {
         }
     }
 
-    public void initContentView(MenuItem[] menus) {
+    public void initContentView(MenuItem... menus) {
         for (int i = 0; i < menus.length; i++) {
             MenuItem menu = menus[i];
             TextView menuView = (TextView) getLayoutInflater().inflate(R.layout.common_menu_dialog_item, mContentView, false);
             if (i + 1 == menus.length) menuView.setBackgroundResource(R.drawable.common_menu_dialog_bottom_item_bg_selector);
             menuView.setOnClickListener(menu.clickEvent);
-            menuView.setText(menu.title);
+            menuView.setText(menu.titleResId);
             mContentView.addView(menuView);
         }
-        initContentView(0.8f);
+        initContentView(.8f);
     }
 
     public static class MenuItem {
-        private String title;
         private View.OnClickListener clickEvent;
+        private int titleResId;
 
-        public MenuItem(String title, View.OnClickListener clickEvent) {
-            this.title = title;
+        public MenuItem(int titleResId, View.OnClickListener clickEvent) {
             this.clickEvent = clickEvent;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public View.OnClickListener getClickEvent() {
-            return clickEvent;
+            this.titleResId = titleResId;
         }
     }
 

@@ -1,10 +1,11 @@
 package com.vincestyling.ixiaoshuo.pojo;
 
+import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
 public class Book {
-    private int bookId;
+    private int id;
     private String name;
     private String author;
     private String coverUrl;
@@ -20,36 +21,29 @@ public class Book {
     private int readerCount;
 
     private int updateStatus;
-
     public static final int STATUS_CONTINUE = 1; // 连载
     public static final int STATUS_FINISHED = 2; // 完结
-
-    private int bookType;
-    public static final int TYPE_TEXT = 1; // 文字书籍
-    public static final int TYPE_VOICE = 2; // 有声书籍
-    public static final int TYPE_LOCAL = 3; // 本地书籍
 
     private boolean hasNewChapter = StringUtil.nextRandInt(100) % 2 == 0;
     private String lastUpdateTime;
 
+    private int unreadChapterCount = -1;
+    private String lastChapterTitle;
+
     public String getLocalCoverPath() {
-        return Book.getLocalCoverPath(bookId);
+        return Book.getLocalCoverPath(id);
     }
 
     public static String getLocalCoverPath(int bookId) {
         return Paths.getCoversDirectoryPath() + "book_" + bookId + ".jpg";
     }
 
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
-        this.bookId = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -68,8 +62,9 @@ public class Book {
         this.author = author;
     }
 
-    public String getUpdateStatusStr() {
-        return updateStatus == STATUS_CONTINUE ? "连" : "完";
+    public int getUpdateStatusStr() {
+        return updateStatus == STATUS_CONTINUE ?
+                R.string.book_status_tip_continue : R.string.book_status_tip_finished;
     }
 
     public boolean isContinue() {
@@ -112,21 +107,6 @@ public class Book {
         this.readerCount = readerCount;
     }
 
-    public int getBookType() {
-        return bookType;
-    }
-
-    public void setBookType(int bookType) {
-        this.bookType = bookType;
-    }
-
-    // TODO : 服务端应该直接返回数字标识，而不是字符串
-    public void setType(String type) {
-        if (StringUtil.isEmpty(type)) return;
-        if (type.equals("text")) bookType = TYPE_TEXT;
-        else if (type.equals("voice")) bookType = TYPE_VOICE;
-    }
-
     public boolean isBothType() {
         return isBothType;
     }
@@ -135,12 +115,12 @@ public class Book {
         return isBothType ? 1 : 0;
     }
 
-    public void setBothType(boolean isBothType) {
-        this.isBothType = isBothType;
-    }
-
     public void setWasBothType(int wasBothType) {
         this.isBothType = wasBothType == 1;
+    }
+
+    public void mockWasBothType() {
+        setWasBothType(StringUtil.nextRandInt(100) % 2);
     }
 
     public long getCapacity() {
@@ -183,4 +163,19 @@ public class Book {
         this.lastUpdateTime = lastUpdateTime;
     }
 
+    public int getUnreadChapterCount() {
+        return unreadChapterCount;
+    }
+
+    public void setUnreadChapterCount(int unreadChapterCount) {
+        this.unreadChapterCount = unreadChapterCount;
+    }
+
+    public String getLastChapterTitle() {
+        return lastChapterTitle;
+    }
+
+    public void setLastChapterTitle(String lastChapterTitle) {
+        this.lastChapterTitle = lastChapterTitle;
+    }
 }

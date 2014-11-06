@@ -4,7 +4,7 @@ import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.net.Respond;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 
-public class HotKeywordsRequest extends BasicRequest<String[]> {
+public class HotKeywordsRequest extends NetworkRequest<String[]> {
 
     public HotKeywordsRequest(String url, Listener<String[]> listener) {
         super(url, listener);

@@ -151,7 +151,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
             holder = new Holder();
             holder.lotDivider = convertView.findViewById(R.id.lotDivider);
 
-            holder.txvBookName = (ComplexBookNameView) convertView.findViewById(R.id.txvBookName);
+            holder.txvBookName = (ComplexBookNameView<Book>) convertView.findViewById(R.id.txvBookName);
             holder.txvBookSummary = (TextView) convertView.findViewById(R.id.txvBookSummary);
 
             holder.txvBookTips = (TextView) convertView.findViewById(R.id.txvBookTips);
@@ -164,8 +164,8 @@ public abstract class FinderBaseListView extends BaseFragment implements
 
         Book book = mAdapter.getItem(position);
 
-        holder.txvBookName.setBook(book);
         holder.txvBookName.setSatisficer(this);
+        holder.txvBookName.setBook(book);
 
         setBookTips(holder.txvBookTips, book);
         holder.txvBookSummary.setText(book.getSummary());
@@ -283,7 +283,7 @@ public abstract class FinderBaseListView extends BaseFragment implements
         Book book = (Book) parent.getItemAtPosition(position);
         if (book != null) {
             Intent intent = new Intent(getActivity(), BookInfoActivity.class);
-            intent.putExtra(Const.BOOK_ID, book.getBookId());
+            intent.putExtra(Const.BOOK_ID, book.getId());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getActivity().startActivity(intent);
         }

@@ -4,7 +4,7 @@ import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.net.Respond;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 
-public class BookInfoRequest extends BasicRequest<Book> {
+public class BookInfoRequest extends NetworkRequest<Book> {
 
     public BookInfoRequest(String url, Listener<Book> listener) {
         super(url, listener);

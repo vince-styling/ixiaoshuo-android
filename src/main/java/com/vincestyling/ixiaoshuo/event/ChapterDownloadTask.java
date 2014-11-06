@@ -9,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.net.request.BookChaptersDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
@@ -19,7 +20,7 @@ import java.io.File;
 
 public abstract class ChapterDownloadTask {
     private Context mCtx;
-    protected Book mBook;
+    private Book mBook;
     private int mNotiId;
     private String mBookDirectoryPath;
     private NotificationCompat.Builder mBuilder;
@@ -28,17 +29,19 @@ public abstract class ChapterDownloadTask {
     private int mExecutedCount;
     private boolean mIsCancelled;
     private boolean mIsStarted;
+    private boolean mIsNetTask;
 
-    protected int mIndex;
-    protected int mPageNo = 1;
-    protected boolean mHasNextPage = true;
-    protected PaginationList<Chapter> mChapterList;
+    private int mIndex;
+    private int mPageNo = 1;
+    private boolean mHasNextPage = true;
+    private PaginationList<Chapter> mChapterList;
 
-    public ChapterDownloadTask(Context ctx, Book book) {
+    public ChapterDownloadTask(Context ctx, Book book, boolean isNetTask) {
         mCtx = ctx;
         mBook = book;
-        mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getBookId());
-        mNotiId = Const.NOTIFICATION_DOWNLOAD_ALL_CHAPTER + mBook.getBookId();
+        mIsNetTask = isNetTask;
+        mBookDirectoryPath = Paths.getCacheDirectorySubFolderPath(mBook.getId());
+        mNotiId = Const.NOTIFICATION_DOWNLOAD_ALL_CHAPTER + mBook.getId();
 
         mBuilder = new NotificationCompat.Builder(mCtx);
         mBuilder.setAutoCancel(false);
@@ -48,7 +51,7 @@ public abstract class ChapterDownloadTask {
         mBuilder.setSmallIcon(R.drawable.icon);
 
         Intent intent = new Intent(mCtx, ChapterDownloadNotificationBroadcastReceiver.class);
-        intent.putExtra(Const.BOOK_ID, book.getBookId());
+        intent.putExtra(Const.BOOK_ID, book.getId());
         PendingIntent pIntent = PendingIntent.getBroadcast(mCtx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pIntent);
     }
@@ -61,7 +64,7 @@ public abstract class ChapterDownloadTask {
         }
     }
 
-    protected final void execute() {
+    private void execute() {
         if (mChapterList == null || mChapterList.size() == 0) {
             onFinished();
             return;
@@ -91,16 +94,26 @@ public abstract class ChapterDownloadTask {
             return;
         }
 
-        Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
+        Netroid.downloadChapterContent(mBook.getId(), chapter.getChapterId(), new Listener<Void>() {
             @Override
             public void onSuccess(Void r) {
-                onProgressUpdate(mBook.getBookId(), chapter.getChapterId());
+                onProgressUpdate(mBook.getId(), chapter.getChapterId());
                 runNext();
             }
         });
     }
 
-    protected abstract void loadNextPage();
+    private void loadNextPage() {
+        Listener<PaginationList<Chapter>> listener = new Listener<PaginationList<Chapter>>() {
+            @Override
+            public void onSuccess(PaginationList<Chapter> chapterList) {
+                mChapterList = chapterList;
+                execute();
+            }
+        };
+        if (mIsNetTask) Netroid.getBookChapterList(mBook.getId(), mPageNo, listener);
+        else new BookChaptersDBRequest(mBook.getId(), mPageNo, listener);
+    }
 
     private float calculateProgressPercent() {
         float percentage = mExecutedCount * 1.0f / mChapterCount * 100f;
@@ -116,7 +129,7 @@ public abstract class ChapterDownloadTask {
     }
 
     private void onProgressUpdate(int bookId, int chapterId) {
-        if (mExecutedCount % 10 == 0) {
+        if (!mIsCancelled) {
             String format = mCtx.getResources().getString(R.string.download_notify);
             String info = String.format(format, calculateProgressPercent());
             mBuilder.setContentText(info);
@@ -127,8 +140,8 @@ public abstract class ChapterDownloadTask {
 
     private void onFinished() {
         mIsStarted = false;
-        onDone(mBook.getBookId());
-        mBuilder.setContentText("下载完成");
+        onDone(mBook.getId());
+        mBuilder.setContentText(mCtx.getResources().getString(R.string.download_completed));
         mBuilder.setOngoing(false);
         mBuilder.setAutoCancel(true);
         getNotificationManager().notify(mNotiId, mBuilder.build());
@@ -136,7 +149,7 @@ public abstract class ChapterDownloadTask {
 
     public void onCancel() {
         getNotificationManager().cancel(mNotiId);
-        onDone(mBook.getBookId());
+        onDone(mBook.getId());
         mIsCancelled = true;
     }
 
@@ -162,7 +175,6 @@ public abstract class ChapterDownloadTask {
     }
 
     public int getBookId() {
-        return mBook.getBookId();
+        return mBook.getId();
     }
-
 }

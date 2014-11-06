@@ -7,7 +7,7 @@ import org.codehaus.jackson.type.TypeReference;
 
 import java.util.List;
 
-public class CategoriesRequest extends BasicRequest<List<Category>> {
+public class CategoriesRequest extends NetworkRequest<List<Category>> {
 
     public CategoriesRequest(String url, Listener<List<Category>> listener) {
         super(url, listener);
@@ -15,8 +15,7 @@ public class CategoriesRequest extends BasicRequest<List<Category>> {
 
     @Override
     protected List<Category> convert(Respond respond) {
-        List<Category> categoryList = respond.convert(new TypeReference<List<Category>>() {
-        });
+        List<Category> categoryList = respond.convert(new TypeReference<List<Category>>() {});
         if (categoryList == null || categoryList.size() == 0) return null;
         return categoryList;
     }

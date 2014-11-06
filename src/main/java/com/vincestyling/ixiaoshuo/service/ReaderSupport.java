@@ -21,8 +21,8 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
             throw new IllegalStateException("bookId not exists " + bookId);
         }
 
-        mReadingChapter = AppDAO.get().getReadingChapter(mBook.getBookId());
-        mReadingChapter.ready(mBook.getBookId());
+        mReadingChapter = AppDAO.get().getReadingChapter(mBook.getId());
+        mReadingChapter.ready(mBook.getId());
 
         YYReader.init(this);
         // TODO : should update last read time
@@ -37,7 +37,7 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
     @Override
     public int onGetTotalChapterCount() {
         // TODO : onGetTotalChapterCount 应该不用每次都查数据库
-        return AppDAO.get().getBookChapterCount(mBook.getBookId());
+        return AppDAO.get().getBookChapterCount(mBook.getId());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
     @Override
     public int onGetCurrentChapterIndex() {
         // TODO : onGetCurrentChapterIndex 应该不用每次都查数据库
-        return AppDAO.get().getBookChapterIndex(mBook.getBookId(), mReadingChapter.getChapterId());
+        return AppDAO.get().getBookChapterIndex(mBook.getId(), mReadingChapter.getChapterId());
     }
 
     @Override
@@ -58,21 +58,21 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
 
     @Override
     public Chapter onGetPrevChapter() {
-        Chapter chapter = AppDAO.get().getPreviousChapter(mBook.getBookId(), mReadingChapter.getChapterId());
-        if (chapter != null) chapter.ready(mBook.getBookId());
+        Chapter chapter = AppDAO.get().getPreviousChapter(mBook.getId(), mReadingChapter.getChapterId());
+        if (chapter != null) chapter.ready(mBook.getId());
         return chapter;
     }
 
     @Override
     public Chapter onGetNextChapter() {
-        Chapter chapter = AppDAO.get().getNextChapter(mBook.getBookId(), mReadingChapter.getChapterId());
-        if (chapter != null) chapter.ready(mBook.getBookId());
+        Chapter chapter = AppDAO.get().getNextChapter(mBook.getId(), mReadingChapter.getChapterId());
+        if (chapter != null) chapter.ready(mBook.getId());
         return chapter;
     }
 
     @Override
     public List<Chapter> onGetChapterList() {
-        List<Chapter> list = AppDAO.get().getBookChapters(mBook.getBookId());
+        List<Chapter> list = AppDAO.get().getBookChapters(mBook.getId());
         List<Chapter> chapInfoList = new ArrayList<Chapter>(list.size());
         for (Chapter chapter : list) {
             chapInfoList.add(chapter);
@@ -82,18 +82,18 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
 
     @Override
     public void onReadingChapter(Chapter chapter) {
-        AppDAO.get().makeReadingChapter(mBook.getBookId(), chapter);
+        AppDAO.get().makeReadingChapter(mBook.getId(), chapter);
         mReadingChapter = chapter;
     }
 
     @Override
     public boolean onIsBookOnShelf() {
-        return AppDAO.get().isBookOnShelf(mBook.getBookId());
+        return AppDAO.get().isBookOnShelf(mBook.getId());
     }
 
     @Override
     public boolean onAddToBookShelf() {
-        return AppDAO.get().addToBookShelf(mBook.getBookId());
+        return AppDAO.get().addToBookShelf(mBook.getId());
     }
 
     @Override
@@ -128,7 +128,7 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
         // but onPreExecute() always delay, doesn't make the UI know it.
         listener.onDownloadStart(chapter);
 
-        Netroid.downloadChapterContent(mBook.getBookId(), chapter.getChapterId(), new Listener<Void>() {
+        Netroid.downloadChapterContent(mBook.getId(), chapter.getChapterId(), new Listener<Void>() {
             @Override
             public void onFinish() {
                 listener.onDownloadComplete(chapter);
@@ -136,7 +136,7 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
 
             @Override
             public void onSuccess(Void r) {
-                chapter.ready(mBook.getBookId());
+                chapter.ready(mBook.getId());
             }
         });
 

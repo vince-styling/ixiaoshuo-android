@@ -3,6 +3,23 @@
     <string name="type_txt">文字</string>
     <string name="type_voice">有声</string>
     <string name="type_local">本地</string>
+    <string name="unread_chapters_tip">%d章未读</string>
+    <string name="havent_unread_chapters_tip">暂无未读章节</string>
+    <string name="last_chapter_tip">更新至：%s</string>
+    <string name="book_op_check_detail">查看详情</string>
+    <string name="book_op_remove_from_bookshelf">移出书架</string>
+    <string name="book_op_download_all">下载全部</string>
+    <string name="book_op_remove_book_confirm">是否确认删除该书籍？</string>
+    <string name="book_op_removeing_book">正在删除《%s》</string>
 
     <color name="bookshelf_listview_bg_pressed">#fff5e0</color>
+
+    <style name="bookshelf_desc">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#808080</item>
+        <item name="android:ellipsize">marquee</item>
+    </style>
 </resources>

@@ -2,8 +2,11 @@
 <resources>
     <string name="app_name">爱小说阅读器</string>
     <string name="loading_tip_msg">正在努力地加载中……</string>
-
     <string name="without_data">抱歉，暂无更新数据！</string>
+    <string name="common_dialog_title">提示</string>
+
+    <color name="complex_bookname_txt">#4d4d4d</color>
+    <dimen name="complex_bookname_txt">19sp</dimen>
 
     <string name="cancel">取消</string>
     <string name="ok">确定</string>
@@ -11,6 +14,7 @@
     <item name="btnClose" type="id"/>
 
     <string name="book_status_tip_newly">新</string>
+    <string name="book_status_tip_continue">连</string>
     <string name="book_status_tip_finished">完</string>
     <string name="book_status_tip_both_type">双</string>
     <string name="book_status_tip_text_book">字</string>

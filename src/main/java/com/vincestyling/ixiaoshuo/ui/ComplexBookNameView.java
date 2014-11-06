@@ -24,8 +24,8 @@ public class ComplexBookNameView<T> extends View {
         mBoundsF = new RectF();
         mBounds = new Rect();
 
-        mTextSize = getResources().getDimension(R.dimen.finder_booklist_bookname);
-        mTextColor = getResources().getColor(R.color.finder_booklist_bookname);
+        mTextSize = getResources().getDimension(R.dimen.complex_bookname_txt);
+        mTextColor = getResources().getColor(R.color.complex_bookname_txt);
 
         mFlagSplitPadding = getResources().getDimensionPixelSize(R.dimen.finder_booklist_bookname_flag_split_padding);
         mFlagMarginLeft = getResources().getDimensionPixelSize(R.dimen.finder_booklist_bookname_flag_marginleft);
@@ -113,7 +113,7 @@ public class ComplexBookNameView<T> extends View {
         mShouldEllipsize = measureWidth > mBoundsF.width();
 
         setMeasuredDimension(widthSpecSize, (int) measureHeight);
-//		AppLog.e(String.format("width : %f height : %f", mMeasureWidth, mMeasureHeight));
+//		AppLog.e("Book : %s, width : %f height : %f", mSatisficer.getBookName(mBook), measureWidth, measureHeight);
     }
 
     @Override
@@ -197,6 +197,7 @@ public class ComplexBookNameView<T> extends View {
 
     public void setBook(T book) {
         mBook = book;
+        requestLayout();
         invalidate();
     }
 

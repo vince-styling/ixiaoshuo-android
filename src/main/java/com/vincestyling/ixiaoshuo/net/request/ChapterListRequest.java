@@ -5,7 +5,7 @@ import com.vincestyling.ixiaoshuo.net.Respond;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
-public class ChapterListRequest extends BasicRequest<PaginationList<Chapter>> {
+public class ChapterListRequest extends NetworkRequest<PaginationList<Chapter>> {
 
     public ChapterListRequest(String url, Listener<PaginationList<Chapter>> listener) {
         super(url, listener);

@@ -5,7 +5,7 @@ import com.vincestyling.ixiaoshuo.net.Respond;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
-public class BookListRequest extends BasicRequest<PaginationList<Book>> {
+public class BookListRequest extends NetworkRequest<PaginationList<Book>> {
 
     public BookListRequest(String url, Listener<PaginationList<Book>> listener) {
         super(url, listener);

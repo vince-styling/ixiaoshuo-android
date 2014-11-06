@@ -1,12 +1,14 @@
 package com.vincestyling.ixiaoshuo.net.request;
 
-import com.duowan.mobile.netroid.*;
+import com.duowan.mobile.netroid.Listener;
+import com.duowan.mobile.netroid.NetroidError;
+import com.duowan.mobile.netroid.NetworkResponse;
+import com.duowan.mobile.netroid.Response;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.IOUtil;
 
-public class ChapterDownloadRequest extends Request<Void> {
-    private int bookId;
-    private int chapterId;
+public class ChapterDownloadRequest extends BasicRequest<Void> {
+    private int bookId, chapterId;
 
     public ChapterDownloadRequest(int bookId, int chapterId, String url, Listener<Void> listener) {
         super(url, listener);
@@ -22,15 +24,12 @@ public class ChapterDownloadRequest extends Request<Void> {
                 return Response.success(null, response);
             }
 
-            return Response.error(new NetroidError("ChapterDownloadRequest{" +
-                    "chapterId=" + chapterId +
-                    ", bookId=" + bookId +
-                    ", contentL=" + content.length() +
-                    '}'));
+            return Response.error(new NetroidError(String.format(
+                    "ChapterDownloadRequest{chapterId=%d, bookId=%d, contentL=%d}",
+                    chapterId, bookId, content.length())));
         } catch (Exception e) {
             AppLog.e(e);
             return Response.error(new NetroidError(e));
         }
     }
-
 }

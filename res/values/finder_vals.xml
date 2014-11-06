@@ -15,9 +15,6 @@
     <dimen name="finder_booklist_bookname_flag_marginleft">2dp</dimen>
     <dimen name="finder_booklist_bookname_flag_split_padding">1dp</dimen>
 
-    <color name="finder_booklist_bookname">#4d4d4d</color>
-    <dimen name="finder_booklist_bookname">19sp</dimen>
-
     <string name="finder_tab_type_simply">文本列表</string>
     <string name="finder_tab_type_amply">图文列表</string>
 

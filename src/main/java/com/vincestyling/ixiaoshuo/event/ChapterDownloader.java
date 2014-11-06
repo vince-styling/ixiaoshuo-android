@@ -5,11 +5,6 @@ import com.vincestyling.ixiaoshuo.pojo.Book;
 
 import java.util.LinkedList;
 
-/**
- * 文字书籍章节下载管理器
- *
- * @author vince
- */
 public class ChapterDownloader {
     private int mMaxTaskCount = 2;
 
@@ -46,59 +41,31 @@ public class ChapterDownloader {
         mBookTaskList = new LinkedList<ChapterDownloadTask>();
     }
 
-    public synchronized boolean schedule(final Context ctx, Book book, boolean isNetTask, final OnDownLoadListener listener) {
-        if (mBookTaskList.size() >= mMaxTaskCount) {
-            return false;
-        }
+    public synchronized boolean schedule(Context ctx, Book book, boolean isNetTask, final OnDownLoadListener listener) {
+        if (mBookTaskList.size() >= mMaxTaskCount) return false;
 
-        ChapterDownloadTask bookTask;
-        if (isNetTask) {
-            bookTask = new ChapterDownloadNetTask(ctx, book) {
-                @Override
-                public void onChapterFinish(int bookId, int chapterId) {
-                    if (listener != null) {
-                        listener.onChapterComplete(bookId, chapterId);
+        ChapterDownloadTask bookTask = new ChapterDownloadTask(ctx, book, isNetTask) {
+            @Override
+            public void onChapterFinish(int bookId, int chapterId) {
+                if (listener != null) {
+                    listener.onChapterComplete(bookId, chapterId);
+                }
+            }
+
+            @Override
+            public void onDone(int bookId) {
+                for (ChapterDownloadTask task : mBookTaskList) {
+                    if (bookId == task.getBookId()) {
+                        mBookTaskList.remove(task);
+
+                        if (listener != null)
+                            listener.onDownloadComplete(bookId);
+
+                        break;
                     }
                 }
-
-                @Override
-                public void onDone(int bookId) {
-                    for (ChapterDownloadTask task : mBookTaskList) {
-                        if (bookId == task.getBookId()) {
-                            mBookTaskList.remove(task);
-
-                            if (listener != null) {
-                                listener.onDownloadComplete(bookId);
-                            }
-                            break;
-                        }
-                    }
-                }
-            };
-        } else {
-            bookTask = new ChapterDownloadDBTask(ctx, book) {
-                @Override
-                public void onChapterFinish(int bookId, int chapterId) {
-                    if (listener != null) {
-                        listener.onChapterComplete(bookId, chapterId);
-                    }
-                }
-
-                @Override
-                public void onDone(int bookId) {
-                    for (ChapterDownloadTask task : mBookTaskList) {
-                        if (bookId == task.getBookId()) {
-                            mBookTaskList.remove(task);
-
-                            if (listener != null) {
-                                listener.onDownloadComplete(bookId);
-                            }
-                            break;
-                        }
-                    }
-                }
-            };
-        }
+            }
+        };
 
         mBookTaskList.add(bookTask);
         bookTask.onStart();

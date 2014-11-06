@@ -6,13 +6,12 @@ public class Tables {
 
     public static final class Book {
         public static final String TABLE_NAME = "book";
-        public static final String BOOK_ID = "book_id";
+        public static final String ID = "id";
         public static final String NAME = "name";
         public static final String AUTHOR = "author";
         public static final String COVER_URL = "cover_url";
         public static final String SUMMARY = "summary";
         public static final String UPDATE_STATUS = "update_status";
-        public static final String BOOK_TYPE = "book_type";
         public static final String WAS_BOTH_TYPE = "was_both_type";
         public static final String CAT_ID = "cat_id";
         public static final String CAT_NAME = "cat_name";
@@ -27,13 +26,12 @@ public class Tables {
 
         public static String getCreateStatment() {
             return CREATE_STATMENT + TABLE_NAME + "(" +
-                    BOOK_ID + " integer primary key, " +
+                    ID + " integer primary key, " +
                     NAME + " varchar(200), " +
                     AUTHOR + " varchar(200), " +
                     COVER_URL + " varchar(200), " +
                     SUMMARY + " text, " +
                     UPDATE_STATUS + " int, " +
-                    BOOK_TYPE + " tinyint(1), " +
                     WAS_BOTH_TYPE + " tinyint(1), " +
                     CAT_ID + " int, " +
                     CAT_NAME + " varchar(20), " +

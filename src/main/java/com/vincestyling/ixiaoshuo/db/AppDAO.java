@@ -28,31 +28,28 @@ public class AppDAO extends BaseDAO {
     }
 
     public int checkIfBookExists(int bookId) {
-        return getIntValue(QueryStatment.build(Tables.Book.BOOK_ID).from(Tables.Book.TABLE_NAME)
-                        .where(Tables.Book.BOOK_ID).eq(bookId));
+        return getIntValue(QueryStatment.build(Tables.Book.ID).from(Tables.Book.TABLE_NAME)
+                        .where(Tables.Book.ID).eq(bookId));
     }
 
-    /**
-     * @param temporaryFlag 是否为暂存书籍，详细描述于BookOnReading.java
-     */
     public int addBook(Book book, boolean temporaryFlag) {
-        int bookId = checkIfBookExists(book.getBookId());
+        int bookId = checkIfBookExists(book.getId());
         if (bookId > 0) return bookId;
+        book.mockWasBothType();
         return executeUpdate(
                 CreateStatment.build(Tables.Book.TABLE_NAME)
-                .put(Tables.Book.BOOK_ID, book.getBookId())
+                .put(Tables.Book.ID, book.getId())
                 .put(Tables.Book.NAME, book.getName())
                 .put(Tables.Book.AUTHOR, book.getAuthor())
                 .put(Tables.Book.COVER_URL, book.getCoverUrl())
                 .put(Tables.Book.SUMMARY, book.getSummary())
                 .put(Tables.Book.UPDATE_STATUS, book.getUpdateStatus())
-                .put(Tables.Book.BOOK_TYPE, book.getBookType())
                 .put(Tables.Book.WAS_BOTH_TYPE, book.getIntBothType())
                 .put(Tables.Book.CAT_ID, book.getCatId())
                 .put(Tables.Book.CAT_NAME, book.getCatName())
                 .put(Tables.Book.CAPACITY, book.getCapacity())
                 .put(Tables.Book.TEMPORARY_FLAG, temporaryFlag ? 1 : 0)
-        ) ? book.getBookId() : 0;
+        ) ? book.getId() : 0;
     }
 
     public boolean saveBookChapters(final int bookId, List<Chapter> list) {
@@ -73,32 +70,29 @@ public class AppDAO extends BaseDAO {
 
     public boolean addToBookShelf(int bookId) {
         return executeUpdate(UpdateStatment.build(Tables.Book.TABLE_NAME)
-                .set(Tables.Book.TEMPORARY_FLAG, 0).where(Tables.Book.BOOK_ID).eq(bookId));
+                .set(Tables.Book.TEMPORARY_FLAG, 0).where(Tables.Book.ID).eq(bookId));
     }
 
-    public List<Book> getBookListOnBookShelf(int bookType) {
+    public List<Book> getBookListOnBookShelf() {
         return getFetcherList(QueryStatment.build(
-                Tables.Book.BOOK_ID, Tables.Book.NAME, Tables.Book.COVER_URL, Tables.Book.BOOK_TYPE,
-                Tables.Book.WAS_BOTH_TYPE, Tables.Book.UPDATE_STATUS).from(Tables.Book.TABLE_NAME)
-                .where(Tables.Book.BOOK_TYPE).eq(bookType).and(Tables.Book.TEMPORARY_FLAG).eq(0)
-                .orderby(Tables.Book.LAST_READ_TIME).desc(), Book.class);
+                Tables.Book.ID, Tables.Book.NAME, Tables.Book.WAS_BOTH_TYPE,
+                Tables.Book.COVER_URL, Tables.Book.UPDATE_STATUS).from(Tables.Book.TABLE_NAME)
+                .where(Tables.Book.TEMPORARY_FLAG).eq(0).orderby(Tables.Book.LAST_READ_TIME).desc(), Book.class);
     }
 
     public Book getBookOnReading(int bookId) {
-        if (bookId <= 0) return null;
-        Book book = getEntity(QueryStatment.build(
-                Tables.Book.BOOK_ID, Tables.Book.NAME, Tables.Book.BOOK_TYPE, Tables.Book.UPDATE_STATUS)
-                .from(Tables.Book.TABLE_NAME).where(Tables.Book.BOOK_ID).eq(bookId), Book.class);
+        Book book = getEntity(QueryStatment.build(Tables.Book.ID, Tables.Book.NAME, Tables.Book.UPDATE_STATUS)
+                .from(Tables.Book.TABLE_NAME).where(Tables.Book.ID).eq(bookId), Book.class);
         if (book != null) {
             executeUpdate(UpdateStatment.build(Tables.Book.TABLE_NAME)
-                    .set(Tables.Book.LAST_READ_TIME, "datetime('now', 'localtime')").where(Tables.Book.BOOK_ID).eq(bookId));
+                    .set(Tables.Book.LAST_READ_TIME, "datetime('now', 'localtime')").where(Tables.Book.ID).eq(bookId));
         }
         return book;
     }
 
     public boolean isBookOnShelf(int bookId) {
         return getIntValue(QueryStatment.build(Tables.Book.TEMPORARY_FLAG)
-                .from(Tables.Book.TABLE_NAME).where(Tables.Book.BOOK_ID).eq(bookId)) == 0;
+                .from(Tables.Book.TABLE_NAME).where(Tables.Book.ID).eq(bookId)) == 0;
     }
 
     public Chapter getReadingChapter(int bookId) {
@@ -133,7 +127,7 @@ public class AppDAO extends BaseDAO {
 
     public int getBookChapterIndex(int bookId, int chapterId) {
         return getIntValue(QueryStatment.rowcount().from(Tables.Chapter.TABLE_NAME)
-                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.BOOK_ID).lt(chapterId));
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.CHAPTER_ID).lt(chapterId));
     }
 
     public Chapter getPreviousChapter(int bookId, int chapterId) {
@@ -165,23 +159,24 @@ public class AppDAO extends BaseDAO {
     }
 
     public int getBookUnreadChapterCount(int bookId) {
-        // TODO : 修正问题：先查当前阅读到的章节，然后调用getBookChapterCount、getBookChapterIndex来计算出结果
-        return getIntValue(QueryStatment.rowcount().from(Tables.Chapter.TABLE_NAME)
-                .where(Tables.Chapter.BOOK_ID).eq(bookId).and(Tables.Chapter.READ_STATUS).eq(Chapter.READSTATUS_UNREAD));
+        int chapterCount = getBookChapterCount(bookId);
+        int chapterId = getReadingChapter(bookId).getChapterId();
+        int index = getBookChapterIndex(bookId, chapterId);
+        return chapterCount - index;
     }
 
-    public Chapter getBookLastChapter(int bookId) {
-        return getEntity(QueryStatment.build(Tables.Chapter.CHAPTER_ID, Tables.Chapter.TITLE).from(Tables.Chapter.TABLE_NAME)
-                .where(Tables.Chapter.BOOK_ID).eq(bookId).orderby(Tables.Chapter.CHAPTER_ID).desc().limit(1), Chapter.class);
+    public String getBookLastChapterTitle(int bookId) {
+        return getStringValue(QueryStatment.build(Tables.Chapter.TITLE).from(Tables.Chapter.TABLE_NAME)
+                .where(Tables.Chapter.BOOK_ID).eq(bookId).orderby(Tables.Chapter.CHAPTER_ID).desc().limit(1), "");
     }
 
+    // this method should be executing async with main thread.
     public boolean deleteBook(Book book) {
-        if (executeUpdate(DeleteStatment.build(Tables.Book.TABLE_NAME).where(Tables.Book.BOOK_ID).eq(book.getBookId()))) {
-            saveBookChapters(book.getBookId(), null);
+        if (executeUpdate(DeleteStatment.build(Tables.Book.TABLE_NAME).where(Tables.Book.ID).eq(book.getId()))) {
+            saveBookChapters(book.getId(), null);
             IOUtil.deleteBookCache(book);
             return true;
         }
         return false;
     }
-
 }

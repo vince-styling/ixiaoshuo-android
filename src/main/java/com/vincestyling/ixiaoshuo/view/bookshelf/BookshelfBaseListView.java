@@ -1,26 +1,32 @@
 package com.vincestyling.ixiaoshuo.view.bookshelf;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.image.NetworkImageView;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
 import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.net.request.DeleteBookDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 import com.vincestyling.ixiaoshuo.ui.CommonMenuDialog;
+import com.vincestyling.ixiaoshuo.ui.ComplexBookNameView;
 import com.vincestyling.ixiaoshuo.ui.RoundedRepeatBackgroundDrawable;
 import com.vincestyling.ixiaoshuo.ui.WithoutBookStatisticsView;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
@@ -28,7 +34,9 @@ import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import java.util.List;
 import java.util.Random;
 
-public abstract class BookshelfBaseListView extends BaseFragment implements OnItemLongClickListener, OnItemClickListener {
+public abstract class BookshelfBaseListView extends BaseFragment implements OnItemClickListener,
+        OnItemLongClickListener, ComplexBookNameView.ConditionSatisficer<Book> {
+    private ListView mLsvBookShelf;
     protected BaseAdapter mAdapter;
     protected List<Book> mBookList;
 
@@ -37,8 +45,12 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.book_shelf_content, null);
+        return getActivity().getLayoutInflater().inflate(R.layout.book_shelf_content, null);
+    }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        mLsvBookShelf = (ListView) view.findViewById(R.id.lsvBookShelf);
         mLotWithoutBooks = view.findViewById(R.id.lotWithoutBooks);
 
         RoundedRepeatBackgroundDrawable drawable = new RoundedRepeatBackgroundDrawable();
@@ -49,14 +61,15 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
         mLotWithoutBooks.findViewById(R.id.lotWithoutBookBanner).setBackgroundDrawable(drawable);
 
         mLotBookShelf = view.findViewById(R.id.lotBookShelf);
-
-        return view;
     }
 
     @Override
     public void onResume() {
-        loadData();
         super.onResume();
+        refreshData();
+    }
+
+    protected void refreshData() {
         if (mBookList != null && mBookList.size() > 0) {
             initListView();
             mAdapter.notifyDataSetChanged();
@@ -69,10 +82,8 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
         }
     }
 
-    public abstract void loadData();
-
     private void initListView() {
-        if (getListView().getAdapter() != null) return;
+        if (mLsvBookShelf.getAdapter() != null) return;
         mAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -91,82 +102,92 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                return getAdapterView(position, convertView);
+                Holder holder;
+                if (convertView == null) {
+                    convertView = getActivity().getLayoutInflater().inflate(R.layout.book_shelf_list_item, null);
+                    holder = new Holder();
+                    holder.txvBookName = (ComplexBookNameView<Book>) convertView.findViewById(R.id.txvBookName);
+                    holder.imvBookCover = (NetworkImageView) convertView.findViewById(R.id.imvBookCover);
+                    holder.txvBookUpdateLabel = convertView.findViewById(R.id.txvBookUpdateLabel);
+                    holder.txvBookDesc1 = (TextView) convertView.findViewById(R.id.txvBookDesc1);
+                    holder.txvBookDesc2 = (TextView) convertView.findViewById(R.id.txvBookDesc2);
+                    convertView.setTag(holder);
+                } else {
+                    holder = (Holder) convertView.getTag();
+                }
+
+                Book book = mBookList.get(position);
+                Netroid.displayImage(book.getCoverUrl(), holder.imvBookCover,
+                        R.drawable.book_cover_default, R.drawable.book_cover_default);
+
+                holder.txvBookName.setSatisficer(BookshelfBaseListView.this);
+                holder.txvBookName.setBook(book);
+
+                holder.txvBookUpdateLabel.setVisibility(book.hasNewChapter() ? View.GONE : View.VISIBLE);
+
+                setBookDesc1(book, holder.txvBookDesc1);
+                setBookDesc2(book, holder.txvBookDesc2);
+
+                return convertView;
             }
         };
-        getListView().setAdapter(mAdapter);
-        getListView().setOnItemClickListener(this);
-        getListView().setOnItemLongClickListener(this);
-    }
-
-    private View getAdapterView(int position, View convertView) {
-        Holder holder;
-        if (convertView == null) {
-            convertView = getActivity().getLayoutInflater().inflate(R.layout.book_shelf_list_item, null);
-            holder = new Holder();
-            holder.imvBookCover = (NetworkImageView) convertView.findViewById(R.id.imvBookCover);
-            holder.txvBookName = (TextView) convertView.findViewById(R.id.txvBookName);
-            holder.txvBookDesc1 = (TextView) convertView.findViewById(R.id.txvBookDesc1);
-            holder.txvBookDesc2 = (TextView) convertView.findViewById(R.id.txvBookDesc2);
-            holder.txvBookStatus1 = (TextView) convertView.findViewById(R.id.txvBookStatus1);
-            holder.txvBookStatus2 = (TextView) convertView.findViewById(R.id.txvBookStatus2);
-            holder.imvBookStatusSplit = (ImageView) convertView.findViewById(R.id.imvBookStatusSplit);
-            holder.lotBookStatus = convertView.findViewById(R.id.lotBookStatus);
-            holder.txvBookLabel = convertView.findViewById(R.id.txvBookLabel);
-            convertView.setTag(holder);
-        } else {
-            holder = (Holder) convertView.getTag();
-        }
-
-        Book book = mBookList.get(position);
-        Netroid.displayImage(book.getCoverUrl(), holder.imvBookCover,
-                R.drawable.book_cover_default, R.drawable.book_cover_default);
-
-        holder.txvBookName.setText(book.getName());
-        holder.txvBookLabel.setVisibility(book.hasNewChapter() ? View.GONE : View.VISIBLE);
-
-        holder.txvBookStatus1.setVisibility(book.isFinished() ? View.VISIBLE : View.GONE);
-        holder.txvBookStatus2.setVisibility(book.isBothType() ? View.VISIBLE : View.GONE);
-        holder.lotBookStatus.setVisibility(holder.txvBookStatus1.getVisibility() == View.VISIBLE || holder.txvBookStatus2.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
-        holder.imvBookStatusSplit.setVisibility(holder.txvBookStatus1.getVisibility() == View.VISIBLE && holder.txvBookStatus2.getVisibility() == View.VISIBLE ? View.VISIBLE : View.GONE);
-
-        setBookDesc1(book, holder.txvBookDesc1);
-        setBookDesc2(book, holder.txvBookDesc2);
-
-        return convertView;
+        mLsvBookShelf.setAdapter(mAdapter);
+        mLsvBookShelf.setOnItemClickListener(this);
+        mLsvBookShelf.setOnItemLongClickListener(this);
     }
 
     protected void setBookDesc1(Book book, TextView txvBookDesc) {
-        int unreadCount = AppDAO.get().getBookUnreadChapterCount(book.getBookId());
-        if (unreadCount > 0) {
-            txvBookDesc.setText(unreadCount + "章未读");
-        } else {
-            txvBookDesc.setText("");
+        int unreadChapterCount = book.getUnreadChapterCount();
+        if (unreadChapterCount == -1) {
+            unreadChapterCount = AppDAO.get().getBookUnreadChapterCount(book.getId());
+            book.setUnreadChapterCount(unreadChapterCount);
         }
+
+        txvBookDesc.setText(unreadChapterCount > 0 ?
+                String.format(getActivity().getString(R.string.unread_chapters_tip), unreadChapterCount) :
+                getActivity().getString(R.string.havent_unread_chapters_tip));
     }
 
     protected void setBookDesc2(Book book, TextView txvBookDesc) {
-        Chapter chapter = AppDAO.get().getBookLastChapter(book.getBookId());
-        if (chapter != null) {
-            txvBookDesc.setText("更新至：" + chapter.getTitle());
-        } else {
-            txvBookDesc.setText("");
+        String chapterTitle = book.getLastChapterTitle();
+        if (chapterTitle == null) {
+            chapterTitle = AppDAO.get().getBookLastChapterTitle(book.getId());
+            book.setLastChapterTitle(chapterTitle);
         }
-    }
-
-    private ListView getListView() {
-        return (ListView) getView().findViewById(R.id.lsvBookShelf);
+        txvBookDesc.setText(String.format(getActivity().getString(R.string.last_chapter_tip), chapterTitle));
     }
 
     class Holder {
+        ComplexBookNameView<Book> txvBookName;
         NetworkImageView imvBookCover;
-        TextView txvBookName;
         TextView txvBookDesc1;
         TextView txvBookDesc2;
-        TextView txvBookStatus1, txvBookStatus2;
-        ImageView imvBookStatusSplit;
-        View lotBookStatus;
-        View txvBookLabel;
+        View txvBookUpdateLabel;
+    }
+
+    @Override
+    public String getBookName(Book book) {
+        return book.getName();
+    }
+
+    @Override
+    public boolean isFirstConditionSatisfy(Book book) {
+        return book.isFinished();
+    }
+
+    @Override
+    public int firstConditionLabel(Book book) {
+        return R.string.book_status_tip_finished;
+    }
+
+    @Override
+    public boolean isSecondConditionSatisfy(Book book) {
+        return book.isBothType();
+    }
+
+    @Override
+    public int secondConditionLabel(Book book) {
+        return R.string.book_status_tip_both_type;
     }
 
     private boolean mIsInitWithoutBook;
@@ -206,33 +227,46 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
         final Book book = (Book) parent.getItemAtPosition(position);
         if (book == null) return true;
 
-        final CommonMenuDialog menuDialog = new CommonMenuDialog(getActivity(), '《' + book.getName() + '》');
-        menuDialog.initContentView(new CommonMenuDialog.MenuItem[]{
-                new CommonMenuDialog.MenuItem("查看详情", new View.OnClickListener() {
+        final CommonMenuDialog menuDialog = new CommonMenuDialog(getActivity(),
+                String.format(getResources().getString(R.string.book_with_quote), book.getName()));
+        menuDialog.initContentView(
+                new CommonMenuDialog.MenuItem(R.string.book_op_check_detail, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intentActivity = new Intent(getActivity(), BookInfoActivity.class);
-                        intentActivity.putExtra(Const.BOOK_ID, book.getBookId());
+                        intentActivity.putExtra(Const.BOOK_ID, book.getId());
                         intentActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         getActivity().startActivity(intentActivity);
                         menuDialog.cancel();
                     }
                 }),
-                new CommonMenuDialog.MenuItem("移出书架", new View.OnClickListener() {
+                new CommonMenuDialog.MenuItem(R.string.book_op_remove_from_bookshelf, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("是否确认删除该书籍？");
-                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        builder.setMessage(R.string.book_op_remove_book_confirm);
+                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                AppDAO.get().deleteBook(book);
+                                final ProgressDialog prgsDialog = ProgressDialog.show(getActivity(), null,
+                                        String.format(getResources().getString(R.string.book_op_removeing_book), book.getName()), false, false);
                                 menuDialog.cancel();
                                 dialog.cancel();
-                                loadData();
+
+                                new DeleteBookDBRequest(book, new Listener<Boolean>() {
+                                    @Override
+                                    public void onFinish() {
+                                        prgsDialog.cancel();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(Boolean response) {
+                                        refreshData();
+                                    }
+                                });
                             }
                         });
-                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -241,7 +275,7 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
                         builder.show();
                     }
                 }),
-                new CommonMenuDialog.MenuItem("下载全部", new View.OnClickListener() {
+                new CommonMenuDialog.MenuItem(R.string.book_op_download_all, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!ChapterDownloader.get().schedule(getActivity(), book, false, null)) {
@@ -250,7 +284,7 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
                         menuDialog.cancel();
                     }
                 })
-        });
+        );
         menuDialog.show();
 
         return true;
@@ -261,9 +295,8 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
         Book book = (Book) parent.getItemAtPosition(position);
         if (book != null) {
             Intent intent = new Intent(getActivity(), ReaderActivity.class);
-            intent.putExtra(Const.BOOK_ID, book.getBookId());
+            intent.putExtra(Const.BOOK_ID, book.getId());
             getActivity().startActivity(intent);
         }
     }
-
 }
