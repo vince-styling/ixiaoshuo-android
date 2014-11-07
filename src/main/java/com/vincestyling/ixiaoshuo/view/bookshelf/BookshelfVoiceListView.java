@@ -5,7 +5,9 @@ import com.vincestyling.ixiaoshuo.R;
 
 public class BookshelfVoiceListView extends BookshelfBaseListView {
     @Override
-    protected void setFinderTip(TextView txvFinderTip) {
-        txvFinderTip.setText(R.string.without_book_finder_tip3);
+    protected void initWithoutBookUI() {
+        ((TextView) mLotWithoutBook.findViewById(R.id.txvFinderTip)).setText(R.string.without_book_finder_tip3);
+        ((TextView) mLotWithoutBook.findViewById(R.id.txvTopTip)).setText(R.string.without_voice_book_tips);
+        super.initWithoutBookUI();
     }
 }

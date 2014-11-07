@@ -50,4 +50,9 @@ public class MainMenuGridView extends GridView {
         mHighlightDrawable = getResources().getDrawable(R.drawable.menu_bg_pressed);
     }
 
+    @Override
+    public boolean selectItem(int itemId) {
+        mMainContentPager.setCurrentItem(itemId, true);
+        return super.selectItem(itemId);
+    }
 }

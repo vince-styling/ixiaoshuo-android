@@ -5,6 +5,8 @@
     <string name="without_data">抱歉，暂无更新数据！</string>
     <string name="common_dialog_title">提示</string>
 
+    <string name="exit_app_tip">再按一次退出程序</string>
+
     <color name="complex_bookname_txt">#4d4d4d</color>
     <dimen name="complex_bookname_txt">19sp</dimen>
 
@@ -54,5 +56,9 @@
 
     <style name="AppsTheme" parent="android:Theme.Translucent.NoTitleBar">
         <item name="android:windowAnimationStyle">@style/GlobalPendingTransitionAnimation.Activity</item>
+        <item name="android:windowBackground">@color/theme_windows_bg</item>
+        <item name="android:colorBackground">@color/theme_windows_bg</item>
     </style>
+
+    <color name="theme_windows_bg">#ffffff</color>
 </resources>

@@ -4,7 +4,6 @@
     android:id="@+id/lsvBookInfo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
     android:divider="@color/book_info_chapter_list_divier"
     android:dividerHeight="1dp"
     android:headerDividersEnabled="false"

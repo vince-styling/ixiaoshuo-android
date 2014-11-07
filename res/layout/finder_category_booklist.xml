@@ -4,8 +4,7 @@
     android:id="@+id/lotContent"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ffffff">
+    android:layout_height="match_parent">
 
     <FrameLayout
         style="@style/top_titlebar">

@@ -16,6 +16,7 @@ import com.vincestyling.ixiaoshuo.view.finder.FinderView;
 import com.vincestyling.ixiaoshuo.view.search.SearchView;
 
 public class MainActivity extends BaseActivity {
+    private MainMenuGridView mMainMenuView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,8 +26,8 @@ public class MainActivity extends BaseActivity {
         ViewPager mainContentPager = (ViewPager) findViewById(R.id.mainContentPager);
         mainContentPager.setAdapter(new MyAdapter(getSupportFragmentManager()));
 
-        MainMenuGridView mainMenuView = (MainMenuGridView) findViewById(R.id.mainMenuView);
-        mainMenuView.setViewPager(mainContentPager);
+        mMainMenuView = (MainMenuGridView) findViewById(R.id.mainMenuView);
+        mMainMenuView.setViewPager(mainContentPager);
     }
 
     // If adjust Fragment order, remember reset the index for each Fragment index which inside them.
@@ -53,6 +54,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    public void showMenuView(int menuId) {
+		mMainMenuView.selectItem(menuId);
+    }
+
     private long lastPressBackKeyTime;
 
     @Override
@@ -64,12 +69,11 @@ public class MainActivity extends BaseActivity {
                     finish();
                     SysUtil.killAppProcess();
                 } else {
+                    showToastMsg(R.string.exit_app_tip);
                     lastPressBackKeyTime = currentTime;
-                    showToastMsg("再按一次退出程序");
                 }
                 return true;
         }
         return super.onKeyDown(keyCode, event);
     }
-
 }

@@ -24,43 +24,30 @@ import com.vincestyling.ixiaoshuo.net.request.DeleteBookDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
+import com.vincestyling.ixiaoshuo.reader.MainActivity;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 import com.vincestyling.ixiaoshuo.ui.CommonMenuDialog;
 import com.vincestyling.ixiaoshuo.ui.ComplexBookNameView;
 import com.vincestyling.ixiaoshuo.ui.RoundedRepeatBackgroundDrawable;
 import com.vincestyling.ixiaoshuo.ui.WithoutBookStatisticsView;
+import com.vincestyling.ixiaoshuo.utils.StringUtil;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
+import com.vincestyling.ixiaoshuo.view.detector.DetectorView;
+import com.vincestyling.ixiaoshuo.view.finder.FinderView;
 
 import java.util.List;
-import java.util.Random;
 
 public abstract class BookshelfBaseListView extends BaseFragment implements OnItemClickListener,
         OnItemLongClickListener, ComplexBookNameView.ConditionSatisficer<Book> {
-    private ListView mLsvBookShelf;
     protected BaseAdapter mAdapter;
     protected List<Book> mBookList;
 
-    protected View mLotWithoutBooks;
+    protected View mLotWithoutBook;
     protected View mLotBookShelf;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return getActivity().getLayoutInflater().inflate(R.layout.book_shelf_content, null);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        mLsvBookShelf = (ListView) view.findViewById(R.id.lsvBookShelf);
-        mLotWithoutBooks = view.findViewById(R.id.lotWithoutBooks);
-
-        RoundedRepeatBackgroundDrawable drawable = new RoundedRepeatBackgroundDrawable();
-        drawable.setBackgroundDrawable(getResources().getDrawable(R.drawable.book_shelf_without_book_stripe));
-        drawable.setCornerRadius(getResources().getDimension(R.dimen.without_book_container_bg_corner_radius));
-        drawable.setBorderWidth(getResources().getDimension(R.dimen.without_book_container_bg_border));
-        drawable.setBorderColor(getResources().getColor(R.color.without_book_container_bg_border));
-        mLotWithoutBooks.findViewById(R.id.lotWithoutBookBanner).setBackgroundDrawable(drawable);
-
-        mLotBookShelf = view.findViewById(R.id.lotBookShelf);
     }
 
     @Override
@@ -74,16 +61,20 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
             initListView();
             mAdapter.notifyDataSetChanged();
             mLotBookShelf.setVisibility(View.VISIBLE);
-            mLotWithoutBooks.setVisibility(View.GONE);
+            if (mLotWithoutBook != null) mLotWithoutBook.setVisibility(View.GONE);
         } else {
             initWithoutBookLayout();
-            mLotBookShelf.setVisibility(View.GONE);
-            mLotWithoutBooks.setVisibility(View.VISIBLE);
+            mLotWithoutBook.setVisibility(View.VISIBLE);
+            if (mLotBookShelf != null) mLotBookShelf.setVisibility(View.GONE);
         }
     }
 
     private void initListView() {
-        if (mLsvBookShelf.getAdapter() != null) return;
+        if (mLotBookShelf != null) return;
+
+        ListView lsvBookShelf = (ListView) getView().findViewById(R.id.lsvBookShelf);
+        mLotBookShelf = getView().findViewById(R.id.lotBookShelf);
+
         mAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -131,9 +122,9 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
                 return convertView;
             }
         };
-        mLsvBookShelf.setAdapter(mAdapter);
-        mLsvBookShelf.setOnItemClickListener(this);
-        mLsvBookShelf.setOnItemLongClickListener(this);
+        lsvBookShelf.setAdapter(mAdapter);
+        lsvBookShelf.setOnItemClickListener(this);
+        lsvBookShelf.setOnItemLongClickListener(this);
     }
 
     protected void setBookDesc1(Book book, TextView txvBookDesc) {
@@ -190,36 +181,45 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
         return R.string.book_status_tip_both_type;
     }
 
-    private boolean mIsInitWithoutBook;
-
     private void initWithoutBookLayout() {
-        setFinderTip((TextView) mLotWithoutBooks.findViewById(R.id.txvFinderTip));
+        if (mLotWithoutBook != null) return;
 
-        if (mIsInitWithoutBook) return;
+        ViewGroup lotContent = (ViewGroup) getView().findViewById(R.id.lotContent);
+        mLotWithoutBook = getActivity().getLayoutInflater()
+                .inflate(getWithoutBookUILayout(), lotContent, false);
+        lotContent.addView(mLotWithoutBook);
 
-        mLotWithoutBooks.findViewById(R.id.lotGoFinder).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//				getActivity().showMenuView(MainMenuGridView.MENU_FINDER);
-            }
-        });
+        RoundedRepeatBackgroundDrawable drawable = new RoundedRepeatBackgroundDrawable();
+        drawable.setBackgroundDrawable(getResources().getDrawable(R.drawable.book_shelf_without_book_stripe));
+        drawable.setCornerRadius(getResources().getDimension(R.dimen.without_book_container_bg_corner_radius));
+        drawable.setBorderWidth(getResources().getDimension(R.dimen.without_book_container_bg_border));
+        drawable.setBorderColor(getResources().getColor(R.color.without_book_container_bg_border));
+        mLotWithoutBook.findViewById(R.id.lotWithoutBookBanner).setBackgroundDrawable(drawable);
 
-        mLotWithoutBooks.findViewById(R.id.lotGoDetector).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//				getActivity().showMenuView(MainMenuGridView.MENU_DETECTOR);
-            }
-        });
-
-        WithoutBookStatisticsView statisticsView = (WithoutBookStatisticsView) mLotWithoutBooks.findViewById(R.id.lotBookStatistics);
-        statisticsView.setStatCount(100000 + new Random().nextInt(600000));
-
-
-        mIsInitWithoutBook = true;
+        initWithoutBookUI();
     }
 
-    protected void setFinderTip(TextView txvFinderTip) {
-        txvFinderTip.setText(R.string.without_book_finder_tip2);
+    protected int getWithoutBookUILayout() {
+        return R.layout.book_shelf_without_book;
+    }
+
+    protected void initWithoutBookUI() {
+        mLotWithoutBook.findViewById(R.id.lotGoFinder).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).showMenuView(FinderView.PAGER_INDEX);
+            }
+        });
+
+        mLotWithoutBook.findViewById(R.id.lotGoDetector).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).showMenuView(DetectorView.PAGER_INDEX);
+            }
+        });
+
+        ((WithoutBookStatisticsView) mLotWithoutBook.findViewById(R.id.lotBookStatistics))
+                .setStatCount(StringUtil.nextRandInt(100000, 600000));
     }
 
     @Override
