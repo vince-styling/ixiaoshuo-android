@@ -10,10 +10,10 @@ import android.widget.*;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
 import com.vincestyling.ixiaoshuo.event.Notifier;
 import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.net.request.AddingBookDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
@@ -287,13 +287,13 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                     mBatchDownloadStatus = STATUS_DOWNLOAD_PAUSE;
                     updateDownloadButtonStatus();
 
-                    int bid = AppDAO.get().addBook(mBook, false);
-                    if (bid > 0) {
-                        AppDAO.get().saveBookChapters(bid, mAdapter.getData());
-                        getReaderApplication().getMainHandler().sendMessage(Notifier.NOTIFIER_BOOKSHELF_REFRESH);
-
-                        showToastMsg(R.string.added_to_bookshelf, mBook.getName());
-                    }
+                    new AddingBookDBRequest(mBook, false, mAdapter.getData(), new Listener<Integer>() {
+                        @Override
+                        public void onSuccess(Integer bookId) {
+                            getReaderApplication().getMainHandler().sendMessage(Notifier.NOTIFIER_BOOKSHELF_REFRESH);
+                            showToastMsg(R.string.added_to_bookshelf, mBook.getName());
+                        }
+                    });
                 } else {
                     showToastMsg(R.string.chapter_downloader_limit_msg);
                 }
@@ -322,15 +322,18 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        int bookId = AppDAO.get().addBook(mBook, true);
-        if (bookId > 0) {
-            AppDAO.get().saveBookChapters(bookId, mAdapter.getData());
-            Intent intent = new Intent(this, ReaderActivity.class);
-            intent.putExtra(Const.BOOK_ID, bookId);
-            startActivity(intent);
-        } else {
-            showToastMsg(R.string.failed_to_append_abook_toshelf);
-        }
+        new AddingBookDBRequest(mBook, true, mAdapter.getData(), new Listener<Integer>() {
+            @Override
+            public void onSuccess(Integer bookId) {
+                Intent intent = new Intent(BookInfoActivity.this, ReaderActivity.class);
+                intent.putExtra(Const.BOOK_ID, bookId);
+                startActivity(intent);
+            }
+            @Override
+            public void onError(NetroidError error) {
+                showToastMsg(R.string.failed_to_append_abook_toshelf);
+            }
+        });
     }
 
     private EndlessListAdapter<Chapter> mAdapter = new EndlessListAdapter<Chapter>() {

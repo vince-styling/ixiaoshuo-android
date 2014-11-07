@@ -78,7 +78,7 @@ public class YYReader {
         /**
          * 从书架上移除书籍
          */
-        public boolean onRemoveInBookShelf();
+        public void onRemoveInBookShelf();
 
         /**
          * 下载某个章节
@@ -183,8 +183,8 @@ public class YYReader {
         return mOnYYReaderListener != null && mOnYYReaderListener.onAddToBookShelf();
     }
 
-    public static boolean removeInBookShelf() {
-        return mOnYYReaderListener != null && mOnYYReaderListener.onRemoveInBookShelf();
+    public static void removeInBookShelf() {
+        if (mOnYYReaderListener != null) mOnYYReaderListener.onRemoveInBookShelf();
     }
 
     public static boolean downloadOneChapter(Chapter chapter, OnDownloadChapterListener listener) {

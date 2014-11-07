@@ -16,6 +16,10 @@ public class DeleteBookDBRequest extends BasicRequest<Boolean> {
         this.book = book;
     }
 
+    public DeleteBookDBRequest(Book book) {
+        this(book, null);
+    }
+
     @Override
     public NetworkResponse perform() {
         result = AppDAO.get().deleteBook(book);

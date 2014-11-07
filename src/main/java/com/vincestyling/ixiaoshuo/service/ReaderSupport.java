@@ -4,6 +4,7 @@ import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
 import com.vincestyling.ixiaoshuo.event.YYReader;
 import com.vincestyling.ixiaoshuo.net.Netroid;
+import com.vincestyling.ixiaoshuo.net.request.DeleteBookDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 
@@ -97,8 +98,8 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
     }
 
     @Override
-    public boolean onRemoveInBookShelf() {
-        return AppDAO.get().deleteBook(mBook);
+    public void onRemoveInBookShelf() {
+        new DeleteBookDBRequest(mBook);
     }
 
     @Override
