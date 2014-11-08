@@ -19,20 +19,21 @@ public class CommonMenuDialog extends AbsDialog {
         super(context);
 
         mContentView = (ViewGroup) getLayoutInflater().inflate(R.layout.common_menu_dialog, null);
-        if (title == null) {
-            mContentView.findViewById(R.id.txvDialogTitle).setVisibility(View.GONE);
-        } else {
+        if (title != null) {
             ((TextView) mContentView.findViewById(R.id.txvDialogTitle)).setText(title);
+        } else {
+            mContentView.findViewById(R.id.txvDialogTitle).setVisibility(View.GONE);
         }
     }
 
     public void initContentView(MenuItem... menus) {
         for (int i = 0; i < menus.length; i++) {
-            MenuItem menu = menus[i];
-            TextView menuView = (TextView) getLayoutInflater().inflate(R.layout.common_menu_dialog_item, mContentView, false);
-            if (i + 1 == menus.length) menuView.setBackgroundResource(R.drawable.common_menu_dialog_bottom_item_bg_selector);
-            menuView.setOnClickListener(menu.clickEvent);
-            menuView.setText(menu.titleResId);
+            TextView menuView = (TextView) getLayoutInflater().inflate(
+                    R.layout.common_menu_dialog_item, mContentView, false);
+            if (i + 1 == menus.length) menuView.setBackgroundResource(
+                    R.drawable.common_menu_dialog_bottom_item_bg_selector);
+            menuView.setOnClickListener(menus[i].clickEvent);
+            menuView.setText(menus[i].titleResId);
             mContentView.addView(menuView);
         }
         initContentView(.8f);
@@ -47,5 +48,4 @@ public class CommonMenuDialog extends AbsDialog {
             this.titleResId = titleResId;
         }
     }
-
 }
