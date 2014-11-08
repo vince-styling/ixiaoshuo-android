@@ -28,6 +28,7 @@ public class MainActivity extends BaseActivity {
 
         mMainMenuView = (MainMenuGridView) findViewById(R.id.mainMenuView);
         mMainMenuView.setViewPager(mainContentPager);
+        mMainMenuView.selectItem(BookshelfView.PAGER_INDEX);
     }
 
     // If adjust Fragment order, remember reset the index for each Fragment index which inside them.

@@ -31,10 +31,10 @@ public abstract class GridView extends View {
     private int mColumnCount;
 
     // the selected itemId
-    private int mSelectedItemId;
+    private int mSelectedItemId = -1;
 
     // the selected temp itemId, when TouchEvent.onDown use
-    private int mTempSelectedItemId;
+    private int mTempSelectedItemId = -1;
 
     // highlight drawable, must not transparent, allows nine-patch or normal image
     protected Drawable mHighlightDrawable;
@@ -103,6 +103,8 @@ public abstract class GridView extends View {
 
     private void highlightItem(Canvas canvas) {
         int index = mItems.indexOfKey(mTempSelectedItemId);
+        if (index < 0) return;
+
         Rect itemRect = getItemRect(index);
         canvas.save(Canvas.CLIP_SAVE_FLAG);
         canvas.clipRect(itemRect);
