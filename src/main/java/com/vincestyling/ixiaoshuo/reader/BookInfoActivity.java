@@ -11,7 +11,6 @@ import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
-import com.vincestyling.ixiaoshuo.event.Notifier;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.net.request.AddingBookDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
@@ -290,7 +289,6 @@ public class BookInfoActivity extends BaseActivity implements View.OnClickListen
                     new AddingBookDBRequest(mBook, false, mAdapter.getData(), new Listener<Integer>() {
                         @Override
                         public void onSuccess(Integer bookId) {
-                            getReaderApplication().getMainHandler().sendMessage(Notifier.NOTIFIER_BOOKSHELF_REFRESH);
                             showToastMsg(R.string.added_to_bookshelf, mBook.getName());
                         }
                     });

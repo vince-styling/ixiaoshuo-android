@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.app.Application;
 import android.widget.Toast;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
-import com.vincestyling.ixiaoshuo.event.MainHandler;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 
 public class ReaderApplication extends Application {
-
     @Override
     public void onCreate() {
         super.onCreate();
         AppDAO.init(this);
         Netroid.init(this);
-        mMainHandler = new MainHandler();
     }
 
     private Toast mToast;
@@ -31,12 +28,6 @@ public class ReaderApplication extends Application {
         mToast.show();
     }
 
-    private MainHandler mMainHandler;
-
-    public MainHandler getMainHandler() {
-        return mMainHandler;
-    }
-
     private Activity mCurrentActivity;
 
     public Activity getCurrentActivity() {
@@ -46,5 +37,4 @@ public class ReaderApplication extends Application {
     public void setCurrentActivity(Activity currentActivity) {
         this.mCurrentActivity = currentActivity;
     }
-
 }
