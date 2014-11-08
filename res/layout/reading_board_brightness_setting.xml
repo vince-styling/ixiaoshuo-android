@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="20dp"
-        android:orientation="horizontal">
+        android:gravity="center">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -26,42 +26,34 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="12dp"
             android:max="250"
             android:progress="0"
             android:secondaryProgress="0"
             android:progressDrawable="@drawable/reading_board_seekbar_progress"
-            android:thumb="@drawable/reading_board_seekbar_thumb" />
+            android:thumb="@drawable/reading_board_seekbar_thumb"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/light_shine" />
+            android:background="@drawable/light_shine"/>
+
     </LinearLayout>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/reading_board_two_items_menu_bg">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <Button android:id="@+id/buttonLight"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/light_mode"
-                android:textSize="20dp"
-                android:textColor="@drawable/reading_board_btn_text_selector"
-                android:background="@drawable/reading_board_two_items_menu_bg_selector" />
+        <Button
+            android:id="@+id/buttonLight"
+            android:text="@string/reading_board_light_mode"
+            style="@style/reading_board_setting_btn_left"/>
 
-        <Button android:id="@+id/buttonDark"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/dark_mode"
-                android:textSize="20dp"
-                android:textColor="@drawable/reading_board_btn_text_selector"
-                android:background="@drawable/reading_board_two_items_menu_bg_selector" />
+        <Button
+            android:id="@+id/buttonDark"
+            android:text="@string/reading_board_dark_mode"
+            style="@style/reading_board_setting_btn_right"/>
 
     </LinearLayout>
 

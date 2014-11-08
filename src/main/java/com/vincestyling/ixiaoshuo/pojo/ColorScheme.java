@@ -50,5 +50,4 @@ public class ColorScheme {
     public String getName() {
         return name;
     }
-
 }

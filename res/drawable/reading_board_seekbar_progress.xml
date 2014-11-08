@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <nine-patch android:src="@drawable/reading_board_seekbar_dark_bg" android:dither="true" />
+        <nine-patch
+            android:src="@drawable/reading_board_seekbar_dark_bg"
+            android:dither="true"/>
     </item>
     <item android:id="@android:id/progress">
         <clip>
-            <nine-patch android:src="@drawable/reading_board_seekbar_light_bg"
-                        android:dither="true" android:gravity="left" />
+            <nine-patch
+                android:src="@drawable/reading_board_seekbar_light_bg"
+                android:dither="true"
+                android:gravity="left"/>
         </clip>
     </item>
 </layer-list>

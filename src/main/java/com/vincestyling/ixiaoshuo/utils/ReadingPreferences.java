@@ -67,12 +67,20 @@ public class ReadingPreferences {
         return mIsDarkMode;
     }
 
+    public int getBrightness() {
+        return mBrightness;
+    }
+
     public ColorScheme getColorScheme() {
         return mIsDarkMode ? mDarkColorScheme : mColorSchemes[mColorSchemeIndex];
     }
 
-    public int getBrightness() {
-        return mBrightness;
+    public ColorScheme[] getColorSchemes() {
+        return mColorSchemes;
+    }
+
+    public int getColorSchemeIndex() {
+        return mColorSchemeIndex;
     }
 
     public void setColorSchemeIndex(int colorSchemeIndex) {

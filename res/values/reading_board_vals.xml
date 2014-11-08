@@ -18,6 +18,16 @@
 
     <integer name="reading_board_indent_char_count">1</integer>
 
+    <dimen name="reading_menu_scheme_width">68dp</dimen>
+    <dimen name="reading_menu_scheme_height">68dp</dimen>
+    <dimen name="reading_menu_scheme_margin">20dp</dimen>
+    <color name="reading_menu_scheme_selected_color">#f38a5a</color>
+    <dimen name="reading_menu_scheme_corner_radius">5dp</dimen>
+    <dimen name="reading_menu_scheme_border_size">2dp</dimen>
+    <dimen name="reading_menu_scheme_text_margin">10dp</dimen>
+    <dimen name="reading_menu_scheme_text_size">13sp</dimen>
+    <color name="reading_menu_scheme_text_color">#b4b4b4</color>
+
     <string name="reading_menu_scheme_yellow">奶沫黄</string>
     <string name="reading_menu_scheme_green1">护眼绿</string>
     <string name="reading_menu_scheme_green">清妍绿</string>
@@ -30,6 +40,36 @@
     <color name="reading_board_btn_text_on">#7bb114</color>
     <color name="reading_board_btn_text_off">#d5d5d5</color>
 
-    <string name="light_mode">日间模式</string>
-    <string name="dark_mode">夜间模式</string>
+    <string name="reading_board_light_mode">日间模式</string>
+    <string name="reading_board_dark_mode">夜间模式</string>
+
+    <string name="reading_board_catalog">目录</string>
+
+    <string name="reading_board_setting_font_decrease">A-</string>
+    <string name="reading_board_setting_font_increase">A+</string>
+    <string name="reading_board_setting_font_prompt">当前 %d 号字</string>
+
+    <style name="reading_board_setting_headtitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:textColor">#d5d5d5</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="reading_board_setting_btn">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@drawable/reading_board_btn_txt</item>
+    </style>
+
+    <style name="reading_board_setting_btn_left" parent="reading_board_setting_btn">
+        <item name="android:background">@drawable/reading_board_btn_left</item>
+    </style>
+
+    <style name="reading_board_setting_btn_right" parent="reading_board_setting_btn">
+        <item name="android:background">@drawable/reading_board_btn_right</item>
+    </style>
 </resources>
