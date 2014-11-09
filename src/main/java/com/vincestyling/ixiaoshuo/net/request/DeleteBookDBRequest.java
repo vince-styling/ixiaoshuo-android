@@ -12,7 +12,7 @@ public class DeleteBookDBRequest extends BasicRequest<Boolean> {
     private Book book;
 
     public DeleteBookDBRequest(Book book, Listener<Boolean> listener) {
-        super(null, listener);
+        super(listener);
         this.book = book;
     }
 

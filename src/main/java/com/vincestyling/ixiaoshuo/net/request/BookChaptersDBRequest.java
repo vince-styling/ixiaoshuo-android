@@ -13,7 +13,7 @@ public class BookChaptersDBRequest extends BasicRequest<PaginationList<Chapter>>
     private int bookId, pageNo;
 
     public BookChaptersDBRequest(int bookId, int pageNo, Listener<PaginationList<Chapter>> listener) {
-        super(null, listener);
+        super(listener);
         this.bookId = bookId;
         this.pageNo = pageNo;
     }

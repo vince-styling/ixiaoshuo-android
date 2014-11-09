@@ -18,7 +18,7 @@ public class AddingBookDBRequest extends BasicRequest<Integer> {
     private List<Chapter> chapterList;
 
     public AddingBookDBRequest(Book book, boolean temporaryFlag, List<Chapter> chapterList, Listener<Integer> listener) {
-        super(null, listener);
+        super(listener);
         this.book = book;
         this.chapterList = chapterList;
         this.temporaryFlag = temporaryFlag;

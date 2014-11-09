@@ -17,6 +17,10 @@ public abstract class BasicRequest<T> extends Request<T> {
         deploy();
     }
 
+    public BasicRequest(Listener<T> listener) {
+        this(null, listener);
+    }
+
     private void deploy() {
         Netroid.get().add(this);
     }

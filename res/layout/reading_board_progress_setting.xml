@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
-    android:visibility="gone">
+    android:padding="12dp">
 
     <TextView
         android:id="@+id/txvProgress"

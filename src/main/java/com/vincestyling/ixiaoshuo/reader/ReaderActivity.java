@@ -18,8 +18,6 @@ import com.vincestyling.ixiaoshuo.ui.RenderPaint;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.ReadingPreferences;
 import com.vincestyling.ixiaoshuo.utils.SysUtil;
-import com.vincestyling.ixiaoshuo.view.ViewBuilder;
-import com.vincestyling.ixiaoshuo.view.reader.ChapterListView;
 import com.vincestyling.ixiaoshuo.view.reader.ReadingMenuView;
 
 import java.text.SimpleDateFormat;
@@ -30,13 +28,11 @@ public class ReaderActivity extends BaseActivity {
     private ReadingMenuView mReadingMenuView;
     private TextView mTxvCurTime, mTopInfo, mBottomInfo;
     private BatteryView mBatteryView;
-    private ChapterListView mLsvChapterList;
     private ReadingPreferences mPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         SysUtil.setFullScreen(this);
 
         // TODO : apply reader orientation setting
@@ -44,8 +40,10 @@ public class ReaderActivity extends BaseActivity {
 //			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //		}
 
-        int bookId;
         try {
+            int bookId = getIntent().getIntExtra(Const.BOOK_ID, 0);
+            new ReaderSupport().init(bookId);
+
             setContentView(R.layout.reading_board);
 
             mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
@@ -63,8 +61,6 @@ public class ReaderActivity extends BaseActivity {
                 }
             };
 
-            bookId = getIntent().getIntExtra(Const.BOOK_ID, 0);
-            new ReaderSupport().init(bookId);
             mReadingBoard.init(new OnlineDocument(mReadingBoard, onChangeReadingInfoListener));
 
             mReadingMenuView = new ReadingMenuView(this);
@@ -75,14 +71,6 @@ public class ReaderActivity extends BaseActivity {
             RenderPaint.get().setTextSize(mPreferences.getTextSize());
 
             onChangeColorScheme();
-
-            mLsvChapterList = new ChapterListView(this, new ViewBuilder.OnShowListener() {
-                @Override
-                public void onShow() {
-                    mReadingMenuView.hideMenu();
-                }
-            });
-
         } catch (Exception e) {
             showToastMsg("初始化失败！");
             AppLog.e(e);
@@ -103,10 +91,6 @@ public class ReaderActivity extends BaseActivity {
         boolean is24Hour = android.text.format.DateFormat.is24HourFormat(this);
         SimpleDateFormat dfTime = new SimpleDateFormat(is24Hour ? "HH:mm" : "hh:mm");
         mTxvCurTime.setText(dfTime.format(new Date()));
-    }
-
-    public void showChapterListView() {
-        mLsvChapterList.resume();
     }
 
     public void onChangeColorScheme() {
@@ -135,10 +119,6 @@ public class ReaderActivity extends BaseActivity {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mLsvChapterList.isInFront()) {
-                    mLsvChapterList.pushBack();
-                    return false;
-                }
                 if (!mReadingMenuView.hideMenu()) onFinish();
                 break;
             case KeyEvent.KEYCODE_MENU:
@@ -177,8 +157,7 @@ public class ReaderActivity extends BaseActivity {
     @Override
     public void finish() {
         if (isTaskRoot()) {
-            Intent in = new Intent();
-            in.setClass(this, MainActivity.class);
+            Intent in = new Intent(this, MainActivity.class);
             in.setAction(String.valueOf(System.currentTimeMillis()));
             startActivity(in);
         }
@@ -240,5 +219,4 @@ public class ReaderActivity extends BaseActivity {
     public ReadingPreferences getPreferences() {
         return mPreferences;
     }
-
 }

@@ -12,7 +12,7 @@ import android.view.View;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.event.OnGridItemClickListener;
 
-public abstract class GridView extends View {
+public class GridView extends View {
 
     public GridView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -126,7 +126,7 @@ public abstract class GridView extends View {
         highlightItem(canvas);
     }
 
-    protected abstract void initGrid();
+    protected void initGrid() {}
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -136,7 +136,7 @@ public abstract class GridView extends View {
                     Rect itemRect = getItemRect(index);
                     if (itemRect.contains((int) event.getX(), (int) event.getY())) {
                         int itemId = mItems.keyAt(index);
-                        if (itemId == mTempSelectedItemId) return false;
+                        if (itemId == mTempSelectedItemId) return true;
                         mTempSelectedItemId = itemId;
                         invalidate();
                         break;
@@ -148,14 +148,14 @@ public abstract class GridView extends View {
                 if (getItemRect(index).contains((int) event.getX(), (int) event.getY())) return true;
                 mTempSelectedItemId = mSelectedItemId;
                 invalidate();
-                return false;
+                return true;
             case MotionEvent.ACTION_UP:
                 if (mSelectedItemId != mTempSelectedItemId) {
                     mSelectedItemId = mTempSelectedItemId;
                     mItems.get(mSelectedItemId).performClick();
                     afterEvent();
                 }
-                return false;
+                return true;
         }
         return true;
     }
@@ -177,7 +177,7 @@ public abstract class GridView extends View {
         return false;
     }
 
-    protected static class GridItem {
+    public static class GridItem {
         int offResId, onResId;
         OnGridItemClickListener clickEvent;
 
@@ -212,4 +212,7 @@ public abstract class GridView extends View {
         return mSelectedItemId == 0 ? mItems.keyAt(0) : mSelectedItemId;
     }
 
+    public void setHighlightDrawable(Drawable highlightDrawable) {
+        mHighlightDrawable = highlightDrawable;
+    }
 }

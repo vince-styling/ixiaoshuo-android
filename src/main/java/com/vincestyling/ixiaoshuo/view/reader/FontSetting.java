@@ -4,20 +4,15 @@ import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 
-public class FontSetting extends ReaderViewBuilder {
-
-    public FontSetting(ReaderActivity activity, OnShowListener showListener) {
-        super(activity, R.id.lotFontSetting, showListener);
+public class FontSetting extends SettingBase {
+    public FontSetting(ReaderActivity activity) {
+        super(activity, R.id.lotFontSetting);
     }
 
     @Override
     protected void build() {
-        mView = getActivity().getLayoutInflater().inflate(R.layout.reading_board_font_setting, null);
-    }
-
-    @Override
-    public void init() {
-        TextView mTxvCurrentFont = (TextView) findViewById(R.id.txvCurrentFont);
+        inflate(R.layout.reading_board_font_setting);
+        TextView mTxvCurrentFont = (TextView) mView.findViewById(R.id.txvCurrentFont);
         mTxvCurrentFont.setText("当前 38 号字");
     }
 }

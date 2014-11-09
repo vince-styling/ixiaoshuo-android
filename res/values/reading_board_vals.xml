@@ -35,8 +35,6 @@
 
     <color name="reading_board_chapter_list_bg">#f4efe6</color>
     <color name="reading_board_chapter_list_bg_pressed">#fdfbf6</color>
-    <color name="reading_board_chapter_list_item">#626262</color>
-    <color name="reading_board_chapter_list_item_reading">#76ac1c</color>
     <color name="reading_board_btn_text_on">#7bb114</color>
     <color name="reading_board_btn_text_off">#d5d5d5</color>
 

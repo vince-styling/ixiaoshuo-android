@@ -6,26 +6,23 @@ import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 
-public class ProgressSetting extends ReaderViewBuilder implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
-    private SeekBar mSkbProgress;
+public class ProgressSetting extends SettingBase implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
     private TextView mTxvProgress;
+    private SeekBar mSkbProgress;
     private float originProgress;
 
-    public ProgressSetting(ReaderActivity activity, OnShowListener showListener) {
-        super(activity, R.id.lotProgressSetting, showListener);
+    public ProgressSetting(ReaderActivity activity) {
+        super(activity, R.id.lotProgressSetting);
     }
 
     @Override
     protected void build() {
-        mView = getActivity().getLayoutInflater().inflate(R.layout.reading_board_progress_setting, null);
-    }
+        inflate(R.layout.reading_board_progress_setting);
 
-    @Override
-    public void init() {
-        findViewById(R.id.btnProgressRevert).setOnClickListener(this);
-        mTxvProgress = (TextView) findViewById(R.id.txvProgress);
+        mView.findViewById(R.id.btnProgressRevert).setOnClickListener(this);
+        mTxvProgress = (TextView) mView.findViewById(R.id.txvProgress);
 
-        mSkbProgress = (SeekBar) findViewById(R.id.skbProgress);
+        mSkbProgress = (SeekBar) mView.findViewById(R.id.skbProgress);
         mSkbProgress.setOnSeekBarChangeListener(this);
     }
 
@@ -35,7 +32,6 @@ public class ProgressSetting extends ReaderViewBuilder implements SeekBar.OnSeek
 //		originProgress = getActivity().getReadingBoard().calculateReadingProgress();
         originProgress = 10;
         mSkbProgress.setProgress((int) originProgress);
-        super.resume();
     }
 
     @Override
@@ -45,7 +41,7 @@ public class ProgressSetting extends ReaderViewBuilder implements SeekBar.OnSeek
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        String progressTip = getActivity().getResources().getString(R.string.reading_txt_current_progress);
+        String progressTip = mReaderActivity.getResources().getString(R.string.reading_txt_current_progress);
         mTxvProgress.setText(String.format(progressTip, progress));
     }
 

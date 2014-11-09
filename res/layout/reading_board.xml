@@ -61,10 +61,6 @@
 
     </RelativeLayout>
 
-    <include
-        android:id="@+id/lotChapterList"
-        layout="@layout/reading_board_chapter_list"/>
-
     <RelativeLayout
         android:id="@+id/lotReadingHeadbar"
         android:layout_width="match_parent"
@@ -88,14 +84,14 @@
         android:orientation="vertical"
         android:layout_alignParentBottom="true">
 
-        <com.vincestyling.ixiaoshuo.ui.ScrollLayout
+        <FrameLayout
             android:id="@+id/lotSecondaryMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/reading_board_menu_content_bg"
             android:visibility="gone"/>
 
-        <com.vincestyling.ixiaoshuo.ui.ReadingMenu
+        <com.vincestyling.ixiaoshuo.ui.GridView
             android:id="@+id/readingMainMenu"
             android:layout_width="match_parent"
             android:layout_height="107dp"

@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent" android:layout_height="wrap_content"
-              android:paddingLeft="10dp" android:paddingRight="10dp"
-              android:paddingTop="15dp" android:paddingBottom="15dp"
-              android:gravity="center_vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:gravity="center_vertical">
 
-    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
-               android:layout_marginRight="10dp" android:src="@drawable/reading_board_chapter_list_marker" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/reading_board_chapter_list_marker"/>
 
-    <TextView android:id="@+id/txvChapterTitle"
-            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-            android:textSize="16sp" android:singleLine="true" android:ellipsize="middle" />
+    <TextView
+        android:id="@+id/txvChapterTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="16sp"
+        android:singleLine="true"
+        android:ellipsize="middle"/>
 
 </LinearLayout>
