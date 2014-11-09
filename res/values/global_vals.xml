@@ -49,13 +49,7 @@
         <item name="android:background">@drawable/reading_board_arrow</item>
     </style>
 
-    <style name="GlobalPendingTransitionAnimation.Activity" parent="@android:style/Animation.Activity">
-        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
-        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
-    </style>
-
-    <style name="AppsTheme" parent="android:Theme.Translucent.NoTitleBar">
-        <item name="android:windowAnimationStyle">@style/GlobalPendingTransitionAnimation.Activity</item>
+    <style name="AppsTheme" parent="android:Theme.Light.NoTitleBar">
         <item name="android:windowBackground">@color/theme_windows_bg</item>
         <item name="android:colorBackground">@color/theme_windows_bg</item>
     </style>
