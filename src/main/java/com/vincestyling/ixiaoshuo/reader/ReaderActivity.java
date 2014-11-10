@@ -147,6 +147,8 @@ public class ReaderActivity extends BaseActivity {
             });
             builder.show();
         }
+        ReaderSupport.destory();
+        RenderPaint.destory();
     }
 
     @Override
@@ -179,13 +181,6 @@ public class ReaderActivity extends BaseActivity {
     protected void onPause() {
         unregisterReceiver(mStatusBarReceiver);
         super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        ReaderSupport.destory();
-        RenderPaint.destory();
-        super.onDestroy();
     }
 
     private StatusBarBroadcastReceiver mStatusBarReceiver = new StatusBarBroadcastReceiver();

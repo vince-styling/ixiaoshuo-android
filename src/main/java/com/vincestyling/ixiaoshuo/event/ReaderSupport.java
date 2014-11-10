@@ -13,6 +13,7 @@ import java.util.List;
 public class ReaderSupport {
     private static OnDownloadChapterListener mListener;
     private static Chapter mReadingChapter;
+    private static int mChapterCount;
     private static Book mBook;
 
     public static void init(int bookId) throws IllegalStateException {
@@ -21,9 +22,6 @@ public class ReaderSupport {
 
         mReadingChapter = AppDAO.get().getReadingChapter(mBook.getId());
         mReadingChapter.ready(mBook.getId());
-
-        // TODO : should update last read time
-//		BookTable.updateBookLastReadTime(mContext, mCurrentBookId, System.currentTimeMillis());
     }
 
     public static void setDownloadChapterListener(OnDownloadChapterListener listener) {
@@ -39,8 +37,9 @@ public class ReaderSupport {
     }
 
     public static int getTotalChapterCount() {
-        // TODO : getTotalChapterCount 应该不用每次都查数据库
-        return AppDAO.get().getBookChapterCount(mBook.getId());
+        if (mChapterCount == 0)
+            mChapterCount = AppDAO.get().getBookChapterCount(mBook.getId());
+        return mChapterCount;
     }
 
     public static int getUnReadChapterCount() {
@@ -48,7 +47,6 @@ public class ReaderSupport {
     }
 
     public static int getCurrentChapterIndex() {
-        // TODO : getCurrentChapterIndex 应该不用每次都查数据库
         return AppDAO.get().getBookChapterIndex(mBook.getId(), mReadingChapter.getChapterId());
     }
 
@@ -94,15 +92,6 @@ public class ReaderSupport {
         new DeleteBookDBRequest(mBook);
     }
 
-    public static void updateReadingPercent(float percent) {
-        // TODO : BookTable.updateBookReadingPercent(mContext, mCurrentBookId, percent);
-    }
-
-    public static boolean downloadChapters() {
-        // TODO : implement pre download few chapters
-        return false;
-    }
-
     public static boolean downloadOneChapter(final Chapter chapter) {
         if (chapter == null || chapter.isNativeChapter()) {
             return false;
@@ -128,6 +117,7 @@ public class ReaderSupport {
 
     public static void destory() {
         mReadingChapter = null;
+        mChapterCount = 0;
         mListener = null;
         mBook = null;
     }

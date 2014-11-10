@@ -37,7 +37,6 @@ public class OnlineDocument extends Document {
                 mOnChangeReadingInfoListener.onChangeBottomInfo(
                         unreadCount > 0 ? String.format("剩余%d章", unreadCount) : "暂无新章节");
 
-                ReaderSupport.downloadChapters();
                 return true;
             }
 
@@ -94,13 +93,12 @@ public class OnlineDocument extends Document {
         return false;
     }
 
-    @Override
-    public void calculatePagePosition() {
-        super.calculatePagePosition();
-        float percentage = calculateReadingProgress();
-        percentage = percentage > 100 ? 100 : percentage;
-        ReaderSupport.updateReadingPercent(percentage);
-    }
+//    @Override
+//    public void calculatePagePosition() {
+//        super.calculatePagePosition();
+//        float percentage = calculateReadingProgress();
+//        percentage = percentage > 100 ? 100 : percentage;
+//    }
 
     @Override
     public float calculateReadingProgress() {

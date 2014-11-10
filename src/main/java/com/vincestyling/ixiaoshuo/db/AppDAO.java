@@ -1,10 +1,7 @@
 package com.vincestyling.ixiaoshuo.db;
 
 import android.content.Context;
-import com.vincestyling.ixiaoshuo.db.statment.CreateStatment;
-import com.vincestyling.ixiaoshuo.db.statment.DeleteStatment;
-import com.vincestyling.ixiaoshuo.db.statment.QueryStatment;
-import com.vincestyling.ixiaoshuo.db.statment.UpdateStatment;
+import com.vincestyling.ixiaoshuo.db.statment.*;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.utils.IOUtil;
@@ -84,8 +81,8 @@ public class AppDAO extends BaseDAO {
         Book book = getEntity(QueryStatment.build(Tables.Book.ID, Tables.Book.NAME, Tables.Book.UPDATE_STATUS)
                 .from(Tables.Book.TABLE_NAME).where(Tables.Book.ID).eq(bookId), Book.class);
         if (book != null) {
-            executeUpdate(UpdateStatment.build(Tables.Book.TABLE_NAME)
-                    .set(Tables.Book.LAST_READ_TIME, "datetime('now', 'localtime')").where(Tables.Book.ID).eq(bookId));
+            executeUpdate(UpdateStatment.build(Tables.Book.TABLE_NAME).set(Tables.Book.LAST_READ_TIME,
+                    UnescapeValue.get("datetime('now', 'localtime')")).where(Tables.Book.ID).eq(bookId));
         }
         return book;
     }
