@@ -1,7 +1,7 @@
 package com.vincestyling.ixiaoshuo.doc;
 
 import android.util.Log;
-import com.vincestyling.ixiaoshuo.event.YYReader;
+import com.vincestyling.ixiaoshuo.event.ReaderSupport;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.ui.RenderPaint;
 import com.vincestyling.ixiaoshuo.utils.CharsetUtil;
@@ -288,9 +288,9 @@ public abstract class Document {
     public void calculatePagePosition() {
         try {
             mPageBeginPosition = mReadByteBeginOffset + mContentBuf.substring(0, mPageCharOffsetInBuffer).getBytes(mEncoding.getName()).length;
-            Chapter chapter = YYReader.getCurrentChapter();
+            Chapter chapter = ReaderSupport.getCurrentChapter();
             chapter.setReadPosition((int) mPageBeginPosition);
-            YYReader.onReadingChapter(chapter);
+            ReaderSupport.onReadingChapter(chapter);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
@@ -347,7 +347,7 @@ public abstract class Document {
     }
 
     public String getReadingInfo() {
-        return YYReader.getBookName();
+        return ReaderSupport.getBookName();
     }
 
     public abstract boolean turnToChapter(Chapter chapter);

@@ -1,7 +1,7 @@
 package com.vincestyling.ixiaoshuo.doc;
 
 import com.vincestyling.ixiaoshuo.event.OnChangeReadingInfoListener;
-import com.vincestyling.ixiaoshuo.event.YYReader;
+import com.vincestyling.ixiaoshuo.event.ReaderSupport;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.ui.RenderPaint;
 import com.vincestyling.ixiaoshuo.utils.AppLog;
@@ -10,13 +10,11 @@ import com.vincestyling.ixiaoshuo.utils.Encoding;
 import java.io.RandomAccessFile;
 
 public class OnlineDocument extends Document {
-    private YYReader.OnDownloadChapterListener mOnDownloadChapterListener;
     private OnChangeReadingInfoListener mOnChangeReadingInfoListener;
     private boolean mIsTurnPrevious;
 
-    public OnlineDocument(YYReader.OnDownloadChapterListener onDownloadChapterListener, OnChangeReadingInfoListener onChangeReadingInfoListener) throws Exception {
+    public OnlineDocument(OnChangeReadingInfoListener onChangeReadingInfoListener) throws Exception {
         mOnChangeReadingInfoListener = onChangeReadingInfoListener;
-        mOnDownloadChapterListener = onDownloadChapterListener;
         mEncoding = Encoding.GBK;
     }
 
@@ -32,16 +30,19 @@ public class OnlineDocument extends Document {
                 mContentBuf.setLength(0);
                 mPageCharOffsetInBuffer = 0;
 
-                YYReader.onReadingChapter(chapter);
-                mOnChangeReadingInfoListener.onChangeBottomInfo("剩余" + YYReader.getUnReadChapterCount() + "章");
+                ReaderSupport.onReadingChapter(chapter);
                 mOnChangeReadingInfoListener.onChangeTopInfo(getReadingInfo());
 
-                YYReader.downloadChapters();
+                int unreadCount = ReaderSupport.getUnReadChapterCount();
+                mOnChangeReadingInfoListener.onChangeBottomInfo(
+                        unreadCount > 0 ? String.format("剩余%d章", unreadCount) : "暂无新章节");
+
+                ReaderSupport.downloadChapters();
                 return true;
             }
 
             if (chapter.isRemoteChapter() && !isDownloading()) {
-                YYReader.downloadOneChapter(chapter, mOnDownloadChapterListener);
+                ReaderSupport.downloadOneChapter(chapter);
             }
         } catch (Exception e) {
             AppLog.e(e);
@@ -66,7 +67,7 @@ public class OnlineDocument extends Document {
     public boolean turnNextPage() {
         if (super.turnNextPage()) return true;
 
-        Chapter chapter = YYReader.getNextChapter();
+        Chapter chapter = ReaderSupport.getNextChapter();
         if (renewRandomAccessFile(chapter)) {
             mReadByteBeginOffset = 0;
             mReadByteEndOffset = 0;
@@ -81,7 +82,7 @@ public class OnlineDocument extends Document {
     public boolean turnPreviousPage() {
         if (super.turnPreviousPage()) return true;
 
-        Chapter chapter = YYReader.getPrevChapter();
+        Chapter chapter = ReaderSupport.getPrevChapter();
         if (renewRandomAccessFile(chapter)) {
             mReadByteBeginOffset = getBackmostPosition();
             mReadByteEndOffset = mReadByteBeginOffset;
@@ -98,13 +99,13 @@ public class OnlineDocument extends Document {
         super.calculatePagePosition();
         float percentage = calculateReadingProgress();
         percentage = percentage > 100 ? 100 : percentage;
-        YYReader.onReadingPercent(percentage);
+        ReaderSupport.updateReadingPercent(percentage);
     }
 
     @Override
     public float calculateReadingProgress() {
-        int chapterCount = YYReader.getTotalChapterCount();
-        int readChapterNum = YYReader.onGetCurrentChapterIndex() + 1;
+        int chapterCount = ReaderSupport.getTotalChapterCount();
+        int readChapterNum = ReaderSupport.getCurrentChapterIndex() + 1;
         if (readChapterNum == chapterCount && mReadByteEndOffset == mFileSize) {
             if (mPageCharOffsetInBuffer + RenderPaint.get().getMaxCharCountPerPage() >= mContentBuf.length()) return 100;
         }
@@ -120,7 +121,6 @@ public class OnlineDocument extends Document {
 
     @Override
     public String getReadingInfo() {
-        return YYReader.getCurrentChapter().getTitle();
+        return ReaderSupport.getCurrentChapter().getTitle();
     }
-
 }

@@ -7,8 +7,10 @@
 
     <string name="reading_txt_current_progress">当前阅读进度 %1$d%%</string>
     <string name="reading_btn_revert_progress">恢复跳转</string>
+    <string name="reading_failed">初始化失败！</string>
+    <string name="reading_addto_bookshelf_confirm">是否添加到书架？</string>
 
-    <dimen name="reading_board_default_text_size">10sp</dimen>
+    <dimen name="reading_board_default_text_size">14sp</dimen>
     <dimen name="reading_board_min_text_size">10sp</dimen>
     <dimen name="reading_board_max_text_size">30sp</dimen>
 

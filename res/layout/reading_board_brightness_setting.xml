@@ -17,7 +17,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/light"/>
+            android:background="@drawable/reading_board_light_dark"/>
 
         <SeekBar
             android:id="@+id/seekBright"
@@ -36,7 +36,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/light_shine"/>
+            android:background="@drawable/reading_board_light_shine"/>
 
     </LinearLayout>
 

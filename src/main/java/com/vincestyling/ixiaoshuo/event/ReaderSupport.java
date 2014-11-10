@@ -1,8 +1,7 @@
-package com.vincestyling.ixiaoshuo.service;
+package com.vincestyling.ixiaoshuo.event;
 
 import com.duowan.mobile.netroid.Listener;
 import com.vincestyling.ixiaoshuo.db.AppDAO;
-import com.vincestyling.ixiaoshuo.event.YYReader;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.net.request.DeleteBookDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
@@ -11,68 +10,65 @@ import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReaderSupport implements YYReader.OnYYReaderListener {
+public class ReaderSupport {
+    private static OnDownloadChapterListener mListener;
+    private static Chapter mReadingChapter;
+    private static Book mBook;
 
-    private Book mBook;
-    private Chapter mReadingChapter;
-
-    public void init(int bookId) throws IllegalStateException {
+    public static void init(int bookId) throws IllegalStateException {
         mBook = AppDAO.get().getBookOnReading(bookId);
-        if (mBook == null) {
-            throw new IllegalStateException("bookId not exists " + bookId);
-        }
+        if (mBook == null) throw new IllegalStateException("bookId not exists " + bookId);
 
         mReadingChapter = AppDAO.get().getReadingChapter(mBook.getId());
         mReadingChapter.ready(mBook.getId());
 
-        YYReader.init(this);
         // TODO : should update last read time
 //		BookTable.updateBookLastReadTime(mContext, mCurrentBookId, System.currentTimeMillis());
     }
 
-    @Override
-    public String onGetBookName() {
+    public static void setDownloadChapterListener(OnDownloadChapterListener listener) {
+        mListener = listener;
+    }
+
+    public static int getBookId() {
+        return mBook.getId();
+    }
+
+    public static String getBookName() {
         return mBook.getName();
     }
 
-    @Override
-    public int onGetTotalChapterCount() {
-        // TODO : onGetTotalChapterCount 应该不用每次都查数据库
+    public static int getTotalChapterCount() {
+        // TODO : getTotalChapterCount 应该不用每次都查数据库
         return AppDAO.get().getBookChapterCount(mBook.getId());
     }
 
-    @Override
-    public int onGetUnReadChapterCount() {
-        return onGetTotalChapterCount() - onGetCurrentChapterIndex() - 1;
+    public static int getUnReadChapterCount() {
+        return getTotalChapterCount() - getCurrentChapterIndex() - 1;
     }
 
-    @Override
-    public int onGetCurrentChapterIndex() {
-        // TODO : onGetCurrentChapterIndex 应该不用每次都查数据库
+    public static int getCurrentChapterIndex() {
+        // TODO : getCurrentChapterIndex 应该不用每次都查数据库
         return AppDAO.get().getBookChapterIndex(mBook.getId(), mReadingChapter.getChapterId());
     }
 
-    @Override
-    public Chapter onGetCurrentChapter() {
+    public static Chapter getCurrentChapter() {
         return mReadingChapter;
     }
 
-    @Override
-    public Chapter onGetPrevChapter() {
+    public static Chapter getPrevChapter() {
         Chapter chapter = AppDAO.get().getPreviousChapter(mBook.getId(), mReadingChapter.getChapterId());
         if (chapter != null) chapter.ready(mBook.getId());
         return chapter;
     }
 
-    @Override
-    public Chapter onGetNextChapter() {
+    public static Chapter getNextChapter() {
         Chapter chapter = AppDAO.get().getNextChapter(mBook.getId(), mReadingChapter.getChapterId());
         if (chapter != null) chapter.ready(mBook.getId());
         return chapter;
     }
 
-    @Override
-    public List<Chapter> onGetChapterList() {
+    public static List<Chapter> getChapterList() {
         List<Chapter> list = AppDAO.get().getBookChapters(mBook.getId());
         List<Chapter> chapInfoList = new ArrayList<Chapter>(list.size());
         for (Chapter chapter : list) {
@@ -81,60 +77,46 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
         return chapInfoList;
     }
 
-    @Override
-    public void onReadingChapter(Chapter chapter) {
+    public static void onReadingChapter(Chapter chapter) {
         AppDAO.get().makeReadingChapter(mBook.getId(), chapter);
         mReadingChapter = chapter;
     }
 
-    @Override
-    public boolean onIsBookOnShelf() {
+    public static boolean isBookOnShelf() {
         return AppDAO.get().isBookOnShelf(mBook.getId());
     }
 
-    @Override
-    public boolean onAddToBookShelf() {
+    public static boolean addToBookShelf() {
         return AppDAO.get().addToBookShelf(mBook.getId());
     }
 
-    @Override
-    public void onRemoveInBookShelf() {
+    public static void removeInBookShelf() {
         new DeleteBookDBRequest(mBook);
     }
 
-    @Override
-    public void onReadingPercent(float percent) {
+    public static void updateReadingPercent(float percent) {
         // TODO : BookTable.updateBookReadingPercent(mContext, mCurrentBookId, percent);
     }
 
-    @Override
-    public void onCancelRead() {
-        mBook = null;
-        mReadingChapter = null;
-    }
-
-    @Override
-    public boolean onDownloadChapters() {
+    public static boolean downloadChapters() {
         // TODO : implement pre download few chapters
         return false;
     }
 
-    @Override
-    public boolean onDownloadOneChapter(final Chapter chapter, final YYReader.OnDownloadChapterListener listener) {
-        if (chapter == null || chapter.isNativeChapter() || listener == null) {
+    public static boolean downloadOneChapter(final Chapter chapter) {
+        if (chapter == null || chapter.isNativeChapter()) {
             return false;
         }
 
         // onDownloadStart() should perform with Netroid's Listener.onPreExecute(),
-        // but onPreExecute() always delay, doesn't make the UI know it.
-        listener.onDownloadStart(chapter);
+        // but onPreExecute() always delay, doesn't make the UI know it instantly.
+        mListener.onDownloadStart(chapter);
 
         Netroid.downloadChapterContent(mBook.getId(), chapter.getChapterId(), new Listener<Void>() {
             @Override
             public void onFinish() {
-                listener.onDownloadComplete(chapter);
+                mListener.onDownloadComplete(chapter);
             }
-
             @Override
             public void onSuccess(Void r) {
                 chapter.ready(mBook.getId());
@@ -144,4 +126,9 @@ public class ReaderSupport implements YYReader.OnYYReaderListener {
         return true;
     }
 
+    public static void destory() {
+        mReadingChapter = null;
+        mListener = null;
+        mBook = null;
+    }
 }

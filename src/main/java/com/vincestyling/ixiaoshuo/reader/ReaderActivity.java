@@ -2,16 +2,16 @@ package com.vincestyling.ixiaoshuo.reader;
 
 import android.app.AlertDialog;
 import android.content.*;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.doc.OnlineDocument;
 import com.vincestyling.ixiaoshuo.event.OnChangeReadingInfoListener;
-import com.vincestyling.ixiaoshuo.event.YYReader;
+import com.vincestyling.ixiaoshuo.event.ReaderSupport;
 import com.vincestyling.ixiaoshuo.pojo.ColorScheme;
 import com.vincestyling.ixiaoshuo.pojo.Const;
-import com.vincestyling.ixiaoshuo.service.ReaderSupport;
 import com.vincestyling.ixiaoshuo.ui.BatteryView;
 import com.vincestyling.ixiaoshuo.ui.ReadingBoard;
 import com.vincestyling.ixiaoshuo.ui.RenderPaint;
@@ -35,44 +35,39 @@ public class ReaderActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         SysUtil.setFullScreen(this);
 
-        // TODO : apply reader orientation setting
-//		if (!SettingTable.isReadPortMode(this)) {
-//			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//		}
-
         try {
             int bookId = getIntent().getIntExtra(Const.BOOK_ID, 0);
-            new ReaderSupport().init(bookId);
+            ReaderSupport.init(bookId);
+
+            mPreferences = new ReadingPreferences(this);
+            if (!mPreferences.isPortMode()) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
 
             setContentView(R.layout.reading_board);
 
             mReadingBoard = (ReadingBoard) findViewById(R.id.readingBoard);
             initStatusBar();
 
-            OnChangeReadingInfoListener onChangeReadingInfoListener = new OnChangeReadingInfoListener() {
-                @Override
-                public void onChangeTopInfo(String topInfo) {
-                    mTopInfo.setText(topInfo);
-                }
-
+            mReadingBoard.init(new OnlineDocument(new OnChangeReadingInfoListener() {
                 @Override
                 public void onChangeBottomInfo(String bottomInfo) {
                     mBottomInfo.setText(bottomInfo);
                 }
-            };
-
-            mReadingBoard.init(new OnlineDocument(mReadingBoard, onChangeReadingInfoListener));
+                @Override
+                public void onChangeTopInfo(String topInfo) {
+                    mTopInfo.setText(topInfo);
+                }
+            }));
 
             mReadingMenuView = new ReadingMenuView(this);
-
-            mPreferences = new ReadingPreferences(this);
 
             RenderPaint.init(this);
             RenderPaint.get().setTextSize(mPreferences.getTextSize());
 
             onChangeColorScheme();
         } catch (Exception e) {
-            showToastMsg("初始化失败！");
+            showToastMsg(R.string.reading_failed);
             AppLog.e(e);
             finish();
         }
@@ -129,15 +124,15 @@ public class ReaderActivity extends BaseActivity {
     }
 
     public void onFinish() {
-        if (YYReader.isBookOnShelf()) {
+        if (ReaderSupport.isBookOnShelf()) {
             finish();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("是否添加到书架？");
+            builder.setMessage(R.string.reading_addto_bookshelf_confirm);
             builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    YYReader.addToBookShelf();
+                    ReaderSupport.addToBookShelf();
                     dialog.cancel();
                     finish();
                 }
@@ -145,7 +140,7 @@ public class ReaderActivity extends BaseActivity {
             builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    YYReader.removeInBookShelf();
+                    ReaderSupport.removeInBookShelf();
                     dialog.cancel();
                     finish();
                 }
@@ -188,7 +183,7 @@ public class ReaderActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        YYReader.onCancelRead();
+        ReaderSupport.destory();
         RenderPaint.destory();
         super.onDestroy();
     }

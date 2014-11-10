@@ -6,22 +6,22 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.view.*;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.doc.Document;
 import com.vincestyling.ixiaoshuo.doc.LayoutUtil;
-import com.vincestyling.ixiaoshuo.event.YYReader;
+import com.vincestyling.ixiaoshuo.event.OnDownloadChapterListener;
+import com.vincestyling.ixiaoshuo.event.ReaderSupport;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.ColorScheme;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 
-public class ReadingBoard extends View implements YYReader.OnDownloadChapterListener {
-    Document mDoc;
+public class ReadingBoard extends View {
+    private Document mDoc;
 
-    // added to support full-justification text layout
-    // make it LARGE enough to hold even 2048 GBK chars per line, rarely possible to reach this limit in reality
+    // added to support full-justification text layout, make it LARGE enough to hold
+    // even 2048 GBK chars per line, rarely possible to reach this limit in reality.
     private float mLayoutPositions[] = new float[4096];
 
     public ReadingBoard(Context context, AttributeSet attrs) {
@@ -29,11 +29,37 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
     }
 
     public void init(Document doc) throws Exception {
-        mDragPageShadowWidth = (int) getContext().getResources().getDimension(R.dimen.reading_board_page_shadow_width);
-        mDragPageShadow = (NinePatchDrawable) getContext().getResources().getDrawable(R.drawable.reading_board_page_shadow);
+        mDragPageShadowWidth = getContext().getResources().getDimensionPixelSize(R.dimen.reading_board_page_shadow_width);
+        mDragPageShadow = getContext().getResources().getDrawable(R.drawable.reading_board_page_shadow);
+
+        ReaderSupport.setDownloadChapterListener(new OnDownloadChapterListener() {
+            private ProgressDialog mLoadingPrgreDialog;
+
+            @Override
+            public void onDownloadStart(Chapter chapter) {
+                mLoadingPrgreDialog = ProgressDialog.show(getContext(), null,
+                        getResources().getString(R.string.loading_tip_msg), false, false);
+                mDoc.onDownloadStart();
+            }
+
+            @Override
+            public void onDownloadComplete(Chapter chapter) {
+                boolean willAdjust = mLoadingPrgreDialog.isShowing();
+                if (willAdjust) mLoadingPrgreDialog.cancel();
+                mLoadingPrgreDialog = null;
+
+                if (chapter.isNativeChapter()) {
+                    mDoc.onDownloadComplete(true, willAdjust);
+                    if (willAdjust) turnToChapter(chapter);
+                } else {
+                    mDoc.onDownloadComplete(false, willAdjust);
+                    if (willAdjust) getActivity().showToastMsg(R.string.without_data);
+                }
+            }
+        });
 
         mDoc = doc;
-        turnToChapter(YYReader.getCurrentChapter());
+        turnToChapter(ReaderSupport.getCurrentChapter());
 
         setFocusable(true);
     }
@@ -44,8 +70,7 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
         drawSmoothSlidePage(canvas);
     }
 
-    private Bitmap mBackupPageBitmap;
-    private Bitmap mMainPageBitmap;
+    private Bitmap mMainPageBitmap, mBackupPageBitmap;
     private Canvas mDrawableCanvas;
 
     private void resetPageBitmapDrawable(int width, int height) {
@@ -260,7 +285,7 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
 
     private int mStartDraggingDirection;
     private float mDraggingBitmapX;
-    private NinePatchDrawable mDragPageShadow;
+    private Drawable mDragPageShadow;
     private int mDragPageShadowWidth;
 
     public void startDragging() {
@@ -372,29 +397,6 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
         }
     }
 
-    ProgressDialog mLoadingPrgreDialog;
-
-    @Override
-    public void onDownloadStart(Chapter chapter) {
-        mLoadingPrgreDialog = ProgressDialog.show(getContext(), null, getContext().getString(R.string.loading_tip_msg), false, false);
-        mDoc.onDownloadStart();
-    }
-
-    @Override
-    public void onDownloadComplete(Chapter chapter) {
-        boolean willAdjust = mLoadingPrgreDialog.isShowing();
-        if (willAdjust) mLoadingPrgreDialog.cancel();
-        mLoadingPrgreDialog = null;
-
-        if (chapter.isNativeChapter()) {
-            mDoc.onDownloadComplete(true, willAdjust);
-            if (willAdjust) turnToChapter(chapter);
-        } else {
-            mDoc.onDownloadComplete(false, willAdjust);
-            if (willAdjust) getActivity().showToastMsg(R.string.without_data);
-        }
-    }
-
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         return getActivity().onKeyUp(keyCode, event);
@@ -412,5 +414,4 @@ public class ReadingBoard extends View implements YYReader.OnDownloadChapterList
     private ReaderActivity getActivity() {
         return (ReaderActivity) getContext();
     }
-
 }

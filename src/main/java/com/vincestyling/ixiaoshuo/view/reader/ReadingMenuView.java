@@ -1,5 +1,6 @@
 package com.vincestyling.ixiaoshuo.view.reader;
 
+import android.content.pm.ActivityInfo;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,14 +72,13 @@ public class ReadingMenuView implements Animation.AnimationListener, View.OnTouc
         mReadingMenu.putItem(new GridView.GridItem(R.drawable.reading_board_setting_orientation_on,
                 R.drawable.reading_board_setting_orientation_off, new OnGridItemClickListener(MENU_ORIENTATION) {
             public void onGridItemClick() {
-                // TODO : apply the orientation setting
-//				if (SettingTable.isReadPortMode(getActivity())) {
-//					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//					SettingTable.setIsReadPortMode(getActivity(), false);
-//				} else {
-//					getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//					SettingTable.setIsReadPortMode(getActivity(), true);
-//				}
+				if (mReaderActivity.getPreferences().isPortMode()) {
+                    mReaderActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    mReaderActivity.getPreferences().setIsPortMode(false);
+				} else {
+                    mReaderActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    mReaderActivity.getPreferences().setIsPortMode(true);
+				}
             }
         }));
 
@@ -88,7 +88,7 @@ public class ReadingMenuView implements Animation.AnimationListener, View.OnTouc
                 // TODO : implement global settings
 //				Intent intent = new Intent(getActivity(), SettingActivity.class);
 //				getActivity().startActivity(intent);
-//				getActivity().getReadingMenu().hideReadingMenu();
+                hideMenu();
             }
         }));
 

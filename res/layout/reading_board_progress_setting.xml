@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:max="100"
         android:progress="0"
@@ -31,7 +30,7 @@
         android:layout_height="wrap_content"
         android:text="@string/reading_btn_revert_progress"
         android:textSize="20sp"
-        android:textColor="@color/reading_board_btn_text_on"
+        android:textColor="@drawable/reading_board_btn_txt"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:background="@drawable/reading_board_btn_bg"/>

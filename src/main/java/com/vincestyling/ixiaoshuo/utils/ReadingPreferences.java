@@ -21,15 +21,15 @@ public class ReadingPreferences {
     private int mBrightness;
     private static final String BRIGHTNESS = "brightness";
     public static final int MIN_BRIGHT = 5;
-    /**
-     * 防止灭屏的最小亮度
-     */
 
     private boolean mIsDarkMode;
     private static final String DARK_MODE = "isDarkMode";
 
     private ColorScheme[] mColorSchemes;
     private ColorScheme mDarkColorScheme;
+
+    private boolean mIsPortMode;
+    private static final String PORT_MODE = "isPortMode";
 
     public ReadingPreferences(Context ctx) {
         mCtx = ctx;
@@ -55,6 +55,7 @@ public class ReadingPreferences {
 
         mDarkColorScheme = new ColorScheme("", 0xff000000, 0xff444444, true);
         mIsDarkMode = sharedPreferences.getBoolean(DARK_MODE, false);
+        mIsPortMode = sharedPreferences.getBoolean(PORT_MODE, true);
 
         mBrightness = sharedPreferences.getInt(BRIGHTNESS, -1);
     }
@@ -83,9 +84,14 @@ public class ReadingPreferences {
         return mColorSchemeIndex;
     }
 
+    public boolean isPortMode() {
+        return mIsPortMode;
+    }
+
     public void setColorSchemeIndex(int colorSchemeIndex) {
         putInt(COLOR_SCHEME_INDEX, colorSchemeIndex);
         mColorSchemeIndex = colorSchemeIndex;
+        setIsDarkMode(false);
     }
 
     public void setBrightness(int brightness) {
@@ -116,6 +122,11 @@ public class ReadingPreferences {
         return false;
     }
 
+    public void setIsPortMode(boolean isPortMode) {
+        putBoolean(PORT_MODE, isPortMode);
+        mIsPortMode = isPortMode;
+    }
+
     public int getTextSize() {
         return mTextSize;
     }
@@ -124,14 +135,14 @@ public class ReadingPreferences {
         SharedPreferences sharedPreferences = getPreferences();
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     private void putBoolean(String key, boolean value) {
         SharedPreferences sharedPreferences = getPreferences();
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
 
 }

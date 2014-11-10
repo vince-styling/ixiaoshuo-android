@@ -13,7 +13,7 @@ import com.duowan.mobile.netroid.NetroidError;
 import com.duowan.mobile.netroid.NetworkResponse;
 import com.duowan.mobile.netroid.Response;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.event.YYReader;
+import com.vincestyling.ixiaoshuo.event.ReaderSupport;
 import com.vincestyling.ixiaoshuo.net.request.BasicRequest;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
@@ -88,7 +88,7 @@ public class BookChapterListDialog extends AbsDialog implements AdapterView.OnIt
 
             @Override
             public NetworkResponse perform() {
-                chapterList = YYReader.getChapterList();
+                chapterList = ReaderSupport.getChapterList();
                 return new NetworkResponse(null, null);
             }
 
@@ -108,7 +108,9 @@ public class BookChapterListDialog extends AbsDialog implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mReaderActivity.getReadingBoard().turnToChapter((Chapter) parent.getItemAtPosition(position));
+        Chapter chapter = mAdapter.getItem(position);
+        chapter.ready(ReaderSupport.getBookId());
+        mReaderActivity.getReadingBoard().turnToChapter(chapter);
         cancel();
     }
 }

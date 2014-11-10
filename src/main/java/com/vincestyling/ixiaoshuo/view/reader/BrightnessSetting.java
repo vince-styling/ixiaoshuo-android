@@ -10,7 +10,7 @@ import com.vincestyling.ixiaoshuo.utils.ReadingPreferences;
 import com.vincestyling.ixiaoshuo.utils.SysUtil;
 
 public class BrightnessSetting extends SettingBase implements SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
-    private Button mBtnDark, mBtnLight;
+    private Button mBtnLight, mBtnDark;
     private SeekBar mSeekBright;
 
     public BrightnessSetting(ReaderActivity activity) {
@@ -22,13 +22,13 @@ public class BrightnessSetting extends SettingBase implements SeekBar.OnSeekBarC
         inflate(R.layout.reading_board_brightness_setting);
 
         mSeekBright = (SeekBar) mView.findViewById(R.id.seekBright);
+        mSeekBright.setOnSeekBarChangeListener(this);
 
-        mBtnDark = (Button) mView.findViewById(R.id.buttonDark);
-        mBtnDark.setOnTouchListener(this);
         mBtnLight = (Button) mView.findViewById(R.id.buttonLight);
         mBtnLight.setOnTouchListener(this);
 
-        mSeekBright.setOnSeekBarChangeListener(this);
+        mBtnDark = (Button) mView.findViewById(R.id.buttonDark);
+        mBtnDark.setOnTouchListener(this);
     }
 
     @Override
@@ -47,7 +47,9 @@ public class BrightnessSetting extends SettingBase implements SeekBar.OnSeekBarC
 
         if (mReaderActivity.getPreferences().isDarkMode()) {
             mBtnDark.setPressed(true);
+            mBtnLight.setPressed(false);
         } else {
+            mBtnDark.setPressed(false);
             mBtnLight.setPressed(true);
         }
     }
@@ -68,8 +70,8 @@ public class BrightnessSetting extends SettingBase implements SeekBar.OnSeekBarC
             mBtnLight.setPressed(true);
             mBtnDark.setPressed(false);
         }
-//		getActivity().setColorScheme(getActivity().getPreferences().getColorScheme());
 
+        mReaderActivity.onChangeColorScheme();
         return true;
     }
 
