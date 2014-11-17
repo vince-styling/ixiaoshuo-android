@@ -7,21 +7,15 @@ import com.vincestyling.ixiaoshuo.net.Netroid;
 public abstract class BasicRequest<T> extends Request<T> {
     public BasicRequest(int method, String url, Listener<T> listener) {
         super(method, url, listener);
-        // deploy immediately
-        deploy();
+        // deploy request immediately
+        Netroid.get().add(this);
     }
 
     public BasicRequest(String url, Listener<T> listener) {
-        super(url, listener);
-        // deploy immediately
-        deploy();
+        this(Method.GET, url, listener);
     }
 
     public BasicRequest(Listener<T> listener) {
         this(null, listener);
-    }
-
-    private void deploy() {
-        Netroid.get().add(this);
     }
 }
