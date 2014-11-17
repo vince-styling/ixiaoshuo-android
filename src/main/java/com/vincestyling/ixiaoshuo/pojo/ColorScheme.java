@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -29,18 +28,15 @@ public class ColorScheme {
         }
     }
 
-    public Bitmap getResizeSchemeBitmap(Resources res, int width, int height) {
+    public Bitmap getResizeSchemeBitmap(Resources res, int dstWidth, int dstHeight) {
         if (isPureColor) {
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            Bitmap bitmap = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(bitmap);
             canvas.drawColor(resourceId);
             return bitmap;
-        } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(res, resourceId);
-            Matrix matrix = new Matrix();
-            matrix.postScale(((float) width) / bitmap.getWidth(), ((float) height) / bitmap.getHeight());
-            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
         }
+        return Bitmap.createScaledBitmap(
+                BitmapFactory.decodeResource(res, resourceId), dstWidth, dstHeight, false);
     }
 
     public int getTextColor() {

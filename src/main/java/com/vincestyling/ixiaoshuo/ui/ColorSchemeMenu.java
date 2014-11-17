@@ -9,22 +9,17 @@ import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.pojo.ColorScheme;
 import com.vincestyling.ixiaoshuo.reader.ReaderActivity;
 
+import java.lang.ref.WeakReference;
+
 public class ColorSchemeMenu extends View {
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    private Bitmap[] mSchemeBitmaps;
-    private int mColumnCount;
-    private int mSelectedItemIndex = -1;
-    private int mTempSelectedItemIndex = -1;
+    private int mSchemeCount, mSchemeWidth, mSchemeHeight, mSchemeSelectedColor;
+    private int mSchemeTextMargin, mSchemeTextSize, mSchemeTextColor;
+    private int mSchemeMargin, mSchemeCornerRadius, mBorderSize;
 
-    private int mSchemeCornerRadius, mBorderSize;
-    private int mSchemeWidth, mSchemeHeight;
-    private int mSchemeSelectedColor;
-    private int mSchemeMargin;
-
-    private int mSchemeTextMargin;
-    private int mSchemeTextSize;
-    private int mSchemeTextColor;
+    private int mTempSelectedItemIndex = -1, mSelectedItemIndex = -1;
+    private WeakReference<Bitmap> mItemsBitmapRef;
 
     public ColorSchemeMenu(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,8 +35,7 @@ public class ColorSchemeMenu extends View {
         mSchemeTextSize = getResources().getDimensionPixelSize(R.dimen.reading_menu_scheme_text_size);
         mSchemeTextColor = getResources().getColor(R.color.reading_menu_scheme_text_color);
 
-        mColumnCount = getActivity().getPreferences().getColorSchemes().length;
-        mSchemeBitmaps = new Bitmap[mColumnCount];
+        mSchemeCount = getActivity().getPreferences().getColorSchemes().length;
 
         mSelectedItemIndex = getActivity().getPreferences().getColorSchemeIndex();
         mTempSelectedItemIndex = mSelectedItemIndex;
@@ -49,68 +43,87 @@ public class ColorSchemeMenu extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int measureWidth = mSchemeWidth * mColumnCount + mSchemeMargin * (mColumnCount - 1);
+        int measureWidth = mSchemeWidth * mSchemeCount + mSchemeMargin * (mSchemeCount - 1);
         int measureHeight = mSchemeHeight + mSchemeTextMargin + mSchemeTextSize;
         setMeasuredDimension(measureWidth, measureHeight);
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        for (int index = 0; index < mColumnCount; index++) {
-            if (mSchemeBitmaps[index] == null) {
-                ColorScheme scheme = getActivity().getPreferences().getColorSchemes()[index];
-                mSchemeBitmaps[index] = scheme.getResizeSchemeBitmap(getResources(), mSchemeWidth, mSchemeHeight);
-            }
-            canvas.save(Canvas.CLIP_SAVE_FLAG);
-            RectF itemRect = getItemRect(index);
-            canvas.clipRect(itemRect);
-            drawItem(canvas, itemRect, index);
-            canvas.restore();
+    private void init() {
+        Bitmap itemsBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        mItemsBitmapRef = new WeakReference<Bitmap>(itemsBitmap);
+        Canvas canvas = new Canvas(itemsBitmap);
+        for (int index = 0; index < mSchemeCount; index++) {
+            drawItem(canvas, index, false);
         }
+    }
+
+    private void drawItem(Canvas canvas, int index, boolean highlighting) {
+        Bitmap schemeBitmap = getActivity().getPreferences().getColorSchemes()[index]
+                .getResizeSchemeBitmap(getResources(), mSchemeWidth, mSchemeHeight);
+        RectF itemRect = getItemRect(index);
+
+        itemRect.bottom = itemRect.top + mSchemeHeight;
+        RectF roundRect = new RectF(itemRect);
+
+//        int origColor = mPaint.getColor();
+
+        // -------------------------------------- draw selected background
+        if (highlighting && index == mTempSelectedItemIndex) {
+//            Paint.Style origStyle = mPaint.getStyle();
+            mPaint.setStyle(Paint.Style.FILL);
+            mPaint.setColor(mSchemeSelectedColor);
+            canvas.drawRoundRect(roundRect, mSchemeCornerRadius, mSchemeCornerRadius, mPaint);
+//            mPaint.setStyle(origStyle);
+//            mPaint.setColor(origColor);
+        }
+
+        // -------------------------------------- draw scheme bitmap
+        roundRect.inset(mBorderSize, mBorderSize);
+        mPaint.setShader(new BitmapShader(schemeBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+        canvas.drawRoundRect(roundRect, mSchemeCornerRadius, mSchemeCornerRadius, mPaint);
+        mPaint.setShader(null);
+
+        // -------------------------------------- draw scheme name
+//        float origTextSize = mPaint.getTextSize();
+        mPaint.setTextSize(mSchemeTextSize);
+        Rect textBoundsRect = new Rect();
+        ColorScheme scheme = getActivity().getPreferences().getColorSchemes()[index];
+        mPaint.getTextBounds(scheme.getName(), 0, scheme.getName().length(), textBoundsRect);
+        float left = itemRect.left + (itemRect.width() - textBoundsRect.width()) / 2;
+        float top = itemRect.bottom + mSchemeTextMargin - mPaint.ascent();
+
+        mPaint.setColor(highlighting ? mSchemeSelectedColor : mSchemeTextColor);
+        canvas.drawText(scheme.getName(), left, top, mPaint);
+
+//        mPaint.setTextSize(origTextSize);
+//        mPaint.setColor(origColor);
     }
 
     private RectF getItemRect(int index) {
         RectF itemRect = new RectF();
-        itemRect.left = (index % mColumnCount) * (mSchemeWidth + mSchemeMargin);
+        itemRect.left = (index % mSchemeCount) * (mSchemeWidth + mSchemeMargin);
         itemRect.right = itemRect.left + mSchemeWidth;
         itemRect.bottom = getHeight();
         return itemRect;
     }
 
-    private void drawItem(Canvas canvas, RectF itemRect, int index) {
-        ColorScheme scheme = getActivity().getPreferences().getColorSchemes()[index];
-        itemRect.bottom = itemRect.top + mSchemeHeight;
-        RectF roundRect = new RectF(itemRect);
-
-        // ------------------ draw selected background
-        if (index == mTempSelectedItemIndex) {
-            mPaint.setStyle(Paint.Style.FILL);
-            mPaint.setColor(mSchemeSelectedColor);
-            canvas.drawRoundRect(roundRect, mSchemeCornerRadius, mSchemeCornerRadius, mPaint);
-        }
-
-        // ------------------ draw scheme bitmap
-        roundRect.set(itemRect.left + mBorderSize, itemRect.top + mBorderSize, itemRect.right - mBorderSize, itemRect.bottom - mBorderSize);
-        Shader shader = new BitmapShader(mSchemeBitmaps[index], Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        mPaint.setShader(shader);
-        canvas.drawRoundRect(roundRect, mSchemeCornerRadius, mSchemeCornerRadius, mPaint);
-        mPaint.setShader(null);
-
-        // ------------------ draw scheme name
-        mPaint.setTextSize(mSchemeTextSize);
-        mPaint.setColor(mSchemeTextColor);
-        Rect textBoundsRect = new Rect();
-        mPaint.getTextBounds(scheme.getName(), 0, scheme.getName().length(), textBoundsRect);
-        float left = itemRect.left + (itemRect.width() - textBoundsRect.width()) / 2;
-        float top = itemRect.bottom + mSchemeTextMargin - mPaint.ascent();
-        canvas.drawText(scheme.getName(), left, top, mPaint);
+    /**
+     * Notice : Never use onDraw's Canvas do any complex work such as drawRoundRect or setShader,
+     * it's problematical between difference Canvas instance :
+     * android.graphics.Canvas VS android.view.GLES20RecordingCanvas.
+     */
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (mItemsBitmapRef == null || mItemsBitmapRef.get() == null) init();
+        canvas.drawBitmap(mItemsBitmapRef.get(), 0, 0, mPaint);
+        drawItem(canvas, mTempSelectedItemIndex, true);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                for (int index = 0; index < mColumnCount; index++) {
+                for (int index = 0; index < mSchemeCount; index++) {
                     RectF itemRect = getItemRect(index);
                     if (itemRect.contains(event.getX(), event.getY())) {
                         if (index == mTempSelectedItemIndex) return false;
@@ -136,8 +149,7 @@ public class ColorSchemeMenu extends View {
         return true;
     }
 
-    public final ReaderActivity getActivity() {
+    public ReaderActivity getActivity() {
         return (ReaderActivity) getContext();
     }
-
 }
