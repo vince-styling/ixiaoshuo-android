@@ -12,6 +12,8 @@ import android.view.View;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.event.OnGridItemClickListener;
 
+import java.lang.ref.WeakReference;
+
 public class GridView extends View {
 
     public GridView(Context context, AttributeSet attrs) {
@@ -40,15 +42,11 @@ public class GridView extends View {
     protected Drawable mHighlightDrawable;
 
     // this ItemsBitmap draw with all OFF status grid item, just draw once then reuse
-    private Bitmap mItemsBitmap;
+    private WeakReference<Bitmap> mItemsBitmapRef;
 
     private int mItemWidth, mItemHeight;
 
-    // is draw the default cache bitmap
-    private boolean mInitialized;
-
     private synchronized void init() {
-        mInitialized = true;
         int width = getWidth();
         int height = getHeight();
 
@@ -57,14 +55,11 @@ public class GridView extends View {
         mItemWidth = (int) Math.ceil((width) / mColumnCount);
         mItemHeight = height / (mItems.size() / mColumnCount);
 
-        mItemsBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        mItemsBitmap.eraseColor(Color.TRANSPARENT);
+        Bitmap itemsBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        mItemsBitmapRef = new WeakReference<Bitmap>(itemsBitmap);
+        itemsBitmap.eraseColor(Color.TRANSPARENT);
 
-        Canvas tmpCanvas = new Canvas(mItemsBitmap);
-        drawItems(tmpCanvas);
-    }
-
-    private void drawItems(Canvas canvas) {
+        Canvas canvas = new Canvas(itemsBitmap);
         for (int index = 0; index < mItems.size(); index++) {
             Rect itemRect = getItemRect(index);
 
@@ -121,8 +116,8 @@ public class GridView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (!mInitialized) init();
-        canvas.drawBitmap(mItemsBitmap, 0, 0, null);
+        if (mItemsBitmapRef == null || mItemsBitmapRef.get() == null) init();
+        canvas.drawBitmap(mItemsBitmapRef.get(), 0, 0, null);
         highlightItem(canvas);
     }
 
