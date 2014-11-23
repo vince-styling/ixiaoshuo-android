@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/book_shelf_bg_layer">
+
+    <FrameLayout
+        style="@style/top_titlebar">
+
+        <TextView
+            style="@style/top_titlebar_txv"
+            android:text="@string/aboutus_head_title"/>
+
+        <Button
+            style="@style/top_titlebar_btn_close"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/aboutus_rounded_bg">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/aboutus_titlebar_bg">
+
+                <LinearLayout style="@style/aboutus_ring"/>
+                <LinearLayout style="@style/aboutus_ring"/>
+                <LinearLayout style="@style/aboutus_ring"/>
+                <LinearLayout style="@style/aboutus_ring"/>
+                <LinearLayout style="@style/aboutus_ring"/>
+                <LinearLayout style="@style/aboutus_ring"/>
+                <LinearLayout style="@style/aboutus_ring"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/aboutus_intro"
+                android:padding="12dp"
+                android:textSize="14sp"
+                android:textColor="#625d5d"
+                android:lineSpacingExtra="10dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txvVersionName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#ffffff"
+            android:gravity="center_vertical"
+            android:layout_marginTop="32dp"
+            android:paddingRight="18dp"
+            android:background="@drawable/aboutus_version_bg"/>
+
+    </FrameLayout>
+
+</LinearLayout>

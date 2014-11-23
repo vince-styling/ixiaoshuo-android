@@ -5,7 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.KeyEvent;
+import android.view.*;
+import android.widget.PopupWindow;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.ui.MainMenuGridView;
 import com.vincestyling.ixiaoshuo.utils.SysUtil;
@@ -59,20 +60,54 @@ public class MainActivity extends BaseActivity {
 		mMainMenuView.selectItem(menuId);
     }
 
+    private PopupWindow mGlobalMenu;
+
+    private boolean showGlobalMenu() {
+        if (mGlobalMenu == null) {
+            View view = getLayoutInflater().inflate(R.layout.global_apps_menu, null);
+            mGlobalMenu = new PopupWindow(view, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, false);
+            mGlobalMenu.setAnimationStyle(android.R.style.Animation_Dialog);
+        }
+        if (mGlobalMenu.isShowing()) return false;
+        mGlobalMenu.showAtLocation(mMainMenuView, Gravity.BOTTOM, 0, 0);
+        return true;
+    }
+
+    public boolean hideGlobalMenu() {
+        if (mGlobalMenu != null && mGlobalMenu.isShowing()) {
+            mGlobalMenu.dismiss();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            hideGlobalMenu();
+        }
+        return super.onTouchEvent(event);
+    }
+
     private long lastPressBackKeyTime;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - lastPressBackKeyTime < 2000) {
-                    finish();
-                    SysUtil.killAppProcess();
-                } else {
-                    showToastMsg(R.string.exit_app_tip);
-                    lastPressBackKeyTime = currentTime;
+                if (!hideGlobalMenu()) {
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - lastPressBackKeyTime < 2000) {
+                        finish();
+                        SysUtil.killAppProcess();
+                    } else {
+                        showToastMsg(R.string.exit_app_tip);
+                        lastPressBackKeyTime = currentTime;
+                    }
                 }
+                return true;
+            case KeyEvent.KEYCODE_MENU:
+                if (!showGlobalMenu()) hideGlobalMenu();
                 return true;
         }
         return super.onKeyDown(keyCode, event);

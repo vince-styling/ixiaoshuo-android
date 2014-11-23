@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aboutus_head_title">关于爱小说阅读器</string>
+    <string name="aboutus_version_title">版本号：V%s</string>
+    <string name="aboutus_intro">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;爱小说是一个开源的在线书籍阅读器，项目源代码发布于我的GitHub上：https://github.com/vince-styling/ixiaoshuo-android。其中的书籍数据来源于澄文中文网(www.cwzww.com)，目的是为了填充阅读器的效果，使其代码流程执行完整，仅作为编码练习及展示个人技能之用，并不包括商业用途。所有数据均为静态生成，没有动态服务器提供后台支撑。</string>
+
+    <style name="aboutus_ring">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/aboutus_ring_layer</item>
+    </style>
+</resources>

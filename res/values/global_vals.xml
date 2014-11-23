@@ -6,6 +6,7 @@
     <string name="common_dialog_title">提示</string>
 
     <string name="exit_app_tip">再按一次退出程序</string>
+    <string name="unimplement_feature">功能未实现</string>
 
     <color name="complex_bookname_txt">#4d4d4d</color>
     <dimen name="complex_bookname_txt">19sp</dimen>
