@@ -5,10 +5,6 @@ ixiaoshuo is a Chinese e-book reader, served online book reading. I'm developing
 
 'Cause this application as a online service, it of course needed a server to serving datas. But it's too expensive to deploy one, thus I benefit from GitHub Pages, making all remote datas hosted on [ixiaoshuo-data-center](https://github.com/vince-styling/ixiaoshuo-data-center). Eventually made the Application fully alive just like behind has a dynamic server does.
 
-You can download the compiled APK which at the project's root directory to experiencing it, following is what you're getting for.
-
-![Runtime Screenshot](screenshot.png "screenshot")
-
 # Development
 
 If you want to compile this project, you should make the `libs/android-support-v4.jar` as a library or install it into the local Maven repository :
@@ -22,6 +18,12 @@ mvn install:install-file
     -DgeneratePom=true
     -Dpackaging=jar
 ```
+
+You can download the compiled APK which at the project's root directory to experiencing it, following is what you're getting for.
+
+![Runtime Screenshot](screenshot.png "screenshot")
+
+![Runtime Screenshot](screenshot_finder.png "screenshot_finder")
 
 License
 =======
