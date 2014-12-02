@@ -18,6 +18,7 @@ import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.reader.SearchListActivity;
 import com.vincestyling.ixiaoshuo.ui.KeywordsFlow;
+import com.vincestyling.ixiaoshuo.utils.AppLog;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 
@@ -127,13 +128,17 @@ public class SearchView extends BaseFragment implements View.OnClickListener, Vi
         mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        feedKeywordsFlow();
-                        mKeywordsFlow.go2Show(KeywordsFlow.ANIMATION_IN);
-                    }
-                });
+                try {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            feedKeywordsFlow();
+                            mKeywordsFlow.go2Show(KeywordsFlow.ANIMATION_IN);
+                        }
+                    });
+                } catch (Exception e) {
+                    AppLog.e(e);
+                }
             }
         }, 0, REFRESH_TIME);
     }
