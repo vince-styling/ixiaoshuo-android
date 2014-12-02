@@ -147,8 +147,6 @@ public class ReaderActivity extends BaseActivity {
             });
             builder.show();
         }
-        ReaderSupport.destory();
-        RenderPaint.destory();
     }
 
     @Override
@@ -158,6 +156,8 @@ public class ReaderActivity extends BaseActivity {
             in.setAction(String.valueOf(System.currentTimeMillis()));
             startActivity(in);
         }
+        ReaderSupport.destory();
+        RenderPaint.destory();
         super.finish();
     }
 
