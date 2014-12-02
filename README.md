@@ -19,6 +19,8 @@ mvn install:install-file
     -Dpackaging=jar
 ```
 
+# App
+
 You can download the compiled APK which at the project's root directory to experiencing it, following is what you're getting for.
 
 ![Runtime Screenshot](screenshot.png "screenshot")
