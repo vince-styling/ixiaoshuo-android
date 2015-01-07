@@ -7,13 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import com.duowan.mobile.netroid.Listener;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.net.request.BookChaptersDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 
 import java.io.File;

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.*;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
 import com.vincestyling.ixiaoshuo.net.Netroid;
@@ -17,7 +18,6 @@ import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 import com.vincestyling.ixiaoshuo.pojo.Const;
 import com.vincestyling.ixiaoshuo.ui.EllipseEndTextView;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.Paths;
 import com.vincestyling.ixiaoshuo.view.EndlessListAdapter;
 

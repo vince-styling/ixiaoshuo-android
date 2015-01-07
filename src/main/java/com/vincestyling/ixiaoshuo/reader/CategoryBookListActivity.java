@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
-import com.vincestyling.ixiaoshuo.view.finder.*;
+import com.vincestyling.ixiaoshuo.view.finder.FinderAmplyHottestBookView;
+import com.vincestyling.ixiaoshuo.view.finder.FinderBaseListView;
+import com.vincestyling.ixiaoshuo.view.finder.FinderSimplyHottestBookView;
+import com.vincestyling.ixiaoshuo.view.finder.FinderView;
 
 public class CategoryBookListActivity extends BaseActivity {
     @Override

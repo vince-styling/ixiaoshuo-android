@@ -1,9 +1,12 @@
 package com.vincestyling.ixiaoshuo.net;
 
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
+import com.vincestyling.asqliteplus.DBOverseer;
+import com.vincestyling.asqliteplus.PaginationList;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.type.TypeReference;
 
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,7 +61,34 @@ public class Respond {
     }
 
     public <T> PaginationList<T> convertPaginationList(Class<T> clazz) {
-        return PaginationList.convert((Map<String, Object>) data, clazz);
+        return convert((Map<String, Object>) data, clazz);
+    }
+
+    public static <T> PaginationList<T> convert(Map<String, Object> dataMap, Class<T> clazz) {
+        try {
+            PaginationList<T> list = new PaginationList<T>();
+
+            for (String key : dataMap.keySet()) {
+                Object value = dataMap.get(key);
+                if (value instanceof List) {
+                    List datas = (List) value;
+                    list.ensureCapacity(datas.size());
+                    for (Object item : datas) {
+                        list.add(GObjectMapper.get().convertValue(item, clazz));
+                    }
+                } else {
+                    for (Method method : PaginationList.class.getMethods()) {
+                        if (method.getName().equalsIgnoreCase(DBOverseer.METHOD_PREFIX + key)) {
+                            method.invoke(list, Integer.parseInt(dataMap.get(key).toString()));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return list;
+        } catch (Exception ex) {}
+        return null;
     }
 
     @Override

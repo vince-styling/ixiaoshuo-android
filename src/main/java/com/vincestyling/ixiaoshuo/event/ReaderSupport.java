@@ -1,7 +1,7 @@
 package com.vincestyling.ixiaoshuo.event;
 
 import com.duowan.mobile.netroid.Listener;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
+import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.net.request.DeleteBookDBRequest;
 import com.vincestyling.ixiaoshuo.pojo.Book;
@@ -17,10 +17,10 @@ public class ReaderSupport {
     private static Book mBook;
 
     public static void init(int bookId) throws IllegalStateException {
-        mBook = AppDAO.get().getBookOnReading(bookId);
+        mBook = AppDBOverseer.get().getBookOnReading(bookId);
         if (mBook == null) throw new IllegalStateException("bookId not exists " + bookId);
 
-        mReadingChapter = AppDAO.get().getReadingChapter(mBook.getId());
+        mReadingChapter = AppDBOverseer.get().getReadingChapter(mBook.getId());
         mReadingChapter.ready(mBook.getId());
     }
 
@@ -38,7 +38,7 @@ public class ReaderSupport {
 
     public static int getTotalChapterCount() {
         if (mChapterCount == 0)
-            mChapterCount = AppDAO.get().getBookChapterCount(mBook.getId());
+            mChapterCount = AppDBOverseer.get().getBookChapterCount(mBook.getId());
         return mChapterCount;
     }
 
@@ -47,7 +47,7 @@ public class ReaderSupport {
     }
 
     public static int getCurrentChapterIndex() {
-        return AppDAO.get().getBookChapterIndex(mBook.getId(), mReadingChapter.getChapterId());
+        return AppDBOverseer.get().getBookChapterIndex(mBook.getId(), mReadingChapter.getChapterId());
     }
 
     public static Chapter getCurrentChapter() {
@@ -55,19 +55,19 @@ public class ReaderSupport {
     }
 
     public static Chapter getPrevChapter() {
-        Chapter chapter = AppDAO.get().getPreviousChapter(mBook.getId(), mReadingChapter.getChapterId());
+        Chapter chapter = AppDBOverseer.get().getPreviousChapter(mBook.getId(), mReadingChapter.getChapterId());
         if (chapter != null) chapter.ready(mBook.getId());
         return chapter;
     }
 
     public static Chapter getNextChapter() {
-        Chapter chapter = AppDAO.get().getNextChapter(mBook.getId(), mReadingChapter.getChapterId());
+        Chapter chapter = AppDBOverseer.get().getNextChapter(mBook.getId(), mReadingChapter.getChapterId());
         if (chapter != null) chapter.ready(mBook.getId());
         return chapter;
     }
 
     public static List<Chapter> getChapterList() {
-        List<Chapter> list = AppDAO.get().getBookChapters(mBook.getId());
+        List<Chapter> list = AppDBOverseer.get().getBookChapters(mBook.getId());
         List<Chapter> chapInfoList = new ArrayList<Chapter>(list.size());
         for (Chapter chapter : list) {
             chapInfoList.add(chapter);
@@ -76,16 +76,16 @@ public class ReaderSupport {
     }
 
     public static void onReadingChapter(Chapter chapter) {
-        AppDAO.get().makeReadingChapter(mBook.getId(), chapter);
+        AppDBOverseer.get().makeReadingChapter(mBook.getId(), chapter);
         mReadingChapter = chapter;
     }
 
     public static boolean isBookOnShelf() {
-        return AppDAO.get().isBookOnShelf(mBook.getId());
+        return AppDBOverseer.get().isBookOnShelf(mBook.getId());
     }
 
     public static boolean addToBookShelf() {
-        return AppDAO.get().addToBookShelf(mBook.getId());
+        return AppDBOverseer.get().addToBookShelf(mBook.getId());
     }
 
     public static void removeInBookShelf() {

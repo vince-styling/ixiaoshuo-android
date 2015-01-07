@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Const;
@@ -20,7 +21,6 @@ import com.vincestyling.ixiaoshuo.reader.BookInfoActivity;
 import com.vincestyling.ixiaoshuo.ui.ComplexBookNameView;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPage;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPageListView;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.view.BaseFragment;
 import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
 

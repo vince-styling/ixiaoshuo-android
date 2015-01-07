@@ -3,14 +3,14 @@ package com.vincestyling.ixiaoshuo.reader;
 import android.app.Activity;
 import android.app.Application;
 import android.widget.Toast;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
+import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 
 public class ReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AppDAO.init(this);
+        AppDBOverseer.init(this);
         Netroid.init(this);
     }
 

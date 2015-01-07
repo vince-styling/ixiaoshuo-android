@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.image.NetworkImageView;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
+import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.event.ChapterDownloader;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.net.request.DeleteBookDBRequest;
@@ -130,7 +130,7 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
     protected void setBookDesc1(Book book, TextView txvBookDesc) {
         int unreadChapterCount = book.getUnreadChapterCount();
         if (unreadChapterCount == -1) {
-            unreadChapterCount = AppDAO.get().getBookUnreadChapterCount(book.getId());
+            unreadChapterCount = AppDBOverseer.get().getBookUnreadChapterCount(book.getId());
             book.setUnreadChapterCount(unreadChapterCount);
         }
 
@@ -142,7 +142,7 @@ public abstract class BookshelfBaseListView extends BaseFragment implements OnIt
     protected void setBookDesc2(Book book, TextView txvBookDesc) {
         String chapterTitle = book.getLastChapterTitle();
         if (chapterTitle == null) {
-            chapterTitle = AppDAO.get().getBookLastChapterTitle(book.getId());
+            chapterTitle = AppDBOverseer.get().getBookLastChapterTitle(book.getId());
             book.setLastChapterTitle(chapterTitle);
         }
         txvBookDesc.setText(String.format(getActivity().getString(R.string.last_chapter_tip), chapterTitle));

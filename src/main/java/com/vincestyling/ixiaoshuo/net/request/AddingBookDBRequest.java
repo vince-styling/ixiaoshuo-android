@@ -4,7 +4,7 @@ import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
 import com.duowan.mobile.netroid.NetworkResponse;
 import com.duowan.mobile.netroid.Response;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
+import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 
@@ -26,9 +26,9 @@ public class AddingBookDBRequest extends BasicRequest<Integer> {
 
     @Override
     public NetworkResponse perform() {
-        bookId = AppDAO.get().addBook(book, temporaryFlag);
+        bookId = AppDBOverseer.get().addBook(book, temporaryFlag);
         if (bookId > 0) {
-            result = AppDAO.get().saveBookChapters(bookId, chapterList);
+            result = AppDBOverseer.get().saveBookChapters(bookId, chapterList);
         }
         return new NetworkResponse(null, null);
     }

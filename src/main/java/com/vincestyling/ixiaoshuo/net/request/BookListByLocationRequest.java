@@ -1,9 +1,9 @@
 package com.vincestyling.ixiaoshuo.net.request;
 
 import com.duowan.mobile.netroid.Listener;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.net.Respond;
 import com.vincestyling.ixiaoshuo.pojo.BookByLocation;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class BookListByLocationRequest extends NetworkRequest<PaginationList<BookByLocation>> {
 

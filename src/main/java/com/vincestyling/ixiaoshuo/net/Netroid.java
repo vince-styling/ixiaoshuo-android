@@ -12,9 +12,9 @@ import com.duowan.mobile.netroid.image.NetworkImageView;
 import com.duowan.mobile.netroid.stack.HurlStack;
 import com.duowan.mobile.netroid.toolbox.BasicNetwork;
 import com.duowan.mobile.netroid.toolbox.ImageLoader;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.net.request.*;
 import com.vincestyling.ixiaoshuo.pojo.*;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import org.apache.http.protocol.HTTP;
 
 import java.io.File;

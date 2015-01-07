@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.R;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.BookByLocation;
@@ -17,7 +18,6 @@ import com.vincestyling.ixiaoshuo.ui.ComplexBookNameView;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPage;
 import com.vincestyling.ixiaoshuo.ui.PullToLoadPageListView;
 import com.vincestyling.ixiaoshuo.ui.RoundedRepeatBackgroundDrawable;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 import com.vincestyling.ixiaoshuo.utils.StringUtil;
 import com.vincestyling.ixiaoshuo.view.PaginationAdapter;
 

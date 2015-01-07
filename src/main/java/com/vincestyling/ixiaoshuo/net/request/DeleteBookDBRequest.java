@@ -4,7 +4,7 @@ import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
 import com.duowan.mobile.netroid.NetworkResponse;
 import com.duowan.mobile.netroid.Response;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
+import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 
 public class DeleteBookDBRequest extends BasicRequest<Boolean> {
@@ -22,7 +22,7 @@ public class DeleteBookDBRequest extends BasicRequest<Boolean> {
 
     @Override
     public NetworkResponse perform() {
-        result = AppDAO.get().deleteBook(book);
+        result = AppDBOverseer.get().deleteBook(book);
         return new NetworkResponse(null, null);
     }
 

@@ -4,9 +4,9 @@ import com.duowan.mobile.netroid.Listener;
 import com.duowan.mobile.netroid.NetroidError;
 import com.duowan.mobile.netroid.NetworkResponse;
 import com.duowan.mobile.netroid.Response;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
+import com.vincestyling.asqliteplus.PaginationList;
+import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class BookChaptersDBRequest extends BasicRequest<PaginationList<Chapter>> {
     private PaginationList<Chapter> chapterList;
@@ -20,7 +20,7 @@ public class BookChaptersDBRequest extends BasicRequest<PaginationList<Chapter>>
 
     @Override
     public NetworkResponse perform() {
-        chapterList = AppDAO.get().getSimpleBookChapters(bookId, pageNo, 100);
+        chapterList = AppDBOverseer.get().getSimpleBookChapters(bookId, pageNo, 100);
         return new NetworkResponse(null, null);
     }
 

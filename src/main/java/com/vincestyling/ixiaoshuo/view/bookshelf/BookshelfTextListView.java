@@ -2,12 +2,12 @@ package com.vincestyling.ixiaoshuo.view.bookshelf;
 
 import android.widget.TextView;
 import com.vincestyling.ixiaoshuo.R;
-import com.vincestyling.ixiaoshuo.db.AppDAO;
+import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 
 public class BookshelfTextListView extends BookshelfBaseListView {
     @Override
     public void refreshData() {
-        mBookList = AppDAO.get().getBookListOnBookShelf();
+        mBookList = AppDBOverseer.get().getBookListOnBookShelf();
         super.refreshData();
     }
 

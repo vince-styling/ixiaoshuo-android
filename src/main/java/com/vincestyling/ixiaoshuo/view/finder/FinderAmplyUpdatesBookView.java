@@ -2,9 +2,9 @@ package com.vincestyling.ixiaoshuo.view.finder;
 
 import android.widget.TextView;
 import com.duowan.mobile.netroid.Listener;
+import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.net.Netroid;
 import com.vincestyling.ixiaoshuo.pojo.Book;
-import com.vincestyling.ixiaoshuo.utils.PaginationList;
 
 public class FinderAmplyUpdatesBookView extends FinderAmplyBaseBookView {
 
