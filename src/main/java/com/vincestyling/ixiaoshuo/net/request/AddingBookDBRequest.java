@@ -10,7 +10,7 @@ import com.vincestyling.ixiaoshuo.pojo.Chapter;
 
 import java.util.List;
 
-public class AddingBookDBRequest extends BasicRequest<Integer> {
+public class AddingBookDBRequest extends DBRequest<Integer> {
     private boolean result;
     private Book book;
     private int bookId;
@@ -25,12 +25,11 @@ public class AddingBookDBRequest extends BasicRequest<Integer> {
     }
 
     @Override
-    public NetworkResponse perform() {
+    protected void onPerform() {
         bookId = AppDBOverseer.get().addBook(book, temporaryFlag);
         if (bookId > 0) {
             result = AppDBOverseer.get().saveBookChapters(bookId, chapterList);
         }
-        return new NetworkResponse(null, null);
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.vincestyling.asqliteplus.PaginationList;
 import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.pojo.Chapter;
 
-public class BookChaptersDBRequest extends BasicRequest<PaginationList<Chapter>> {
+public class BookChaptersDBRequest extends DBRequest<PaginationList<Chapter>> {
     private PaginationList<Chapter> chapterList;
     private int bookId, pageNo;
 
@@ -19,9 +19,8 @@ public class BookChaptersDBRequest extends BasicRequest<PaginationList<Chapter>>
     }
 
     @Override
-    public NetworkResponse perform() {
+    protected void onPerform() {
         chapterList = AppDBOverseer.get().getSimpleBookChapters(bookId, pageNo, 100);
-        return new NetworkResponse(null, null);
     }
 
     @Override

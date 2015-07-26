@@ -7,7 +7,7 @@ import com.duowan.mobile.netroid.Response;
 import com.vincestyling.ixiaoshuo.db.AppDBOverseer;
 import com.vincestyling.ixiaoshuo.pojo.Book;
 
-public class DeleteBookDBRequest extends BasicRequest<Boolean> {
+public class DeleteBookDBRequest extends DBRequest<Boolean> {
     private boolean result;
     private Book book;
 
@@ -21,9 +21,8 @@ public class DeleteBookDBRequest extends BasicRequest<Boolean> {
     }
 
     @Override
-    public NetworkResponse perform() {
+    protected void onPerform() {
         result = AppDBOverseer.get().deleteBook(book);
-        return new NetworkResponse(null, null);
     }
 
     @Override
